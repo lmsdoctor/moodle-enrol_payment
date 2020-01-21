@@ -33,10 +33,11 @@ define('NO_DEBUG_DISPLAY', true);
 
 require("../../config.php");
 require_once("lib.php");
-require_once("paymentlib.php");
 require_once($CFG->libdir.'/enrollib.php');
 require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->dirroot . '/group/lib.php');
+
+use enrol_payment\helper;
 
 require_login();
 // Stripe does not like when we return error messages here,
@@ -48,9 +49,7 @@ if (empty(required_param('stripeToken', PARAM_RAW))) {
     print_error(get_string('stripe_sorry', 'enrol_payment'));
 }
 
-
 $data = new stdClass();
-
 $req = "";
 
 foreach ($_POST as $key => $value) {
@@ -63,7 +62,6 @@ foreach ($_POST as $key => $value) {
     $req .= "&$key=".urlencode($value);
     $data->$key = fix_utf8($value);
 }
-//$data->prov is now set to the user's msn field.
 
 $data->payment_gross    = $data->amount;
 $data->payment_currency = $data->currency_code;
@@ -75,7 +73,7 @@ if (empty($data->custom)) {
     throw new moodle_exception('invalidrequest', 'core_error', '', null, 'Missing request param: custom');
 }
 
-$payment = paymentlib\enrol_payment_get_payment_from_token($data->custom);
+$payment = helper::get_payment_from_token($data->custom);
 
 unset($data->custom);
 

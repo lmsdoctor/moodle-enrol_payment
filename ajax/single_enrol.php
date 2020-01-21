@@ -15,6 +15,8 @@ require_once(dirname(__FILE__).'/../lang/en/enrol_payment.php');
 require_once(dirname(__FILE__).'/util.php');
 require_once(dirname(__FILE__).'/../paymentlib.php');
 
+use enrol_payment\helper;
+
 global $DB;
 
 $prepayToken = required_param('prepaytoken', PARAM_ALPHANUM);
@@ -25,9 +27,9 @@ $ret = array();
 try {
     $instance = $DB->get_record('enrol', array("id" => $instanceid), '*', MUST_EXIST);
 
-    $payment = paymentlib\enrol_payment_get_payment_from_token($prepayToken);
+    $payment = helper::get_payment_from_token($prepayToken);
     update_payment_data(false, null, $payment);
-    $ret = paymentlib\enrol_payment_calculate_cost($instance, $payment, true);
+    $ret = \enrol_payment\helper::calculate_cost($instance, $payment, true);
     $ret["success"] = true;
 } catch (Exception $e) {
     $ret["success"] = false;

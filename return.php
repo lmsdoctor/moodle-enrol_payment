@@ -24,13 +24,14 @@
  */
 
 require("../../config.php");
-require("paymentlib.php");
 require_once("$CFG->dirroot/enrol/paypal/lib.php");
+
+use enrol_payment\helper;
 
 $id = required_param('id', PARAM_INT);
 $token = required_param('token', PARAM_RAW);
 $userid = $USER->id;
-$payment = paymentlib\enrol_payment_get_payment_from_token($token);
+$payment = helper::get_payment_from_token($token);
 $purchasing_for_self = true;
 
 if (!$course = $DB->get_record("course", array("id"=>$id))) {
@@ -78,7 +79,6 @@ if($purchasing_for_self) {
         echo '</div>';
         echo '<div id="spin-container"></div>';
         echo $OUTPUT->footer();
-        //notice(get_string('paymentsorry', '', $a), $destination);
     }
 } else {
     $PAGE->set_url($destination);

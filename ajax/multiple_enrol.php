@@ -13,11 +13,12 @@ require_once(dirname(__FILE__).'/../../../config.php');
 require_once("$CFG->libdir/moodlelib.php");
 require_once(dirname(__FILE__).'/../lang/en/enrol_payment.php');
 require_once(dirname(__FILE__).'/util.php');
-require_once(dirname(__FILE__).'/../paymentlib.php');
+
+use enrol_payment\helper;
 
 global $DB;
 
-$ret = array("success" => true);
+$ret = ["success" => true];
 $emails_raw = required_param('emails', PARAM_RAW);
 $emails = json_decode(stripslashes($emails_raw));
 $instanceid = required_param('instanceid', PARAM_RAW);
@@ -41,14 +42,14 @@ if ($CFG->allowaccountssameemail) {
 
     try {
         $ret['users'] = get_moodle_users_by_emails($emails);
-        $payment = paymentlib\enrol_payment_get_payment_from_token($prepayToken);
+        $payment = helper::get_payment_from_token($prepayToken);
 
         update_payment_data(true, $ret['users'], $payment);
 
         $instance = $DB->get_record('enrol', array("id" => $instanceid), '*', MUST_EXIST);
 
         //Tack new subtotals onto return data
-        $ret = array_merge($ret, paymentlib\enrol_payment_calculate_cost($instance, $payment, true));
+        $ret = array_merge($ret, helper::calculate_cost($instance, $payment, true));
 
         if ($payment->tax_percent) {
             $tax_amount = $ret['tax_amount'];
