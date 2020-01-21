@@ -1,4 +1,19 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Strings for component 'enrol_payment', language 'en'.
  *
@@ -15,18 +30,19 @@ $string['cost_desc'] = 'Note that the cost specified in the individual course se
 $string['costerror'] = 'The enrolment cost is not numeric';
 $string['costorkey'] = 'Please choose one of the following methods of enrolment.';
 $string['currency'] = 'Currency';
+$string['customwelcomemessage'] = 'Custom welcome message';
 $string['defaultrole'] = 'Default role assignment';
 $string['defaultrole_desc'] = 'Select role which should be assigned to users during enrolments';
 $string['enrolenddate'] = 'End date';
 $string['enrolenddate_help'] = 'If enabled, users can be enrolled until this date only.';
 $string['enrolenddaterror'] = 'Enrolment end date cannot be earlier than start date';
+$string['enrolgroup'] = 'Group enrolment';
+$string['enrolnogroup'] = 'No group';
 $string['enrolperiod'] = 'Enrolment duration';
 $string['enrolperiod_desc'] = 'Default length of time that the enrolment is valid. If set to zero, the enrolment duration will be unlimited by default.';
 $string['enrolperiod_help'] = 'Length of time that the enrolment is valid, starting with the moment the user is enrolled. If disabled, the enrolment duration will be unlimited.';
 $string['enrolstartdate'] = 'Start date';
 $string['enrolstartdate_help'] = 'If enabled, users can be enrolled from this date onward only.';
-$string['enrolgroup'] = 'Group enrolment';
-$string['enrolnogroup'] = 'No group';
 $string['errcommunicating'] = 'There was an error communicating with the server. Please refresh the page and try again. If the problem persists, please contact the site administrator.';
 $string['errdisabled'] = 'The Payment enrolment plugin is disabled and does not handle payment notifications.';
 $string['erripninvalid'] = 'Instant payment notification has not been verified by PayPal.';
@@ -73,15 +89,14 @@ $string['privacy:metadata:enrol_payment:paypal_com:first_name'] = 'First name of
 $string['privacy:metadata:enrol_payment:paypal_com:last_name'] = 'Last name of the user who is buying the course.';
 $string['privacy:metadata:enrol_payment:paypal_com:os0'] = 'Full name of the buyer.';
 $string['processexpirationstask'] = 'Payment enrolment send expiry notifications task';
+$string['sendcoursewelcomemessage'] = 'Send course welcome message';
+$string['sendcoursewelcomemessage_help'] = '';
 $string['sendpaymentbutton_paypal'] = 'Send payment via PayPal';
 $string['sendpaymentbutton_stripe'] = 'Send payment via Stripe';
 $string['status'] = 'Allow Payment enrolments';
 $string['status_desc'] = 'Allow users to use PayPal and Stripe to enrol';
 $string['transactions'] = 'PayPal transactions';
 $string['unenrolselfconfirm'] = 'Do you really want to unenrol yourself from course "{$a}"?';
-$string['sendcoursewelcomemessage'] = 'Send course welcome message';
-$string['sendcoursewelcomemessage_help'] = '';
-$string['customwelcomemessage'] = 'Custom welcome message';
 $string['customwelcomemessage_help'] = 'A custom welcome message may be added as plain text or Moodle-auto format, including HTML tags and multi-lang tags.
 
 The following placeholders may be included in the message:
@@ -122,22 +137,13 @@ $string['validatezipcode'] = 'Validate the billing postal code (Stripe)';
 $string['validatezipcode_desc'] = 'This sets the Stripe payment option for whether the billing address should be verified as part of processing the payment. They strongly recommend that this option should be on, to reduce fraud.';
 $string['requireshipping'] = 'Require shipping address';
 $string['multipleregistration'] = 'Multiple Registration';
-
-//TODO add description - ensure registrants have an account on (long name)
-//(Registrant 1 email, instead of Email 1)
 $string['multipleregistration_help'] = 'Purchase enrolment for other(s). To register yourself as well as others, enter your email address and click on the "Add a registrant" icon.<br>';
 $string['allowmultipleenrol'] = 'Allow multiple registration';
 $string['allowmultipleenrol_help'] = 'Allow a user to enrol other users by entering their email address.';
 $string['sameemailaccountsallowed'] = "Error: Accounts sharing the same email address are allowed on this Moodle site. Because of this, the Multiple Registration cannot be used. Please contact your site administrator.";
 $string['duplicateemail'] = "Error: Duplicate emails were entered in the multiple registration form.";
-
-$string['paypalaccountnotneeded'] = "<b>A PayPal account is not needed to pay by credit card.</b> <br>".
-"At the PayPal site, there is a <i>\"Pay with a credit or Visa Debit card\"</i> <br>".
-"button. Please note that the name and address on the form <b>must</b><br>".
-"<b>match</b> the name and address associated with the credit card.";
-
+$string['paypalaccountnotneeded'] = "<b>A PayPal account is not needed to pay by credit card.</b> <br>At the PayPal site, there is a <i>\"Pay with a credit or Visa Debit card\"</i> <br>button. Please note that the name and address on the form <b>must</b><br><b>match</b> the name and address associated with the credit card.";
 $string['or'] = "OR";
-
 //TODO use site long name
 $string['usersnotfoundwithemail'] = "Either the registrant(s) have not yet created an account or their account is associated with a different email address:<p></p><ul><li>";
 $string['totalcost'] = 'If your intention is to register <b>yourself as well</b> and your name is not in the list, click <b>Cancel</b>. On the Enrolment page, enter your email address as one of the \"others\" to enrol.</p><p>The <b>{$a->symbol}{$a->discountAmount}{$a->percentSymbol}{$a->perSeat}</b> discount has been applied.</p></p>Total cost:&nbsp;';
@@ -157,10 +163,7 @@ $string['addaregistrant'] = 'Add a registrant';
 $string['removearegistrant'] = 'Remove the registrant';
 
 $string['taxdefinitions'] = 'Custom tax definitions';
-$string['taxdefinitions_help'] = "The format for each entry is Province/State Code : 0.## for tax rate. For instance, assume there are only two taxable provinces: Ontario (code ON and rate 13%) and Quebec (code QC and rate 5%), the entries would be:<br>".
-"ON : 0.13<br>".
-"QC : 0.05<br>".
-"Enter each tax definition on a <b>separate</b> line. The script will pull the province/state code from the MSN field in the user profile (setup instructions are detailed in the ReadMe.txt file) to determine how much tax to add to the course fee.";
+$string['taxdefinitions_help'] = "The format for each entry is Province/State Code : 0.## for tax rate. For instance, assume there are only two taxable provinces: Ontario (code ON and rate 13%) and Quebec (code QC and rate 5%), the entries would be:<br>ON : 0.13<br>QC : 0.05<br>Enter each tax definition on a <b>separate</b> line. The script will pull the province/state code from the MSN field in the user profile (setup instructions are detailed in the ReadMe.txt file) to determine how much tax to add to the course fee.";
 $string['definetaxes'] = 'Allow custom tax definitions';
 $string['feestring_taxed'] = 'The fee for <b>{$a->coursefullname}</b><br>is <b>{$a->symbol}<span class="localisedcost-untaxed">{$a->localisedcost_untaxed}</span></b> + {$a->symbol}<span class="taxamountstring">{$a->tax_amount_string}</span> <span class="taxstring">{$a->tax_string}</span> = <b>{$a->symbol}<span class="localisedcost">{$a->localisedcost}</span></b> {$a->currency}.<br>';
 $string['feestring_notax'] = 'The fee for <b>{$a->coursefullname}</b><br>is <b>{$a->symbol}<span class="localisedcost">{$a->localisedcost}</span></b> {$a->currency}.<br>';
@@ -169,22 +172,8 @@ $string['discountwillbeapplied'] = 'A <b>{$a->symbol}{$a->discountAmount}{$a->pe
 $string['allowbanktransfer'] = 'Allow Bank/Email transfer payment';
 $string['transferinstructions'] = 'Bank/Email transfer payment instructions';
 $string['transferinstructions_help'] = "This text will appear on the course enrolment page. Bank or email money transfer instructions are customizable, but it is advisable to not alter {{AMOUNT}}, {{COURSEFULLNAME}} or {{COURSESHORTNAME}}. These variables are replaced by the plugin code. Note that {{AMOUNT}} is replaced with the course fee + tax (if applicable).";
-$string['transferinstructions_default'] = "<h4>Prefer to pay directly from your bank account?</h4><br>".
-"<p>Email money transfer (known as <a href=\"https://www.youtube.com/watch?time_continue=4&v=zL9yoZZXyOE\" target=\"_blank\"><em>Interac</em> e-Transfer</a>) is an option if you:</p>".
-"<ul>".
-"<li>have an email address or a mobile number, and</li>".
-"<li>are registered for <em>Interac</em> e-Transfer service with your financial institution.</li>".
-"</ul>".
-"<p>To send an <em>Interac</em> e-Transfer payment:</p>".
-"<ol>".
-"<li><p>Log in to your financial institution's online or mobile banking and navigate to <em>Interac</em> e-Transfer menu.</p></li>".
-"<li><p>Select the account from which to withdraw the funds.</p></li>" .
-"<li><p>Add a new recipient using <strong>ENTER RECIPIENT NAME</strong> as the name, <strong>ENTER EMAIL ADDRESS TO RECEIVE THE FUNDS</strong> as the email address, <strong>Who is offering {{COURSESHORTNAME}}?</strong> as the security question, and <strong>ENTER THE ANSWER WITH A MINIMUM OF 5 CHARACTERS</strong> as the answer.</p></li>".
-"<li><p>Select <strong>ENTER RECIPIENT NAME</strong> as the recipient.</p></li>".
-"<li><p>Fill in the amount of <strong>{{AMOUNT}}</strong> and enter <strong>your name</strong> in the message area.</p></li>".
-"<li><p>Follow the on-screen instructions to confirm the information and complete the transfer.</p></li>".
-"</ol>".
-"<p>Once payment is received, you will be notified of your enrolment in <strong>{{COURSEFULLNAME}}</strong>.</p>";
+$string['transferinstructions_default'] = "<h4>Prefer to pay directly from your bank account?</h4><br>
+    <p>Email money transfer (known as <a href=\"https://www.youtube.com/watch?time_continue=4&v=zL9yoZZXyOE\" target=\"_blank\"><em>Interac</em> e-Transfer</a>) is an option if you:</p><ul><li>have an email address or a mobile number, and</li><li>are registered for <em>Interac</em> e-Transfer service with your financial institution.</li></ul><p>To send an <em>Interac</em> e-Transfer payment:</p><ol><li><p>Log in to your financial institution's online or mobile banking and navigate to <em>Interac</em> e-Transfer menu.</p></li><li><p>Select the account from which to withdraw the funds.</p></li><li><p>Add a new recipient using <strong>ENTER RECIPIENT NAME</strong> as the name, <strong>ENTER EMAIL ADDRESS TO RECEIVE THE FUNDS</strong> as the email address, <strong>Who is offering {{COURSESHORTNAME}}?</strong> as the security question, and <strong>ENTER THE ANSWER WITH A MINIMUM OF 5 CHARACTERS</strong> as the answer.</p></li><li><p>Select <strong>ENTER RECIPIENT NAME</strong> as the recipient.</p></li><li><p>Fill in the amount of <strong>{{AMOUNT}}</strong> and enter <strong>your name</strong> in the message area.</p></li><li><p>Follow the on-screen instructions to confirm the information and complete the transfer.</p></li></ol><p>Once payment is received, you will be notified of your enrolment in <strong>{{COURSEFULLNAME}}</strong>.</p>";
 
 $string['paypalwait'] = 'Please wait while PayPal confirms your payment. You will be given access to <i>{$a}</i> when the payment has completed.';
 $string['errorcheckingenrolment'] = "Failure checking user enrolment. Please contact your server administrator. In the meantime, you should navigate to the course manually.";

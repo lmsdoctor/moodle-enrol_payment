@@ -1,18 +1,33 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Payment enrolment plugin.
  *
  * This plugin allows you to set up paid courses.
  *
  * @package    enrol_payment
- * @copyright  2018 Seth Yoder 
+ * @copyright  2018 Seth Yoder, LMS Doctor
  * @copyright  based on work by 2010 Eugene Venter (originally for enrol_paypal)
  * @author     Seth Yoder <seth.a.yoder@gmail.com> - based on code by Eugene Venter, Martin Dougiamas and others
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once('classes/util.php');
-require_once('currencyCodes.php');
+require_once('currencycodes.php');
 require_once('paymentlib.php');
 
 defined('MOODLE_INTERNAL') || die();
@@ -26,13 +41,20 @@ defined('MOODLE_INTERNAL') || die();
  */
 class enrol_payment_plugin extends enrol_plugin {
 
+    /**
+     * Return currencies.
+     *
+     * See https://www.paypal.com/cgi-bin/webscr?cmd=p/sell/mc/mc_intro-outside,
+     * 3-character ISO-4217: https://cms.paypal.com/us/cgi-bin/?cmd=_render-content&content_ID=developer/e_howto_api_currency_codes
+     *
+     * @return array
+     */
     public function get_currencies() {
-        // See https://www.paypal.com/cgi-bin/webscr?cmd=p/sell/mc/mc_intro-outside,
-        // 3-character ISO-4217: https://cms.paypal.com/us/cgi-bin/?cmd=_render-content&content_ID=developer/e_howto_api_currency_codes
-        $codes = array(
+        $codes = [
             'AUD', 'BRL', 'CAD', 'CHF', 'CZK', 'DKK', 'EUR', 'GBP', 'HKD', 'HUF', 'ILS', 'JPY',
-            'MXN', 'MYR', 'NOK', 'NZD', 'PHP', 'PLN', 'RUB', 'SEK', 'SGD', 'THB', 'TRY', 'TWD', 'USD');
-        $currencies = array();
+            'MXN', 'MYR', 'NOK', 'NZD', 'PHP', 'PLN', 'RUB', 'SEK', 'SGD', 'THB', 'TRY', 'TWD', 'USD'
+        ];
+        $currencies = [];
         foreach ($codes as $c) {
             $currencies[$c] = new lang_string($c, 'core_currencies');
         }
@@ -70,29 +92,49 @@ class enrol_payment_plugin extends enrol_plugin {
         return array();
     }
 
+    /**
+     * Users with role assign cap may tweak the roles later.
+     *
+     * @return bool
+     */
     public function roles_protected() {
-        // users with role assign cap may tweak the roles later
         return false;
     }
 
+    /**
+     * Users with unenrol cap may unenrol other users manually - requires enrol/payment:unenrol.
+     *
+     * @param  stdClass $instance
+     * @return bool
+     */
     public function allow_unenrol(stdClass $instance) {
-        // users with unenrol cap may unenrol other users manually - requires enrol/payment:unenrol
         return true;
     }
 
+    /**
+     * Users with manage cap may tweak period and status - requires enrol/payment:manage.
+     * @param  stdClass $instance [description]
+     * @return bool
+     */
     public function allow_manage(stdClass $instance) {
-        // users with manage cap may tweak period and status - requires enrol/payment:manage
         return true;
     }
 
+    /**
+     * Show enrol me link.
+     *
+     * @param  stdClass $instance
+     * @return bool
+     */
     public function show_enrolme_link(stdClass $instance) {
         return ($instance->status == ENROL_INSTANCE_ENABLED);
     }
 
     /**
      * Returns true if the user can add a new instance in this course.
+     *
      * @param int $courseid
-     * @return boolean
+     * @return bool
      */
     public function can_add_instance($courseid) {
         $context = context_course::instance($courseid, MUST_EXIST);
@@ -101,14 +143,14 @@ class enrol_payment_plugin extends enrol_plugin {
             return false;
         }
 
-        // multiple instances supported - different cost for different roles
+        // Multiple instances supported - different cost for different roles.
         return true;
     }
 
     /**
      * We are a good plugin and don't invent our own UI/validation code path.
      *
-     * @return boolean
+     * @return bool
      */
     public function use_standard_editing_ui() {
         return true;
@@ -116,6 +158,7 @@ class enrol_payment_plugin extends enrol_plugin {
 
     /**
      * Add new instance of enrol plugin.
+     *
      * @param object $course
      * @param array $fields instance fields
      * @return int id of new instance, null if can not be created
@@ -129,9 +172,10 @@ class enrol_payment_plugin extends enrol_plugin {
 
     /**
      * Update instance of enrol plugin.
+     *
      * @param stdClass $instance
      * @param stdClass $data modified instance fields
-     * @return boolean
+     * @return bool
      */
     public function update_instance($instance, $data) {
         if ($data) {
@@ -232,6 +276,14 @@ class enrol_payment_plugin extends enrol_plugin {
         email_to_user($user, $contact, $subject, $messagetext, $messagehtml);
     }
 
+    /**
+     * Outputs transfer instructions.
+     *
+     * @param  int $cost
+     * @param  string $coursefullname
+     * @param  string $courseshortname
+     * @return void
+     */
     function output_transfer_instructions($cost, $coursefullname, $courseshortname) {
         if ($this->get_config("allowbanktransfer")) {
             $instructions = $this->get_config("transferinstructions");
@@ -244,6 +296,12 @@ class enrol_payment_plugin extends enrol_plugin {
         }
     }
 
+    /**
+     * Returns the tax info.
+     *
+     * @param  int $cost
+     * @return array
+     */
     function get_tax_info($cost) {
         global $USER;
         if($this->get_config('definetaxes')) {
@@ -279,9 +337,11 @@ class enrol_payment_plugin extends enrol_plugin {
 
         }
 
-        return [ "tax_percent" => 0
-               , "tax_string" => ""
-               ];
+        return [
+            "tax_percent" => 0,
+            "tax_string" => ""
+        ];
+
     }
 
     /**
@@ -321,7 +381,7 @@ class enrol_payment_plugin extends enrol_plugin {
         $strloginto = get_string("loginto", "", $shortname);
         $strcourses = get_string("courses");
 
-        // Pass $view=true to filter hidden caps if the user cannot see them
+        // Pass $view=true to filter hidden caps if the user cannot see them.
         if ($users = get_users_by_capability($context, 'moodle/course:update', 'u.*', 'u.id ASC',
                                              '', '', '', '', false, true)) {
             $users = sort_by_roleassignment_authority($users, $context);
@@ -342,7 +402,8 @@ class enrol_payment_plugin extends enrol_plugin {
         $tax_string = $tax_info["tax_string"];
         $tax_percent = $tax_info["tax_percent"];
 
-        if (abs($original_cost) < 0.01) { // no cost, other enrolment methods (instances) should be used
+        // No cost, other enrolment methods (instances) should be used.
+        if (abs($original_cost) < 0.01) {
             echo '<p>'.get_string('nocost', 'enrol_payment').'</p>';
         } else {
 
@@ -354,29 +415,27 @@ class enrol_payment_plugin extends enrol_plugin {
             $gateways_enabled = ((int) $paypal_enabled) + ((int) $stripe_enabled);
             $stripepublishablekey = $stripe_enabled ? $this->get_config('stripepublishablekey') : null;
 
-            if (isguestuser()) { // force login only for guest user, not real users with guest role
-                //echo '<div class="mdl-align"><p>'.get_string('paymentrequired').'</p>';
-                //echo '<p><b>'.get_string('cost').": $instance->currency $localisedcost".'</b></p>';
+            // Force login only for guest user, not real users with guest role.
+            if (isguestuser()) {
                 echo '<p><a href="'.$wwwroot.'/login/">'.get_string('loginsite').'</a></p>';
-                echo '</div>';
             } else {
-                //Used to verify payment data so that it can't be spoofed.
+                // Used to verify payment data so that it can't be spoofed.
                 $prepayToken = bin2hex(random_bytes(16));
                 $discountCodeRequired = $instance->customint7;
                 $discountThreshold = $instance->customint8;
 
-                $paymentdata = [ 'prepaytoken' => $prepayToken
-                               , 'userid' => $USER->id
-                               , 'courseid' => $course->id
-                               , 'instanceid' => $instance->id
-                               , 'multiple' => false
-                               , 'multiple_userids' => null
-                               , 'code_given' => false
-                               , 'units' => 1
-                               , 'original_cost' => $original_cost
-                               , 'tax_percent' => $tax_percent
-                               , 'paypal_txn_id' => null
-                               ];
+                $paymentdata = [
+                    'prepaytoken' => $prepayToken,
+                    'userid' => $USER->id,'courseid' => $course->id,
+                    'instanceid' => $instance->id,
+                    'multiple' => false,
+                    'multiple_userids' => null,
+                    'code_given' => false,
+                    'units' => 1,
+                    'original_cost' => $original_cost,
+                    'tax_percent' => $tax_percent,
+                    'paypal_txn_id' => null,
+                ];
 
                 $payment_id = $DB->insert_record("enrol_payment_session", $paymentdata);
 
@@ -386,10 +445,10 @@ class enrol_payment_plugin extends enrol_plugin {
 
                 $calculatecost = paymentlib\enrol_payment_calculate_cost($instance,$payment_obj,true);
                 $calculatecost_untaxed = paymentlib\enrol_payment_calculate_cost($instance,$payment_obj,false);
-                $localisedcost = $calculatecost['subtotal_localised']; 
+                $localisedcost = $calculatecost['subtotal_localised'];
                 $localisedcost_untaxed = $calculatecost_untaxed['subtotal_localised'];
 
-                //If percentage discount, get the percentage amount to display
+                //If percentage discount, get the percentage amount to display.
                 if($instance->customint3 == 1) {
                     $percentDisplay = $calculatecost['percent_discount'];
                 }

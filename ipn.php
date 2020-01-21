@@ -1,4 +1,19 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Listens for Instant Payment Notification from PayPal
  *
@@ -8,9 +23,9 @@
  * user.
  *
  * @package    enrol_payment
- * @copyright  2018 Seth Yoder 
+ * @copyright  2018 Seth Yoder
  * @copyright  based on work by 2010 Eugene Venter (originally for enrol_paypal)
- * @author     Seth Yoder <seth.a.yoder@gmail.com> - based on code by others 
+ * @author     Seth Yoder <seth.a.yoder@gmail.com> - based on code by others
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -19,7 +34,7 @@
 define('NO_DEBUG_DISPLAY', true);
 
 // @codingStandardsIgnoreLine This script does not require login.
-require("../../config.php");
+require(__DIR__ . '/../../config.php');
 require_once("lib.php");
 require_once("paymentlib.php");
 require_once($CFG->libdir.'/enrollib.php');
@@ -36,16 +51,16 @@ if (!enrol_is_enabled('payment')) {
     throw new moodle_exception('errdisabled', 'enrol_payment');
 }
 
-/// Keep out casual intruders
+// Keep out casual intruders
 if (empty($_POST) or !empty($_GET)) {
 	http_response_code(400);
 	echo get_string('invalidrequest', 'core_error');
 }
 
-/// Read all the data from PayPal and get it ready for later;
-/// we expect only valid UTF-8 encoding, it is the responsibility
-/// of user to set it up properly in PayPal business account,
-/// it is documented in docs wiki.
+// Read all the data from PayPal and get it ready for later;
+// we expect only valid UTF-8 encoding, it is the responsibility
+// of user to set it up properly in PayPal business account,
+// it is documented in docs wiki.
 
 $req = 'cmd=_notify-validate';
 
@@ -65,7 +80,7 @@ foreach ($_POST as $key => $value) {
 if (empty($data->custom)) {
     /*	throw new moodle_exception('invalidrequest', 'core_error', '', null, 'Missing request param: custom');
 	The line above has been commented out because PayPal interprets the moodle_exception
-	  with an HTTP response code 500 when anything else but a course is purchased.*/ 
+	  with an HTTP response code 500 when anything else but a course is purchased.*/
 	die();
 }
 
@@ -101,7 +116,7 @@ $PAGE->set_context($context);
 $plugin_instance = $DB->get_record("enrol", array("id" => $data->instanceid, "enrol" => "payment", "status" => 0), "*", MUST_EXIST);
 $plugin = enrol_get_plugin('payment');
 
-/// Open a connection back to PayPal to validate the data
+// Open a connection back to PayPal to validate the data
 $paypaladdr = empty($CFG->usepaypalsandbox) ? 'ipnpb.paypal.com' : 'ipnpb.sandbox.paypal.com';
 $c = new curl();
 $options = array(
@@ -118,12 +133,12 @@ if ($c->get_errno()) {
         json_encode($data));
 }
 
-/// Connection is OK, so now we post the data to validate it
+// Connection is OK, so now we post the data to validate it.
 
-/// Now read the response and check if everything is OK.
+// Now read the response and check if everything is OK.
 
 if (strlen($result) > 0) {
-    if (strcmp($result, "VERIFIED") == 0) {          // VALID PAYMENT...ish
+    if (strcmp($result, "VERIFIED") == 0) {
 
         // check the payment_status and payment_reason
 

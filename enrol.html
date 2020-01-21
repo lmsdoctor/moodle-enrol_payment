@@ -1,7 +1,5 @@
 <div class="path-enrol-payment">
     <div id="enrolpage">
-        <div id="dimmer">
-        </div>
         <div id="enrolpage-centered" align="center">
             <?php $stringparams = new stdClass; ?>
             <?php $stringparams->coursefullname = $coursefullname; ?>
@@ -151,7 +149,6 @@
                         <input type="hidden" name="city" value="<?php p($usercity) ?>" />
                         <input type="hidden" name="email" value="<?php p($USER->email) ?>" />
                         <input type="hidden" name="country" value="<?php p($USER->country) ?>" />
-
 
                         <!--<input id="enrol-payment-submit-stripe" class="enrol-payment-submit" type="submit" value="<?php print_string("sendpaymentbutton_stripe", "enrol_payment") ?>" />-->
 
