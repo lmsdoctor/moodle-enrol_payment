@@ -52,6 +52,7 @@
                     <span class="discount-threshold-info" style="display: <?php echo ($discountCodeRequired ? 'none' : 'block') ?> ">
                         <?php echo get_string("discountwillbeapplied", "enrol_payment", $stringparams) ?>
                     </span>
+                    <div class="enrol-payment-error-text alert alert-danger" style="display: none"></div>
                 <?php endif; ?>
                 <br>
 

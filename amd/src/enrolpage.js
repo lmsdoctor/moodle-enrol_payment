@@ -6,14 +6,17 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define([ 'jquery'
-       , 'core/modal_factory'
-       , 'core/modal_events'
-       , 'core/str'
-       , 'core/config'
-       , 'enrol_payment/spin'
-       ],
-function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner) { //eslint-disable-line no-unused-vars
+define([
+    'jquery',
+    'core/modal_factory',
+    'core/modal_events',
+    'core/str',
+    'core/config',
+    'enrol_payment/spin',
+    'core/ajax',
+    'core/notification',
+],
+function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner, Ajax, Notification) { //eslint-disable-line no-unused-vars
 
     /**
      * JavaScript functionality for the enrol_payment enrol.html page
@@ -390,37 +393,33 @@ function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner) { //es
 
         Discount: {
             checkDiscountCode: function(enrolPage) {
-                var discountcode = $("#discountcode").val();
-                var checkURL = MoodleCfg.wwwroot + "/enrol/payment/ajax/check_discount.php";
+                var discountCode = $("#discountcode").val();
 
-                $.ajax({
-                    url: checkURL,
-                    data: { 'discountcode' : discountcode
-                          , 'instanceid'   : enrolPage.instanceid
-                          , 'prepaytoken'  : enrolPage.prepayToken
-                          },
-                    context: document.body,
-                    success: function(r) {
-                        var response = JSON.parse(r);
-                        if (response["success"]) {
+                // Always clean this div first.
+                $("div.enrol-payment-error-text").hide();
+
+                Ajax.call([{
+                    methodname: 'enrol_payment_check_discount',
+                    args: {
+                        enrolid: enrolPage.instanceid,
+                        prepaytoken: enrolPage.prepayToken,
+                        discountcode: discountCode,
+                    },
+                    done: function(response) {
+                        var obj = JSON.parse(response);
+
+                        if (obj.error) {
+                            enrolPage.errorFromDiscount(obj.errormsg);
+                        } else {
                             $('#discount-dimmer').css('display','block');
-                            enrolPage.subtotal = response["subtotal"];
+                            enrolPage.subtotal = obj.subtotal;
                             enrolPage.updateCostView();
                             $('.discount-threshold-info').css('display','block');
-                        } else {
-                            $('#dimmer').css('display', 'block');
-                            enrolPage.genericErrorModal(enrolPage.mdlstr["incorrectdiscountcode"],
-                                                        response["failmessage"],
-                                                        "invalid-code-modal");
                         }
-                    },
-                    error: function() {
-                        $('#dimmer').css('display', 'block');
-                        enrolPage.genericErrorModal(enrolPage.mdlstr["incorrectdiscountcode"],
-                                                    enrolPage.mdlstr["incorrectdiscountcode_desc"],
-                                                    "invalid-code-modal");
-                    }
-                });
+
+                    }.bind(this),
+                    fail: Notification.exception
+                }]);
             },
         },
 
@@ -441,6 +440,11 @@ function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner) { //es
 
         getTaxedAmount: function() {
             return (parseFloat(this.subtotal) + parseFloat(this.taxAmount)).toFixed(2);
+        },
+
+        errorFromDiscount: function(message) {
+            $("div.enrol-payment-error-text").show();
+            $("div.enrol-payment-error-text").text(message);
         },
 
         updateCostView: function() {
