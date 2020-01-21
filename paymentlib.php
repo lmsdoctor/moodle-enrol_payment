@@ -25,19 +25,31 @@
 
 namespace paymentlib;
 
-require_once(dirname(__FILE__).'/../../config.php');
+require_once(dirname(__FILE__) . '/../../config.php');
 require_once("$CFG->libdir/moodlelib.php");
-require_once(dirname(__FILE__).'/lang/en/enrol_payment.php');
+require_once(dirname(__FILE__) . '/lang/en/enrol_payment.php');
 
 global $DB;
 
-function enrol_payment_get_payment_from_token($prepayToken) {
+/**
+ * Get the payment from token.
+ *
+ * @param  string $prepaytoken
+ * @return object
+ */
+function enrol_payment_get_payment_from_token($prepaytoken) {
     global $DB;
     return $DB->get_record_sql('SELECT * FROM {enrol_payment_session}
                                   WHERE ' .$DB->sql_compare_text('prepaytoken') . ' = ? ',
-                              array('prepaytoken' => $prepayToken));
+                              ['prepaytoken' => $prepaytoken]);
 }
 
+/**
+ * Normalize percent discount.
+ *
+ * @param  object $instance
+ * @return int
+ */
 function enrol_payment_normalize_percent_discount($instance) {
     $amount = $instance->customdec1;
     if($instance->customint3 == 1 && $amount > 1.0) {
@@ -48,6 +60,8 @@ function enrol_payment_normalize_percent_discount($instance) {
 }
 
 /**
+ * Calculate cost.
+ *
  * @param $instance enrol_payment instance
  * @param $payment payment object from enrol_payment_session
  * @return object with "subtotal" and "subtotal_localised" fields.
@@ -56,7 +70,7 @@ function enrol_payment_calculate_cost($instance, $payment, $addtax=false) {
     $discount_threshold = $instance->customint8;
     $discount_code_required = $instance->customint7;
     $discount_amount = 0.0;
-    //$ret["discount_amount"] = $discount_amount;
+
     $cost = $payment->original_cost;
     $subtotal = $cost;
 
@@ -68,14 +82,12 @@ function enrol_payment_calculate_cost($instance, $payment, $addtax=false) {
         throw new Exception(get_string("notenoughunits", "enrol_payment"));
     }
 
-    //If conditions have been met for a discount, apply it.
-    /**
-     * This is not the most concise way to write this logic, but it is the most understandable in my opinion.
-     *
-     * Assuming the discount theshold is met:
-     * * If a discount code isn't required, apply the discount.
-     * * If a discount code is required and the user has provided it, apply the discount.
-     */
+    // If conditions have been met for a discount, apply it.
+    // This is not the most concise way to write this logic, but it is the most understandable in my opinion.
+    // Assuming the discount theshold is met:
+    // If a discount code isn't required, apply the discount.
+    // If a discount code is required and the user has provided it, apply the discount.
+
     $apply_discount = 0;
     if($payment->units >= $discount_threshold) {
         if(!$discount_code_required || ($discount_code_required && $payment->code_given)) {
@@ -127,7 +139,7 @@ function enrol_payment_calculate_cost($instance, $payment, $addtax=false) {
     $ret['subtotal_taxed'] = format_float($subtotal_taxed, 2, true);
     $ret['tax_amount'] = format_float($tax_amount, 2, true);
     $ret['oc_discounted'] = format_float($oc_discounted, 2, true);
-    $ret['percent_discount'] = floor($normalized_discount * 100); 
+    $ret['percent_discount'] = floor($normalized_discount * 100);
 
     return $ret;
 }
