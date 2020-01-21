@@ -137,7 +137,7 @@ $original_cost = format_float($original_cost, 2, false);
 
 //What should the user have paid? Verify using info stored in the
 //database.
-$cost = paymentlib\enrol_payment_calculate_cost($plugin_instance, $payment, true)["subtotal_taxed"];
+$cost = helper::calculate_cost($plugin_instance, $payment, true)["subtotal_taxed"];
 
 if ($data->amount + 0.01 < $cost) {
     //This shouldn't happen unless the user spoofs their requests, but

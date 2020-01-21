@@ -26,11 +26,12 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 require_once('classes/util.php');
 require_once('currencycodes.php');
-require_once('paymentlib.php');
 
-defined('MOODLE_INTERNAL') || die();
+use enrol_payment\helper;
 
 /**
  * Payment enrolment plugin implementation.
@@ -443,8 +444,8 @@ class enrol_payment_plugin extends enrol_plugin {
                 // please note PayPal expects amount with 2 decimal places and "." separator.
                 $payment_obj = $DB->get_record("enrol_payment_session", array("id" => $payment_id));
 
-                $calculatecost = paymentlib\enrol_payment_calculate_cost($instance,$payment_obj,true);
-                $calculatecost_untaxed = paymentlib\enrol_payment_calculate_cost($instance,$payment_obj,false);
+                $calculatecost = helper::calculate_cost($instance,$payment_obj,true);
+                $calculatecost_untaxed = helper::calculate_cost($instance,$payment_obj,false);
                 $localisedcost = $calculatecost['subtotal_localised'];
                 $localisedcost_untaxed = $calculatecost_untaxed['subtotal_localised'];
 
@@ -454,7 +455,7 @@ class enrol_payment_plugin extends enrol_plugin {
                 }
 
                 $original_cost = format_float($original_cost, 2, false);
-                $nonlocalised_untaxed_cost = paymentlib\enrol_payment_calculate_cost($instance,$payment_obj,false)['subtotal'];
+                $nonlocalised_untaxed_cost = helper::calculate_cost($instance,$payment_obj,false)['subtotal'];
 
                 $coursefullname  = format_string($course->fullname, true, array('context'=>$context));
                 $enableDiscountCodes = $this->get_config('enablediscounts') && $instance->customint7 && $instance->customint3; //Are discounts enabled in the admin settings?
