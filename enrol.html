@@ -1,59 +1,109 @@
 <div class="path-enrol-payment">
     <div id="enrolpage">
         <div id="enrolpage-centered" align="center">
-            <?php $stringparams = new stdClass; ?>
-            <?php $stringparams->coursefullname = $coursefullname; ?>
-            <?php $stringparams->localisedcost_untaxed = $localisedcost_untaxed; ?>
-            <?php $stringparams->tax_string = $tax_string; ?>
-            <?php $stringparams->tax_amount_string = $tax_amount_string; ?>
-            <?php $stringparams->localisedcost = $localisedcost; ?>
-            <?php $stringparams->currency = $instance->currency; ?>
-            <?php $stringparams->symbol = $symbol; ?>
-            <?php if($tax_string): ?>
-                <?php echo get_string("feestring_taxed", "enrol_payment", $stringparams) ?>
-            <?php else: ?>
-                <?php echo get_string("feestring_notax", "enrol_payment", $stringparams) ?>
-            <?php endif; ?>
+            <?php
 
-            <?php if ($enableDiscountCodes): ?>
-                <br>
-                <span style="white-space: nowrap;">
-                    <div id="discount-container">
-                        <div id="discount-dimmer"></div>
-                        <b><?php echo (get_string("discountcode", "enrol_payment") . ":"); ?></b>
-                        <input type="text" name="discountcode" id="discountcode" style="width: 100px;" />
-                        <a id="apply-discount" class="btn" style="margin-bottom: 10px;"><?php print_string("applydiscount", "enrol_payment"); ?></a>
+            $str                        = new stdClass;
+            $str->coursefullname        = $coursefullname;
+            $str->localisedcost_untaxed = $localisedcost_untaxed;
+            $str->tax_string            = $tax_string;
+            $str->tax_amount_string     = $tax_amount_string;
+            $str->localisedcost         = $localisedcost;
+            $str->currency              = $instance->currency;
+            $str->symbol                = $symbol;
+            $str->currencysign          = $symbol;
+
+            if ($tax_string) {
+                echo get_string("feestring_taxed", "enrol_payment", $str);
+            } else {
+                echo get_string("feestring_notax", "enrol_payment", $str);
+            }
+
+            if ($instance->customint3 > 0) {
+                if ($instance->customint3 == 1) {
+                    $str->discountAmount    = $percentDisplay;
+                    $str->percentSymbol     = '%';
+                    $str->symbol            = '';
+                } else {
+                    $str->discountAmount    = $discountAmount;
+                    $str->percentSymbol     = '';
+                    $str->symbol            = $symbol;
+                }
+
+                $str->currency          = $instance->currency;
+                $str->discountThreshold = $discountThreshold;
+            }
+
+            // If discount codes are enabled.
+            if ($enableDiscountCodes) {
+            ?>
+                <!-- Discount form. -->
+                <div id="discount-container">
+                    <div id="discount-dimmer"></div><br>
+                    <form class="form-inline">
+                        <div class="form-group">
+                            <input class="form-control mb-2 mx-sm-3" type="text" name="discountcode" id="discountcode" placeholder="Discount Code" />
+                            <a id="apply-discount" class="btn btn-outline-primary" role="button" style="margin-bottom: 10px;"><?php print_string("applydiscount", "enrol_payment"); ?></a>
+                        </div>
+                    </form>
+                </div>
+            <?php
+                // We want to display these notifications only when the Discount threshold is 1.
+                if ($discountThreshold == 1) {
+            ?>
+                    <!-- Notifications when applying the code. -->
+                    <div class="row justify-content-md-center">
+                        <div class="col-md-auto">
+                            <!-- Success alert. -->
+                            <span class="discount-threshold-info alert alert-success" style="display: <?php echo ($discountCodeRequired ? 'none' : 'block') ?> ">
+                                <?php
+                                    // Percentage.
+                                    if ($instance->customint3 == 1) {
+                                        echo get_string("discount_percent_success", "enrol_payment", $str);
+                                    } else {
+                                        // ... value discount.
+                                        echo get_string("discount_value_success", "enrol_payment", $str);
+                                    }
+                                ?>
+                            </span>
+
+                            <!-- Error alert. -->
+                            <div class="enrol-payment-error-text alert alert-danger" style="display: none"></div>
+                        </div>
                     </div>
-                </span>
-            <?php endif; ?>
+            <?php
+                } // End if discount threshold validation.
+            } // End if $enableDiscountCodes.
+            ?>
 
             <?php if($multiple_enabled): ?>
                 <br>
+                <!-- Notification -->
+                <?php
+                    if ($discountThreshold > 1 && $instance->customint3 > 0) {
+                        $str->perSeat = $instance->customint3 == 2 ? " per-person" : "";
+                ?>
+                    <!-- Notifications when applying the code. -->
+                    <div class="row justify-content-md-center">
+                        <div class="col-md-auto">
+                            <span class="discount-threshold-info alert alert-success" style="display: <?php echo ($discountCodeRequired ? 'none' : 'block') ?> ">
+                                <?php echo get_string("discountwillbeapplied", "enrol_payment", $str) ?>
+                            </span>
+                            <div class="enrol-payment-error-text alert alert-danger" style="display: none"></div>
+                        </div>
+                    </div>
+                <?php } ?>
+
+                <!-- The following div gets filled with javascript. Check amd/src/enrolpage.js -->
                 <div id="multiple-registration-container"></div>
-                <div id="multiple-registration-btn-container"><a id="multiple-registration-btn" class="btn enable-mr"><?php print_string('enrolothers', 'enrol_payment'); ?></a>
+
+                <!-- Button to enroll others. -->
+                <div id="multiple-registration-btn-container">
+                    <a id="multiple-registration-btn" class="btn btn-outline-secondary enable-mr">
+                        <?php print_string('enrolothers', 'enrol_payment'); ?>
+                    </a>
                     <?php echo($OUTPUT->help_icon('multipleregistration', 'enrol_payment'))?>
                 </div>
-
-                <?php if (($discountThreshold > 1) && ($instance->customint3 != 0)): ?>
-                    <?php $stringparams = new stdClass; ?>
-                    <?php if($instance->customint3 == 1): ?>
-                        <?php $stringparams->discountAmount = $percentDisplay; ?>
-                        <?php $stringparams->percentSymbol = '%'; ?>
-                        <?php $stringparams->symbol = ''; ?>
-                    <?php else: ?>
-                        <?php $stringparams->discountAmount = $discountAmount; ?>
-                        <?php $stringparams->percentSymbol = ''; ?>
-                        <?php $stringparams->symbol = $symbol; ?>
-                    <?php endif; ?>
-
-                    <?php $stringparams->currency = $instance->currency; ?>
-                    <?php $stringparams->discountThreshold = $discountThreshold; ?>
-                    <?php $stringparams->perSeat = $instance->customint3 == 2 ? " per-person" : "" ?>
-                    <span class="discount-threshold-info" style="display: <?php echo ($discountCodeRequired ? 'none' : 'block') ?> ">
-                        <?php echo get_string("discountwillbeapplied", "enrol_payment", $stringparams) ?>
-                    </span>
-                    <div class="enrol-payment-error-text alert alert-danger" style="display: none"></div>
-                <?php endif; ?>
                 <br>
 
             <?php endif; ?>

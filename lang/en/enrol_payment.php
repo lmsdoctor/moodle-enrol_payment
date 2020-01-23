@@ -165,8 +165,10 @@ $string['removearegistrant'] = 'Remove the registrant';
 $string['taxdefinitions'] = 'Custom tax definitions';
 $string['taxdefinitions_help'] = "The format for each entry is Province/State Code : 0.## for tax rate. For instance, assume there are only two taxable provinces: Ontario (code ON and rate 13%) and Quebec (code QC and rate 5%), the entries would be:<br>ON : 0.13<br>QC : 0.05<br>Enter each tax definition on a <b>separate</b> line. The script will pull the province/state code from the MSN field in the user profile (setup instructions are detailed in the ReadMe.txt file) to determine how much tax to add to the course fee.";
 $string['definetaxes'] = 'Allow custom tax definitions';
-$string['feestring_taxed'] = 'The fee for <b>{$a->coursefullname}</b><br>is <b>{$a->symbol}<span class="localisedcost-untaxed">{$a->localisedcost_untaxed}</span></b> + {$a->symbol}<span class="taxamountstring">{$a->tax_amount_string}</span> <span class="taxstring">{$a->tax_string}</span> = <b>{$a->symbol}<span class="localisedcost">{$a->localisedcost}</span></b> {$a->currency}.<br>';
+$string['feestring_taxed'] = 'The fee for <b>{$a->coursefullname}</b><br>
+    is <b>{$a->symbol}<span class="localisedcost-untaxed">{$a->localisedcost_untaxed}</span></b> + {$a->symbol}<span class="taxamountstring">{$a->tax_amount_string}</span> <span class="taxstring">{$a->tax_string}</span> = <b>{$a->symbol}<span class="localisedcost">{$a->localisedcost}</span></b> {$a->currency}.<br>';
 $string['feestring_notax'] = 'The fee for <b>{$a->coursefullname}</b><br>is <b>{$a->symbol}<span class="localisedcost">{$a->localisedcost}</span></b> {$a->currency}.<br>';
+
 $string['discountwillbeapplied'] = 'A <b>{$a->symbol}{$a->discountAmount}{$a->percentSymbol}{$a->perSeat}</b> discount will be applied to a purchase of <b>{$a->discountThreshold}</b> or more registrations.';
 
 $string['allowbanktransfer'] = 'Allow Bank/Email transfer payment';
@@ -196,3 +198,16 @@ $string['novalidemailsentered'] = 'No registrant(s) specified';
 $string['totalenrolmentfee'] = 'Total enrolment fee:';
 $string['charge_enrolment'] = 'Enrolment in: ';
 $string['error'] = 'Error';
+
+$string['discount_value_success'] = 'The <b>{$a->symbol}{$a->discountAmount}</b> discount has been applied to the fee which is now <b>{$a->currencysign}<span class="localisedcost-untaxed">{$a->localisedcost_untaxed}</span></b>
+    <span class="tax-container">
+        + {$a->currencysign}<span class="taxamountstring">{$a->tax_amount_string}</span> <span class="taxstring">{$a->tax_string}</span>
+        = <b>{$a->currencysign}<span class="localisedcost">{$a->localisedcost}</span></b>
+    </span>{$a->currency}';
+
+$string['discount_percent_success'] = 'The <b>{$a->discountAmount}{$a->percentSymbol}</b> discount has been applied to the fee which is now <b>{$a->currencysign}<span class="localisedcost-untaxed">{$a->localisedcost_untaxed}</span></b>
+    <span class="tax-container">
+        + {$a->currencysign}<span class="taxamountstring">{$a->tax_amount_string}</span> <span class="taxstring">{$a->tax_string}</span>
+        = <b>{$a->currencysign}<span class="localisedcost">{$a->localisedcost}</span></b>
+    </span>
+    {$a->currency}';
