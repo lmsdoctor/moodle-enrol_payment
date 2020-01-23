@@ -277,12 +277,9 @@ function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner, Ajax, 
                 } else {
                     var trigger = $("#error-modal-trigger");
                     trigger.off();
-                    ModalFactory.create({
-                        type: ModalFactory.types.DEFAULT,
-                        body: response["failmessage"],
-                        closebuttontitle: enrolPage.mdlstr["dismiss"],
-                    }, trigger).done(function(modal) { enrolPage.removeDimmer(modal); });
-                    $('#error-modal-trigger').click();
+
+                    // Display error directly in the page.
+                    enrolPage.errorFromEnrollment(response["failmessage"]);
                 }
             },
 
@@ -445,6 +442,11 @@ function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner, Ajax, 
         errorFromDiscount: function(message) {
             $("div.enrol-payment-error-text").show();
             $("div.enrol-payment-error-text").text(message);
+        },
+
+        errorFromEnrollment: function(message) {
+            $("div.enrol-payment-enrollment").show();
+            $("div.enrol-payment-enrollment").html(message);
         },
 
         updateCostView: function() {
