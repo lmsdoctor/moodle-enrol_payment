@@ -1,34 +1,35 @@
 /**
  * PayPal return page for pending payment
  */
-
-define(['jquery', 'enrol_payment/spin', 'core/str', 'core/config'], function($, Spinner, MoodleStrings, MoodleCfg) {
+define(['jquery', 'enrol_payment/spin', 'core/str', 'core/config', 'core/ajax'],
+    function($, Spinner, MoodleStrings, MoodleCfg, Ajax) {
     var PayPalReturn = {
 
         checkEnrol: function(ajaxurl, courseid, mdlstr, dest, paymentid) {
-            $.ajax({
-                url : ajaxurl,
-                method : "POST",
-                data : {
-                    'courseid' : courseid,
-                    'paymentid' : paymentid
+
+            Ajax.call([{
+                methodname: 'enrol_payment_check_enrol',
+                args: {
+                    courseid: courseid,
+                    paymentid: paymentid
                 },
-                success : function(r) {
+                done: function(r) {
+
                     var res = JSON.parse(r);
-                    if (res["result"] === true) {
+                    if (res['result'] === true) {
                         window.location.href = dest;
-                    } else if (res["result"] === false && res["reason"]) {
+                    } else if (res['result'] === false && res['reason']) {
                         window.location.href = MoodleCfg.wwwroot +
                                               "/enrol/payment/paypalPending.php?id=" +
-                                              courseid.toString() + "&reason=" + res["reason"];
+                                              courseid.toString() + "&reason=" + res['reason'];
                     } else {
                         return;
                     }
-                },
-                error : function() {
-                    alert(mdlstr[0]);
-                }
-            });
+
+                }.bind(this),
+                fail: alert(mdlstr[0])
+            }]);
+
         },
 
         init: function(dest, ajaxurl, courseid, paymentid) {

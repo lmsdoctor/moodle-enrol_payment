@@ -257,4 +257,70 @@ class enrol_payment_external extends external_api {
         return new external_value(PARAM_RAW, 'Returns an array with the payment enrollment information');
     }
 
+    /**
+     * Returns description of method parameters.
+     *
+     * @return external_function_parameters
+     */
+    public static function check_enrol_parameters() {
+        return new external_function_parameters(
+            [
+                'enrolid' => new external_value(PARAM_INT, 'Enrol id from the enrol table'),
+                'prepaytoken' => new external_value(PARAM_NOTAGS, 'The prepay token'),
+            ]
+        );
+    }
+
+    /**
+     * Validate single enrollments.
+     *
+     * @param  int $courseid
+     * @param  string $paymentid
+     * @return string
+     */
+    public static function check_enrol($courseid, $paymentid) {
+        global $DB;
+
+        // Parameters validation.
+        $params = self::validate_parameters(self::check_enrol_parameters(),
+            [
+                'courseid' => $courseid,
+                'paymentid' => $paymentid,
+            ]
+        );
+
+        $context = context_course::instance($params['courseid'], MUST_EXIST);
+
+        if (is_enrolled($context, NULL, '', true)) {
+            return json_encode([
+                'status' => 'success',
+                'result' => true
+            ]);
+
+        } else if(payment_pending($params['paymentid'])) {
+            return json_encode([
+                'status' => 'success',
+                'result' => false,
+                'reason' => 'Pending'
+            ]);
+        } else {
+            $reason = get_payment_status($params['paymentid']);
+            return json_encode([
+                'status' => 'success',
+                'result' => false,
+                'reason' => $reason
+            ]);
+        }
+
+    }
+
+    /**
+     * Returns description of method result value.
+     *
+     * @return external_description
+     */
+    public static function check_enrol_returns() {
+        return new external_value(PARAM_RAW, 'Returns an array with the check enrol result');
+    }
+
 }

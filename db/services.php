@@ -52,6 +52,15 @@ $functions = [
             'ajax'        => true,
             'capabilities'  => '',
     ],
+    'enrol_payment_check_enrol' => [
+            'classname'   => 'enrol_payment_external',
+            'methodname'  => 'check_enrol',
+            'classpath'   => 'enrol/payment/externallib.php',
+            'description' => 'Validates the user that is being enrolled.',
+            'type'        => 'write',
+            'ajax'        => true,
+            'capabilities'  => '',
+    ],
 ];
 
 // During the plugin installation/upgrade, Moodle installs these services as pre-build services.
@@ -74,5 +83,11 @@ $services = [
         'restrictedusers' => 0,
         'enabled' => 1,
         'shortname' => 'single_enrollment'
+    ],
+    'Check Enrol' => [
+        'functions' => ['enrol_payment_check_enrol'],
+        'restrictedusers' => 0,
+        'enabled' => 1,
+        'shortname' => 'check_enrol'
     ],
 ];
