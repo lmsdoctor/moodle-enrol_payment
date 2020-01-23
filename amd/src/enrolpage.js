@@ -406,7 +406,6 @@ function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner, Ajax, 
                         discountcode: discountCode,
                     },
                     done: function(response) {
-                        console.log(response);
                         var obj = JSON.parse(response);
 
                         if (obj.error) {
@@ -456,7 +455,6 @@ function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner, Ajax, 
 
             // Hide part of the string with the span in the string lang file if the tax is 0.
             // Otherwise, display the whole string.
-            console.log(Number.parseFloat(this.taxAmount).toFixed(0));
             if (Number.parseFloat(this.taxAmount).toFixed(0) > 0) {
                 $("span.taxamountstring").text(Number.parseFloat(this.taxAmount).toFixed(2));
             } else {
