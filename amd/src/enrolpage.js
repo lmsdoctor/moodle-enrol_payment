@@ -352,42 +352,41 @@ function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner, Ajax, 
                 } else {
                     $('#dimmer').css('display', 'block');
                     self.enabled = false;
-                    //Return to single registration mode
 
-                    btn.text(mdlstr["enrolothers"]);
+                    // Return to single registration mode.
+                    btn.text(mdlstr['enrolothers']);
                     btn.removeClass('disable-mr').addClass('enable-mr');
-                    $(".mr-email-line").remove();
-                    $("#multiple-registration-btn-container img.iconhelp").css("display", "inline-block");
+                    $('.mr-email-line').remove();
+                    $('#multiple-registration-btn-container img.iconhelp').css('display', 'inline-block');
 
-                    $.ajax({
-                        //Flip database row to single enrollment mode
-                        url: MoodleCfg.wwwroot + "/enrol/payment/ajax/single_enrol.php",
-                        method: "POST",
-                        data: {
-                            "prepaytoken" : enrolPage.prepayToken,
-                            "instanceid" : enrolPage.instanceid
+                    Ajax.call([{
+                        methodname: 'enrol_payment_single_enrollment',
+                        args: {
+                            enrolid: enrolPage.instanceid,
+                            prepaytoken: enrolPage.prepayToken,
                         },
-                        success: function(r) {
+                        done: function(r) {
+
                             var response = JSON.parse(r);
                             $('#dimmer').css('display', 'none');
-                            if(response["success"]) {
-                                enrolPage.subtotal = response["subtotal"];
+                            if(response['success']) {
+                                enrolPage.subtotal = response['subtotal'];
                                 enrolPage.updateCostView();
                             } else {
-                                var trigger = $("#error-modal-trigger");
+                                var trigger = $('#error-modal-trigger');
                                 trigger.off();
                                 ModalFactory.create({
                                     type: ModalFactory.types.DEFAULT,
-                                    body: response["failmessage"],
-                                    closebuttontitle: enrolPage.mdlstr["dismiss"],
+                                    body: response['failmessage'],
+                                    closebuttontitle: enrolPage.mdlstr['dismiss'],
                                 }, trigger).done(function(modal) { enrolPage.removeDimmer(modal); });
                                 $('#error-modal-trigger').click();
                             }
-                        },
-                        error: function() {
-                            alert(enrolPage.mdlstr["errcommunicating"]);
-                        }
-                    });
+
+                        }.bind(this),
+                        fail: Notification.exception
+                    }]);
+
                 }
             },
         },

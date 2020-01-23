@@ -15,12 +15,14 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Web Service.
+ * Web Services.
  *
  * @package    enrol_payment
  * @copyright  2020 Andrés Ramos, LMS Doctor
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 $functions = [
     'enrol_payment_check_discount' => [
@@ -30,7 +32,6 @@ $functions = [
             'description' => 'This function validates if the code is correct and returns the discounted value.',
             'type'        => 'write',
             'ajax'        => true,
-            // List the capabilities required by the function (those in a require_capability() call) (missing capabilities are displayed for authorised users and also for manually created tokens in the web interface, this is just informative).
             'capabilities'  => '',
     ],
     'enrol_payment_multiple_enrollment' => [
@@ -40,7 +41,15 @@ $functions = [
             'description' => 'Validates the users that are being enrolled, if they exist or not.',
             'type'        => 'write',
             'ajax'        => true,
-            // List the capabilities required by the function (those in a require_capability() call) (missing capabilities are displayed for authorised users and also for manually created tokens in the web interface, this is just informative).
+            'capabilities'  => '',
+    ],
+    'enrol_payment_single_enrollment' => [
+            'classname'   => 'enrol_payment_external',
+            'methodname'  => 'single_enrollment',
+            'classpath'   => 'enrol/payment/externallib.php',
+            'description' => 'Validates the user that is being enrolled.',
+            'type'        => 'write',
+            'ajax'        => true,
             'capabilities'  => '',
     ],
 ];
@@ -59,5 +68,11 @@ $services = [
         'restrictedusers' => 0,
         'enabled' => 1,
         'shortname' => 'multiple_enrollment'
+    ],
+    'Single Enrollment Validation' => [
+        'functions' => ['enrol_payment_single_enrollment'],
+        'restrictedusers' => 0,
+        'enabled' => 1,
+        'shortname' => 'single_enrollment'
     ],
 ];

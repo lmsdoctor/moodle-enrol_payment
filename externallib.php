@@ -199,7 +199,62 @@ class enrol_payment_external extends external_api {
      * @return external_description
      */
     public static function multiple_enrollment_returns() {
-        return new external_value(PARAM_RAW, 'Returns an array with the calculated costs');
+        return new external_value(PARAM_RAW, 'Returns an array with the multiple enrollment information');
+    }
+
+    /**
+     * Returns description of method parameters.
+     *
+     * @return external_function_parameters
+     */
+    public static function single_enrollment_parameters() {
+        return new external_function_parameters(
+            [
+                'enrolid' => new external_value(PARAM_INT, 'Enrol id from the enrol table'),
+                'prepaytoken' => new external_value(PARAM_NOTAGS, 'The prepay token'),
+            ]
+        );
+    }
+
+    /**
+     * Validate single enrollments.
+     *
+     * @param  int $enrolid
+     * @param  string $prepaytoken
+     * @return string
+     */
+    public static function single_enrollment($enrolid, $prepaytoken) {
+        global $DB;
+
+        // Parameters validation.
+        $params = self::validate_parameters(self::single_enrollment_parameters(),
+            [
+                'enrolid' => $enrolid,
+                'prepaytoken' => $prepaytoken,
+            ]
+        );
+
+        try {
+            $instance = $DB->get_record('enrol', ['id' => $params['enrolid']]);
+            $payment = helper::get_payment_from_token($params['prepaytoken']);
+            update_payment_data(false, null, $payment);
+            $ret = helper::calculate_cost($instance, $payment, true);
+            $ret['success'] = true;
+        } catch (Exception $e) {
+            $ret = ['success' => false];
+            $ret['failmessage'] = 'Payment UUID ' . $params['prepaytoken'] . ' not found in database.';
+        }
+
+        return json_encode($ret);
+    }
+
+    /**
+     * Returns description of method result value.
+     *
+     * @return external_description
+     */
+    public static function single_enrollment_returns() {
+        return new external_value(PARAM_RAW, 'Returns an array with the payment enrollment information');
     }
 
 }
