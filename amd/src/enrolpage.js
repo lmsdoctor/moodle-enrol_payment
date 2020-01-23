@@ -303,22 +303,26 @@ function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner, Ajax, 
                                                 "no-valid-emails-entered");
                     $("#dimmer").css("display", "none");
                 } else {
-                    var ajaxURL = MoodleCfg.wwwroot + "/enrol/payment/ajax/multiple_enrol.php";
-                    $.ajax({
-                        url: ajaxURL,
-                        method: "POST",
-                        data: {
-                                'instanceid'  : enrolPage.instanceid
-                              , 'prepaytoken' : enrolPage.prepayToken
-                              , 'emails'      : JSON.stringify(emails)
-                              , 'ipn_id'      : $("#" + enrolPage.gateway + "-custom").val()
-                              , 'symbol'      : enrolPage.symbol
-                              },
-                        context: document.body,
-                        success: function(r) {
-                            self.handleEmailSubmitAJAXResponse(r, enrolPage);
-                        }
-                    });
+
+                    // Always clean this div first.
+                    $("div.enrol-payment-enrollment").hide();
+
+                    Ajax.call([{
+                        methodname: 'enrol_payment_multiple_enrollment',
+                        args: {
+                            enrolid: enrolPage.instanceid,
+                            prepaytoken: enrolPage.prepayToken,
+                            emails: JSON.stringify(emails),
+                            ipnid: $("#" + enrolPage.gateway + "-custom").val(),
+                            symbol: enrolPage.symbol,
+                        },
+                        done: function(response) {
+                            console.log(response);
+                            self.handleEmailSubmitAJAXResponse(response, enrolPage);
+                        }.bind(this),
+                        fail: Notification.exception
+                    }]);
+
                 }
 
             },

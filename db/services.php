@@ -23,7 +23,6 @@
  */
 
 $functions = [
-    // enrol_payment_check_discount is the name of the web service function that the client will call.
     'enrol_payment_check_discount' => [
             'classname'   => 'enrol_payment_external',
             'methodname'  => 'check_discount',
@@ -33,7 +32,17 @@ $functions = [
             'ajax'        => true,
             // List the capabilities required by the function (those in a require_capability() call) (missing capabilities are displayed for authorised users and also for manually created tokens in the web interface, this is just informative).
             'capabilities'  => '',
-    ]
+    ],
+    'enrol_payment_multiple_enrollment' => [
+            'classname'   => 'enrol_payment_external',
+            'methodname'  => 'multiple_enrollment',
+            'classpath'   => 'enrol/payment/externallib.php',
+            'description' => 'Validates the users that are being enrolled, if they exist or not.',
+            'type'        => 'write',
+            'ajax'        => true,
+            // List the capabilities required by the function (those in a require_capability() call) (missing capabilities are displayed for authorised users and also for manually created tokens in the web interface, this is just informative).
+            'capabilities'  => '',
+    ],
 ];
 
 // During the plugin installation/upgrade, Moodle installs these services as pre-build services.
@@ -44,5 +53,11 @@ $services = [
         'restrictedusers' => 0,
         'enabled' => 1,
         'shortname' => 'check_discount'
-    ]
+    ],
+    'Multiple Enrollment Validation' => [
+        'functions' => ['enrol_payment_multiple_enrollment'],
+        'restrictedusers' => 0,
+        'enabled' => 1,
+        'shortname' => 'multiple_enrollment'
+    ],
 ];

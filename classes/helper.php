@@ -152,4 +152,100 @@ class helper {
         return $ret;
     }
 
+    /**
+     * When switching between Single and Multiple mode, make the necessary
+     * adjustments to our payment row in the database.
+     *
+     * @param  bool $multiple
+     * @param  array $users
+     * @param  object &$payment
+     * @return void
+     */
+    public static function update_payment_data($multiple, $users, &$payment) {
+        global $DB;
+
+        $userids = array();
+        if ($multiple) {
+            foreach ($users as $u) {
+                array_push($userids, $u["id"]);
+            }
+        }
+
+        $payment->multiple = $multiple;
+        $payment->multiple_userids = $multiple ? implode(",", $userids) : null;
+        $payment->units = $multiple ? count($userids) : 1;
+        $DB->update_record('enrol_payment_session', $payment);
+    }
+
+    /**
+     * Return true if the corresponding transaction is pending.
+     *
+     * @param  int $paymentid
+     * @return bool
+     */
+    public static function payment_pending($paymentid) {
+        global $DB;
+        $payment = $DB->get_record('enrol_payment_session', array('id' => $paymentid));
+        $transaction = $DB->get_record('enrol_payment_transaction', array('txn_id' => $payment->paypal_txn_id));
+
+        if ($transaction) {
+            return ($transaction->payment_status == "Pending");
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Returns the payment status.
+     *
+     * @param  int $paymentid
+     * @return string
+     */
+    public static function get_payment_status($paymentid) {
+        global $DB;
+        $payment = $DB->get_record('enrol_payment_session', array('id' => $paymentid));
+        $transaction = $DB->get_record('enrol_payment_transaction', array('txn_id' => $payment->paypal_txn_id));
+
+        if ($transaction) {
+            return $transaction->payment_status;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Look for users using email addresses.
+     *
+     * @param  string $emails
+     * @return array
+     */
+    public static function get_moodle_users_by_emails($emails) {
+        global $DB;
+
+        $users = [];
+        foreach ($emails as $email) {
+            $user = $DB->get_record('user', ['email' => $email], 'id, email, firstname, lastname');
+            if ($user) {
+                $userdata = [
+                    'id'    => $user->id,
+                    'email' => $email,
+                    'name'  => ($user->firstname . " " . $user->lastname)
+                ];
+                array_push($users, $userdata);
+            }
+        }
+
+        return $users;
+    }
+
+    /**
+     * Pretty print user.
+     *
+     * @param  array $u
+     * @return string
+     */
+    public static function pretty_print_user($u) {
+        return $u['name'] . " &lt;" . $u['email'] . "&gt;";
+    }
+
 }
