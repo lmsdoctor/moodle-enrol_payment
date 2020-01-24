@@ -151,19 +151,18 @@ class enrol_payment_external extends external_api {
             $ret['failmessage'] = get_string('duplicateemail', 'enrol_payment');
         } else {
 
-            if (!$ret['success']) {
-                return json_encode($ret);
-            }
-
             $ret['users'] = helper::get_moodle_users_by_emails($emaillist);
 
-            // TODO: Improve response or message to identify what emails were not found.
-            // Validate if the users were found.
-            if (empty($ret['users'])) {
+            // If some users were not found in the db, return an error.
+            if (!empty($ret['users']['notfound'])) {
+                $notfoundlist = $ret['users']['notfound'];
+                $stremails = implode(',', $notfoundlist);
                 $ret['success'] = false;
-                $ret['failmessage'] = get_string("usersnotfoundwithemail", "enrol_payment");
+                $ret['failmessage'] = get_string('usersnotfoundwithemail', 'enrol_payment', $stremails);
                 return json_encode($ret);
             }
+
+            $ret['users'] = $ret['users']['found'];
 
             $payment = helper::get_payment_from_token($params['prepaytoken']);
             helper::update_payment_data(true, $ret['users'], $payment);
@@ -180,14 +179,34 @@ class enrol_payment_external extends external_api {
                 $taxstring = "";
             }
 
-            $ret['successmessage'] = get_string('multipleregistrationconfirmuserlist', 'enrol_payment')
-                . implode('<li>', array_map('pretty_print_user', $ret['users']))
-                . '</ul>'
-                . get_string('totalcost', 'enrol_payment')
-                . $symbol . $ret['oc_discounted'] . ' × ' . $payment->units
-                . $taxstring . ' = <b>' . $symbol . $ret['subtotal_taxed']
-                . '</b> ' . $instance->currency;
+            $objcosts = helper::get_object_of_costs($ret, $symbol, $instance->currency, $payment->units, $taxstring);
+            $stremails = array_map('\enrol_payment\helper::pretty_print_user', $ret['users']);
 
+            // If the setting is percentage discount.
+            if ($instance->customint3 == 1) {
+
+                $strings = new \stdClass;
+                $strings->discount = helper::get_percentage_discount_string($objcosts);
+                $strings->calculation = helper::get_percentage_calculation_string($objcosts);
+
+                $ret['successmessage'] = get_string('multipleregistrationconfirmuserlist', 'enrol_payment')
+                . implode('<li>', $stremails)
+                . '</ul>'
+                . get_string('totalcost', 'enrol_payment', $strings);
+
+            } else {
+
+                // ... it is value discount and we want to reflect that.
+                $strings = new \stdClass;
+                $strings->discount = helper::get_value_discount_string($objcosts);
+                $strings->calculation = helper::get_value_calculation_string($objcosts);
+
+                $ret['successmessage'] = get_string('multipleregistrationconfirmuserlist', 'enrol_payment')
+                . implode('<li>', $stremails)
+                . '</ul>'
+                . get_string('totalcost', 'enrol_payment', $strings);
+
+            }
         }
 
         return json_encode($ret);
@@ -291,13 +310,13 @@ class enrol_payment_external extends external_api {
 
         $context = context_course::instance($params['courseid'], MUST_EXIST);
 
-        if (is_enrolled($context, NULL, '', true)) {
+        if (is_enrolled($context, null, '', true)) {
             return json_encode([
                 'status' => 'success',
                 'result' => true
             ]);
 
-        } else if(payment_pending($params['paymentid'])) {
+        } else if (payment_pending($params['paymentid'])) {
             return json_encode([
                 'status' => 'success',
                 'result' => false,

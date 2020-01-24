@@ -148,8 +148,47 @@ class helper {
         $ret['tax_amount'] = format_float($tax_amount, 2, true);
         $ret['oc_discounted'] = format_float($oc_discounted, 2, true);
         $ret['percent_discount'] = floor($normalized_discount * 100);
+        $ret['originalunitprice'] = format_float($cost, 2, true);
+        $ret['percentdiscountunit'] = format_float(self::calculate_discount($ret['originalunitprice'], $ret['percent_discount']), 2, true);
+        $ret['discountvalue'] = format_float($discountamount, 2);
 
         return $ret;
+    }
+
+    protected static function calculate_discount($total, $discount) {
+        return $total * $discount / 100;
+    }
+
+    public static function get_object_of_costs($ret, $symbol, $currency, $units, $taxstring) {
+
+        $data                   = new \stdClass;
+        $data->symbol           = $symbol;
+        $data->originalcost     = $ret['originalunitprice'];
+        $data->unitdiscount     = $ret['percentdiscountunit'];
+        $data->percentdiscount  = $ret['percent_discount'];
+        $data->units            = $units;
+        $data->subtotaltaxed    = $ret['subtotal_taxed'];
+        $data->taxstring        = $taxstring;
+        $data->currency         = $currency;
+        $data->discountvalue    = $ret['discountvalue'];
+        return $data;
+
+    }
+
+    public static function get_percentage_calculation_string($a) {
+        return "{$a->symbol}{$a->originalcost} - {$a->symbol}{$a->unitdiscount} ({$a->percentdiscount}% discount) × {$a->units} {$a->taxstring} = <b>{$a->symbol}{$a->subtotaltaxed}</b> {$a->currency}";
+    }
+
+    public static function get_percentage_discount_string($a) {
+        return "The {$a->symbol}{$a->percentdiscount}% discount has been applied.";
+    }
+
+    public static function get_value_calculation_string($a) {
+        return "{$a->symbol}{$a->originalcost} - {$a->symbol}{$a->discountvalue} discount × {$a->units} {$a->taxstring} = <b>{$a->symbol}{$a->subtotaltaxed}</b> {$a->currency}";
+    }
+
+    public static function get_value_discount_string($a) {
+        return "The {$a->symbol}{$a->discountvalue} discount per-seat has been applied.";
     }
 
     /**
@@ -222,7 +261,10 @@ class helper {
     public static function get_moodle_users_by_emails($emails) {
         global $DB;
 
-        $users = [];
+        $users = [
+            'found' => [],
+            'notfound' => [],
+        ];
         foreach ($emails as $email) {
             $user = $DB->get_record('user', ['email' => $email], 'id, email, firstname, lastname');
             if ($user) {
@@ -231,7 +273,9 @@ class helper {
                     'email' => $email,
                     'name'  => ($user->firstname . " " . $user->lastname)
                 ];
-                array_push($users, $userdata);
+                array_push($users['found'], $userdata);
+            } else {
+                array_push($users['notfound'], $email);
             }
         }
 
