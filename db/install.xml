@@ -50,8 +50,8 @@
         <FIELD NAME="multiple_userids" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Comma-separated user IDs for multiple enrollment"/>
         <FIELD NAME="code_given" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="units" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
-        <FIELD NAME="original_cost" TYPE="text" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="tax_percent" TYPE="float" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="originalcost" TYPE="text" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="taxpercent" TYPE="float" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="paypal_txn_id" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>

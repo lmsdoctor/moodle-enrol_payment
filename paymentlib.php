@@ -27,7 +27,6 @@ namespace paymentlib;
 
 require_once(dirname(__FILE__) . '/../../config.php');
 require_once("$CFG->libdir/moodlelib.php");
-require_once(dirname(__FILE__) . '/lang/en/enrol_payment.php');
 
 global $DB;
 
@@ -52,7 +51,7 @@ function enrol_payment_get_payment_from_token($prepaytoken) {
  */
 function enrol_payment_normalize_percent_discount($instance) {
     $amount = $instance->customdec1;
-    if($instance->customint3 == 1 && $amount > 1.0) {
+    if ($instance->customint3 == 1 && $amount > 1.0) {
         return $amount * 0.01;
     } else {
         return $amount;
@@ -64,21 +63,21 @@ function enrol_payment_normalize_percent_discount($instance) {
  *
  * @param $instance enrol_payment instance
  * @param $payment payment object from enrol_payment_session
- * @return object with "subtotal" and "subtotal_localised" fields.
+ * @return object with "subtotal" and "subtotallocalised" fields.
  */
 function enrol_payment_calculate_cost($instance, $payment, $addtax=false) {
-    $discount_threshold = $instance->customint8;
-    $discount_code_required = $instance->customint7;
-    $discount_amount = 0.0;
+    $discountthreshold = $instance->customint8;
+    $discountcoderequired = $instance->customint7;
+    $discountamount = 0.0;
 
-    $cost = $payment->original_cost;
+    $cost = $payment->originalcost;
     $subtotal = $cost;
 
-    if($discount_amount < 0.00) {
+    if ($discountamount < 0.00) {
         throw new Exception(get_string("negativediscount", "enrol_payment"));
     }
 
-    if($payment->units < 1) {
+    if ($payment->units < 1) {
         throw new Exception(get_string("notenoughunits", "enrol_payment"));
     }
 
@@ -88,37 +87,35 @@ function enrol_payment_calculate_cost($instance, $payment, $addtax=false) {
     // If a discount code isn't required, apply the discount.
     // If a discount code is required and the user has provided it, apply the discount.
 
-    $apply_discount = 0;
-    if($payment->units >= $discount_threshold) {
-        if(!$discount_code_required || ($discount_code_required && $payment->code_given)) {
-            $apply_discount = $instance->customint3;
-            $discount_amount = $instance->customdec1;
+    $applydiscount = 0;
+    if ($payment->units >= $discountthreshold) {
+        if (!$discountcoderequired || ($discountcoderequired && $payment->code_given)) {
+            $applydiscount = $instance->customint3;
+            $discountamount = $instance->customdec1;
         }
     }
 
-    $oc_discounted = $cost;
-    $normalized_discount = enrol_payment_normalize_percent_discount($instance);
+    $ocdiscounted = $cost;
+    $normalizeddiscount = enrol_payment_normalize_percent_discount($instance);
 
-    switch ($apply_discount) {
+    switch ($applydiscount) {
         case 0:
             $subtotal = $cost * $payment->units;
             break;
         case 1:
-            if($discount_amount > 100) {
+            if ($discountamount > 100) {
                 throw new Exception(get_string("percentdiscountover100error", "enrol_payment"));
             }
 
-            //Percentages over 1 converted to a float between 0 and 1.
-            //Per-unit cost is the difference between the full cost and the percent discount.
-            $per_unit_cost = $cost - ($cost * $normalized_discount);
-            $subtotal = $per_unit_cost * $payment->units;
-
-            $oc_discounted = $per_unit_cost;
-
+            // Percentages over 1 converted to a float between 0 and 1.
+            // Per-unit cost is the difference between the full cost and the percent discount.
+            $perunitcost = $cost - ($cost * $normalizeddiscount);
+            $subtotal = $perunitcost * $payment->units;
+            $ocdiscounted = $perunitcost;
             break;
         case 2:
-            $oc_discounted = $cost - $discount_amount;
-            $subtotal = ($cost - $discount_amount) * $payment->units;
+            $ocdiscounted = $cost - $discountamount;
+            $subtotal = ($cost - $discountamount) * $payment->units;
 
             break;
         default:
@@ -126,20 +123,20 @@ function enrol_payment_calculate_cost($instance, $payment, $addtax=false) {
             break;
     }
 
-    if($payment->tax_percent && $addtax) {
-        $tax_amount = $subtotal * $payment->tax_percent;
-        $subtotal_taxed = $subtotal + $tax_amount;
+    if ($payment->taxpercent && $addtax) {
+        $taxamount = $subtotal * $payment->taxpercent;
+        $subtotaltaxed = $subtotal + $taxamount;
     } else {
-        $tax_amount = 0;
-        $subtotal_taxed = $subtotal;
+        $taxamount = 0;
+        $subtotaltaxed = $subtotal;
     }
 
     $ret['subtotal'] = format_float($subtotal, 2, false);
-    $ret['subtotal_localised'] = format_float($subtotal, 2, true);
-    $ret['subtotal_taxed'] = format_float($subtotal_taxed, 2, true);
-    $ret['tax_amount'] = format_float($tax_amount, 2, true);
-    $ret['oc_discounted'] = format_float($oc_discounted, 2, true);
-    $ret['percent_discount'] = floor($normalized_discount * 100);
+    $ret['subtotallocalised'] = format_float($subtotal, 2, true);
+    $ret['subtotaltaxed'] = format_float($subtotaltaxed, 2, true);
+    $ret['taxamount'] = format_float($taxamount, 2, true);
+    $ret['ocdiscounted'] = format_float($ocdiscounted, 2, true);
+    $ret['percentdiscount'] = floor($normalizeddiscount * 100);
 
     return $ret;
 }

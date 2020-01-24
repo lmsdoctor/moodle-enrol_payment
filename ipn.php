@@ -114,7 +114,7 @@ $context = context_course::instance($course->id, MUST_EXIST);
 
 $PAGE->set_context($context);
 
-$plugin_instance = $DB->get_record("enrol", array("id" => $data->instanceid, "enrol" => "payment", "status" => 0), "*", MUST_EXIST);
+$plugininstance = $DB->get_record("enrol", array("id" => $data->instanceid, "enrol" => "payment", "status" => 0), "*", MUST_EXIST);
 $plugin = enrol_get_plugin('payment');
 
 // Open a connection back to PayPal to validate the data
@@ -144,10 +144,10 @@ if (strlen($result) > 0) {
         if ($data->payment_status != "Completed" and $data->payment_status != "Pending") {
             if($multiple) {
                 foreach($multiple_userids as $muid) {
-                    $plugin->unenrol_user($plugin_instance, $muid);
+                    $plugin->unenrol_user($plugininstance, $muid);
                 }
             } else {
-                $plugin->unenrol_user($plugin_instance, $data->userid);
+                $plugin->unenrol_user($plugininstance, $data->userid);
             }
             \enrol_payment\util::message_paypal_error_to_admin("Status not completed or pending. User unenrolled from course",
                                                               $data);
@@ -155,7 +155,7 @@ if (strlen($result) > 0) {
         }
 
         // If currency is incorrectly set then someone maybe trying to cheat the system.
-        if ($data->mc_currency != $plugin_instance->currency) {
+        if ($data->mc_currency != $plugininstance->currency) {
             \enrol_payment\util::message_paypal_error_to_admin(
                 "Currency does not match course settings, received: ".$data->mc_currency,
                 $data);
@@ -229,17 +229,17 @@ if (strlen($result) > 0) {
         $coursecontext = context_course::instance($course->id, IGNORE_MISSING);
 
         // Check that amount paid is the correct amount.
-        if ( (float) $plugin_instance->cost <= 0 ) {
-            $original_cost = (float) $plugin->get_config('cost');
+        if ( (float) $plugininstance->cost <= 0 ) {
+            $originalcost = (float) $plugin->get_config('cost');
         } else {
-            $original_cost = (float) $plugin_instance->cost;
+            $originalcost = (float) $plugininstance->cost;
         }
 
         // Use the same rounding of floats as on the enrol form.
-        $original_cost = format_float($original_cost, 2, false);
+        $originalcost = format_float($originalcost, 2, false);
 
         // What should the user have paid? Verify using info stored in the database.
-        $cost = helper::calculate_cost($plugin_instance, $payment)["subtotal"];
+        $cost = helper::calculate_cost($plugininstance, $payment)["subtotal"];
 
         if ($data->payment_gross + 0.01 < $cost) {
             // This shouldn't happen unless the user spoofs their requests, but
@@ -256,9 +256,9 @@ if (strlen($result) > 0) {
         $DB->update_record("enrol_payment_session", array("id" => $payment->id, "paypal_txn_id" => $data->txn_id));
 
 
-        if ($plugin_instance->enrolperiod) {
+        if ($plugininstance->enrolperiod) {
             $timestart = time();
-            $timeend   = $timestart + $plugin_instance->enrolperiod;
+            $timeend   = $timestart + $plugininstance->enrolperiod;
         } else {
             $timestart = 0;
             $timeend   = 0;
@@ -290,15 +290,15 @@ if (strlen($result) > 0) {
             }
 
             // Enrol user.
-            $plugin->enrol_user($plugin_instance, $user->id, $plugin_instance->roleid, $timestart, $timeend);
+            $plugin->enrol_user($plugininstance, $user->id, $plugininstance->roleid, $timestart, $timeend);
 
-            if ($plugin_instance->customint1 != ENROL_DO_NOT_SEND_EMAIL) {
-                $plugin->email_welcome_message($plugin_instance, $user);
+            if ($plugininstance->customint1 != ENROL_DO_NOT_SEND_EMAIL) {
+                $plugin->email_welcome_message($plugininstance, $user);
             }
 
             // If group selection is not null.
-            if ($plugin_instance->customint2) {
-                groups_add_member($plugin_instance->customint2, $user);
+            if ($plugininstance->customint2) {
+                groups_add_member($plugininstance->customint2, $user);
             }
 
             if (!empty($mailstudents)) {

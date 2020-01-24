@@ -171,9 +171,9 @@ class enrol_payment_external extends external_api {
             // Tack new subtotals onto return data.
             $ret = array_merge($ret, helper::calculate_cost($instance, $payment, true));
 
-            if ($payment->tax_percent) {
-                $taxamount = $ret['tax_amount'];
-                $taxpercent = floor(100 * floatval($payment->tax_percent));
+            if ($payment->taxpercent) {
+                $taxamount = $ret['taxamount'];
+                $taxpercent = floor(100 * floatval($payment->taxpercent));
                 $taxstring = ' + ' . $symbol . $taxamount . " (${taxpercent}% tax)";
             } else {
                 $taxstring = "";

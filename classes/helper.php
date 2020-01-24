@@ -72,21 +72,21 @@ class helper {
      *
      * @param $instance enrol_payment instance
      * @param $payment payment object from enrol_payment_session
-     * @return object with "subtotal" and "subtotal_localised" fields.
+     * @return object with "subtotal" and "subtotallocalised" fields.
      */
     public static function calculate_cost($instance, $payment, $addtax = false) {
         $discountthreshold = $instance->customint8;
         $discountcoderequired = $instance->customint7;
         $discountamount = 0.0;
 
-        $cost = $payment->original_cost;
+        $cost = $payment->originalcost;
         $subtotal = $cost;
 
-        if($discountamount < 0.00) {
+        if ($discountamount < 0.00) {
             throw new \Exception(get_string("negativediscount", "enrol_payment"));
         }
 
-        if($payment->units < 1) {
+        if ($payment->units < 1) {
             throw new \Exception(get_string("notenoughunits", "enrol_payment"));
         }
 
@@ -95,37 +95,36 @@ class helper {
         // Assuming the discount theshold is met:
         // If a discount code isn't required, apply the discount.
         // If a discount code is required and the user has provided it, apply the discount.
-
         $applydiscount = 0;
-        if($payment->units >= $discountthreshold) {
-            if(!$discountcoderequired || ($discountcoderequired && $payment->code_given)) {
+        if ($payment->units >= $discountthreshold) {
+            if (!$discountcoderequired || ($discountcoderequired && $payment->code_given)) {
                 $applydiscount = $instance->customint3;
                 $discountamount = $instance->customdec1;
             }
         }
 
-        $oc_discounted = $cost;
-        $normalized_discount = self::normalize_percent_discount($instance);
+        $ocdiscounted = $cost;
+        $normalizeddiscount = self::normalize_percent_discount($instance);
 
         switch ($applydiscount) {
             case 0:
                 $subtotal = $cost * $payment->units;
                 break;
             case 1:
-                if($discountamount > 100) {
+                if ($discountamount > 100) {
                     throw new \Exception(get_string("percentdiscountover100error", "enrol_payment"));
                 }
 
                 // Percentages over 1 converted to a float between 0 and 1.
                 // Per-unit cost is the difference between the full cost and the percent discount.
-                $perunitcost = $cost - ($cost * $normalized_discount);
+                $perunitcost = $cost - ($cost * $normalizeddiscount);
                 $subtotal = $perunitcost * $payment->units;
 
-                $oc_discounted = $perunitcost;
+                $ocdiscounted = $perunitcost;
 
                 break;
             case 2:
-                $oc_discounted = $cost - $discountamount;
+                $ocdiscounted = $cost - $discountamount;
                 $subtotal = ($cost - $discountamount) * $payment->units;
 
                 break;
@@ -134,22 +133,22 @@ class helper {
                 break;
         }
 
-        if($payment->tax_percent && $addtax) {
-            $tax_amount = $subtotal * $payment->tax_percent;
-            $subtotal_taxed = $subtotal + $tax_amount;
+        if ($payment->taxpercent && $addtax) {
+            $taxamount = $subtotal * $payment->taxpercent;
+            $subtotaltaxed = $subtotal + $taxamount;
         } else {
-            $tax_amount = 0;
-            $subtotal_taxed = $subtotal;
+            $taxamount = 0;
+            $subtotaltaxed = $subtotal;
         }
 
         $ret['subtotal'] = format_float($subtotal, 2, false);
-        $ret['subtotal_localised'] = format_float($subtotal, 2, true);
-        $ret['subtotal_taxed'] = format_float($subtotal_taxed, 2, true);
-        $ret['tax_amount'] = format_float($tax_amount, 2, true);
-        $ret['oc_discounted'] = format_float($oc_discounted, 2, true);
-        $ret['percent_discount'] = floor($normalized_discount * 100);
+        $ret['subtotallocalised'] = format_float($subtotal, 2, true);
+        $ret['subtotaltaxed'] = format_float($subtotaltaxed, 2, true);
+        $ret['taxamount'] = format_float($taxamount, 2, true);
+        $ret['ocdiscounted'] = format_float($ocdiscounted, 2, true);
+        $ret['percentdiscount'] = floor($normalizeddiscount * 100);
         $ret['originalunitprice'] = format_float($cost, 2, true);
-        $ret['percentdiscountunit'] = format_float(self::calculate_discount($ret['originalunitprice'], $ret['percent_discount']), 2, true);
+        $ret['percentdiscountunit'] = format_float(self::calculate_discount($ret['originalunitprice'], $ret['percentdiscount']), 2, true);
         $ret['discountvalue'] = format_float($discountamount, 2);
 
         return $ret;
@@ -165,9 +164,9 @@ class helper {
         $data->symbol           = $symbol;
         $data->originalcost     = $ret['originalunitprice'];
         $data->unitdiscount     = $ret['percentdiscountunit'];
-        $data->percentdiscount  = $ret['percent_discount'];
+        $data->percentdiscount  = $ret['percentdiscount'];
         $data->units            = $units;
-        $data->subtotaltaxed    = $ret['subtotal_taxed'];
+        $data->subtotaltaxed    = $ret['subtotaltaxed'];
         $data->taxstring        = $taxstring;
         $data->currency         = $currency;
         $data->discountvalue    = $ret['discountvalue'];
