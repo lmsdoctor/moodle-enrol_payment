@@ -747,6 +747,12 @@ class enrol_payment_plugin extends enrol_plugin {
                 if (!is_numeric($discountamount)) {
                     $errors['customdec1'] = get_string('discountamounterror', 'enrol_payment');
                 }
+
+                // Display error if the value is negative.
+                if ($data['customdec1'] < 0) {
+                    $errors['customdec1'] = get_string('negativediscounterror', 'enrol_payment');
+                }
+
                 $totaldigits = strlen(str_replace('.', '', $discountamount));
                 $digitsafterdecimal = strlen(substr(strrchr($discountamount, "."), 1));
                 if ($totaldigits > 12 || $digitsafterdecimal > 7) {
