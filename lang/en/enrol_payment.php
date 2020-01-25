@@ -162,10 +162,18 @@ $string['charge_description1'] = "create customer for email receipt";
 $string['charge_description2'] = 'Charge for Course Enrolment';
 $string['addaregistrant'] = 'Add a registrant';
 $string['removearegistrant'] = 'Remove the registrant';
-
-$string['taxdefinitions'] = 'Custom tax definitions';
-$string['taxdefinitions_help'] = "The format for each entry is Province/State Code : 0.## for tax rate. For instance, assume there are only two taxable provinces: Ontario (code ON and rate 13%) and Quebec (code QC and rate 5%), the entries would be:<br>ON : 0.13<br>QC : 0.05<br>Enter each tax definition on a <b>separate</b> line. The script will pull the province/state code from the MSN field in the user profile (setup instructions are detailed in the ReadMe.txt file) to determine how much tax to add to the course fee.";
 $string['definetaxes'] = 'Allow custom tax definitions';
+$string['definetaxes_desc'] = 'Depending on whether there is an entry in the country or region input box, the script will process either a single tax rate based on the user’s country or a regional tax rate based on the user’s <b>taxregion</b> user profile field value.';
+$string['taxdefinitions'] = 'Regional tax rates';
+$string['taxdefinitions_help'] = '<p>A region can be a province, state, territory, department or anything that has an associated code and tax rate. The format for each entry is Region : 0.## for tax rate. For instance, assume there are only two taxable provinces: Ontario (rate 13%) and Quebec (rate 5%), the entries would be:
+    <br><br>
+    Ontario : 0.13<br>Quebec : 0.05
+    <br><br>
+    Enter each tax definition on a <b>separate</b> line. The label has to be spelled the same way as in the corresponding entry in the “Menu options (one per line)” setting in the (taxregion) user profile field.</p>';
+
+$string['countrytax'] = 'Country single tax rate';
+$string['countrytax_desc'] = 'The format is Country Code : 0.## for tax rate. For instance, assume you are setting a tax rate for Colombia (rate 19%) the entries would be: <b>CO : 0.19</b>';
+
 $string['feestring_taxed'] = 'The fee for <b>{$a->coursefullname}</b><br>
     is <b>{$a->symbol}<span class="localisedcost-untaxed">{$a->localisedcostuntaxed}</span></b> + {$a->symbol}<span class="taxamountstring">{$a->taxamountstring}</span> <span class="taxstring">{$a->taxstring}</span> = <b>{$a->symbol}<span class="localisedcost">{$a->localisedcost}</span></b> {$a->currency}.<br>';
 $string['feestring_notax'] = 'The fee for <b>{$a->coursefullname}</b><br>is <b>{$a->symbol}<span class="localisedcost">{$a->localisedcost}</span></b> {$a->currency}.<br>';

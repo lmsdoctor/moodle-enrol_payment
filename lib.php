@@ -300,6 +300,34 @@ class enrol_payment_plugin extends enrol_plugin {
         }
     }
 
+    private function get_tax_amount($tax, $field) {
+        $pieces = explode(":", $tax);
+        if (count($pieces) == 2) {
+
+            $province = strtolower(trim($pieces[0]));
+            $taxrate = trim($pieces[1]);
+
+            if ($province == strtolower(trim($field))) {
+                if (is_numeric($taxrate)) {
+                    try {
+                        $floattaxrate = floatval($taxrate);
+                        return [
+                            'taxpercent' => $floattaxrate,
+                            'taxstring' => '(' . floor($floattaxrate * 100) . '% tax)'
+                        ];
+
+                    } catch (Exception $e) {
+                        debugging("Could not convert tax value for $province into a float.");
+                    }
+                } else {
+                    debugging('Encountered non-numeric tax value.');
+                }
+            }
+        } else {
+            debugging('Incorrect tax definition format.');
+        }
+    }
+
     /**
      * Returns the tax info.
      *
@@ -314,35 +342,19 @@ class enrol_payment_plugin extends enrol_plugin {
             return ['taxpercent' => 0, 'taxstring' => ''];
         }
 
-        $taxdefs = $this->get_config('taxdefinitions');
-        $taxdeflines = explode("\n", $taxdefs);
+        // If the tax country is not empty, use it. Otherwise use the tax region.
+        if (!empty($countrytax = $this->get_config('countrytax'))) {
+            $taxholder = $this->get_tax_amount($countrytax, $USER->country);
+        } else {
+            $taxdefs = $this->get_config('taxdefinitions');
+            $taxdeflines = explode("\n", $taxdefs);
 
-        foreach ($taxdeflines as $l) {
-            $pieces = explode(":", $l);
-            if (count($pieces) == 2) {
-                $province = strtolower(trim($pieces[0]));
-                $taxrate = trim($pieces[1]);
-
-                if ($province == strtolower(trim($USER->profile_field_taxregion))) {
-                    if (is_numeric($taxrate)) {
-                        try {
-                            $floattaxrate = floatval($taxrate);
-                            return [
-                                'taxpercent' => $floattaxrate,
-                                'taxstring' => '(' . floor($floattaxrate * 100) . '% tax)'
-                            ];
-
-                        } catch (Exception $e) {
-                            debugging("Could not convert tax value for $province into a float.");
-                        }
-                    } else {
-                        debugging('Encountered non-numeric tax value.');
-                    }
-                }
-            } else {
-                debugging('Incorrect tax definition format.');
+            foreach ($taxdeflines as $taxline) {
+                $taxholder = $this->get_tax_amount($taxline, $USER->profile_field_taxregion);
             }
         }
+
+        return $taxholder;
 
     }
 
