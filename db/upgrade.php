@@ -174,5 +174,57 @@ function xmldb_enrol_payment_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2019013100, 'enrol', 'payment');
     }
 
+    if ($oldversion < 2020012302) {
+
+        // Rename field original_cost on table enrol_payment_session to originalcost.
+        $table = new xmldb_table('enrol_payment_session');
+        $field = new xmldb_field('original_cost', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null, 'units');
+        $field2 = new xmldb_field('tax_percent', XMLDB_TYPE_FLOAT, null, null, null, null, null, 'originalcost');
+        $field3 = new xmldb_field('paypal_txn_id', XMLDB_TYPE_TEXT, null, null, null, null, null, 'taxpercent');
+        $field4 = new xmldb_field('code_given', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, 'multipleuserids');
+        $field5 = new xmldb_field('multiple_userids', XMLDB_TYPE_TEXT, null, null, null, null, null, 'multiple');
+
+        // Launch rename field original_cost.
+        $dbman->rename_field($table, $field, 'originalcost');
+        $dbman->rename_field($table, $field2, 'taxpercent');
+        $dbman->rename_field($table, $field3, 'paypaltxnid');
+        $dbman->rename_field($table, $field4, 'codegiven');
+        $dbman->rename_field($table, $field5, 'multipleuserids');
+
+        // Rename field receiver_email on table enrol_payment_transaction to receiveremail.
+        $table = new xmldb_table('enrol_payment_transaction');
+        $field = new xmldb_field('receiver_email', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'business');
+        $field2 = new xmldb_field('receiver_id', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'receiveremail');
+        $field3 = new xmldb_field('item_name', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'receiverid');
+        $field4 = new xmldb_field('option_name1', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'tax');
+        $field5 = new xmldb_field('option_selection1_x', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'optionname1');
+        $field6 = new xmldb_field('option_name2', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'optionselection1x');
+        $field7 = new xmldb_field('option_selection2_x', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'optionname2');
+        $field8 = new xmldb_field('payment_status', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'optionselection2x');
+        $field9 = new xmldb_field('pending_reason', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'paymentstatus');
+        $field10 = new xmldb_field('reason_code', XMLDB_TYPE_CHAR, '30', null, null, null, null, 'pendingreason');
+        $field11 = new xmldb_field('txn_id', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'reasoncode');
+        $field12 = new xmldb_field('parent_txn_id', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'txnid');
+        $field13 = new xmldb_field('payment_type', XMLDB_TYPE_CHAR, '30', null, null, null, null, 'parenttxnid');
+
+        // Launch rename field receiver_email.
+        $dbman->rename_field($table, $field, 'receiveremail');
+        $dbman->rename_field($table, $field2, 'receiverid');
+        $dbman->rename_field($table, $field3, 'itemname');
+        $dbman->rename_field($table, $field4, 'optionname1');
+        $dbman->rename_field($table, $field5, 'optionselection1x');
+        $dbman->rename_field($table, $field6, 'optionname2');
+        $dbman->rename_field($table, $field7, 'optionselection2x');
+        $dbman->rename_field($table, $field8, 'paymentstatus');
+        $dbman->rename_field($table, $field9, 'pendingreason');
+        $dbman->rename_field($table, $field10, 'reasoncode');
+        $dbman->rename_field($table, $field11, 'txnid');
+        $dbman->rename_field($table, $field12, 'parenttxnid');
+        $dbman->rename_field($table, $field13, 'paymenttype');
+
+        // Payment savepoint reached.
+        upgrade_plugin_savepoint(true, 2020012302, 'enrol', 'payment');
+    }
+
     return true;
 }

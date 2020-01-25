@@ -69,15 +69,15 @@ $string['privacy:metadata:enrol_payment:enrol_payment:item_name'] = 'The full na
 $string['privacy:metadata:enrol_payment:enrol_payment:memo'] = 'A note that was entered by the buyer in PayPal website payments note field.';
 $string['privacy:metadata:enrol_payment:enrol_payment:option_selection1_x'] = 'Full name of the buyer.';
 $string['privacy:metadata:enrol_payment:enrol_payment:parent_txn_id'] = 'In the case of a refund, reversal, or canceled reversal, this would be the transaction ID of the original transaction.';
-$string['privacy:metadata:enrol_payment:enrol_payment:payment_status'] = 'The status of the payment.';
+$string['privacy:metadata:enrol_payment:enrol_payment:paymentstatus'] = 'The status of the payment.';
 $string['privacy:metadata:enrol_payment:enrol_payment:payment_type'] = 'Holds whether the payment was funded with an eCheck (echeck), or was funded with PayPal balance, credit card, or instant transfer (instant).';
-$string['privacy:metadata:enrol_payment:enrol_payment:pending_reason'] = 'The reason why payment status is pending (if that is).';
+$string['privacy:metadata:enrol_payment:enrol_payment:pendingreason'] = 'The reason why payment status is pending (if that is).';
 $string['privacy:metadata:enrol_payment:enrol_payment:reason_code'] = 'The reason why payment status is Reversed, Refunded, Canceled_Reversal, or Denied (if the status is one of them).';
 $string['privacy:metadata:enrol_payment:enrol_payment:receiver_email'] = 'Primary email address of the payment recipient (that is, the merchant).';
 $string['privacy:metadata:enrol_payment:enrol_payment:receiver_id'] = 'Unique PayPal account ID of the payment recipient (i.e., the merchant).';
 $string['privacy:metadata:enrol_payment:enrol_payment:tax'] = 'Amount of tax charged on payment.';
 $string['privacy:metadata:enrol_payment:enrol_payment:timeupdated'] = 'The time of Moodle being notified by PayPal about the payment.';
-$string['privacy:metadata:enrol_payment:enrol_payment:txn_id'] = 'The merchant\'s original transaction identification number for the payment from the buyer, against which the case was registered';
+$string['privacy:metadata:enrol_payment:enrol_payment:txnid'] = 'The merchant\'s original transaction identification number for the payment from the buyer, against which the case was registered';
 $string['privacy:metadata:enrol_payment:enrol_payment:userid'] = 'The ID of the user who bought the course enrolment.';
 $string['privacy:metadata:enrol_payment:paypal_com'] = 'The Payment enrolment plugin transmits user data from Moodle to the PayPal website.';
 $string['privacy:metadata:enrol_payment:paypal_com:address'] = 'Address of the user who is buying the course.';
@@ -206,9 +206,9 @@ $string['discount_value_success'] = 'The <b>{$a->symbol}{$a->discountamount}</b>
         = <b>{$a->currencysign}<span class="localisedcost">{$a->localisedcost}</span></b>
     </span>{$a->currency}';
 
-$string['discount_percent_success'] = 'The <b>{$a->discountamount}{$a->percentsymbol}</b> discount has been applied to the fee which is now <b>{$a->currencysign}<span class="localisedcost-untaxed">{$a->localisedcostuntaxed}</span></b>
+$string['discount_percent_success'] = 'The fee is now <b>{$a->currencysign}<span class="localisedcost-untaxed">{$a->localisedcostuntaxed}</span></b>
     <span class="tax-container">
         + {$a->currencysign}<span class="taxamountstring">{$a->taxamountstring}</span> <span class="taxstring">{$a->taxstring}</span>
         = <b>{$a->currencysign}<span class="localisedcost">{$a->localisedcost}</span></b>
     </span>
-    {$a->currency}';
+    {$a->currency}  (<b>{$a->discountamount}{$a->percentsymbol}</b>) discount';

@@ -97,7 +97,7 @@ class helper {
         // If a discount code is required and the user has provided it, apply the discount.
         $applydiscount = 0;
         if ($payment->units >= $discountthreshold) {
-            if (!$discountcoderequired || ($discountcoderequired && $payment->code_given)) {
+            if (!$discountcoderequired || ($discountcoderequired && $payment->codegiven)) {
                 $applydiscount = $instance->customint3;
                 $discountamount = $instance->customdec1;
             }
@@ -224,7 +224,7 @@ class helper {
     public static function payment_pending($paymentid) {
         global $DB;
         $payment = $DB->get_record('enrol_payment_session', array('id' => $paymentid));
-        $transaction = $DB->get_record('enrol_payment_transaction', array('txn_id' => $payment->paypal_txn_id));
+        $transaction = $DB->get_record('enrol_payment_transaction', array('txnid' => $payment->paypaltxnid));
 
         if ($transaction) {
             return ($transaction->payment_status == "Pending");
@@ -242,7 +242,7 @@ class helper {
     public static function get_payment_status($paymentid) {
         global $DB;
         $payment = $DB->get_record('enrol_payment_session', array('id' => $paymentid));
-        $transaction = $DB->get_record('enrol_payment_transaction', array('txn_id' => $payment->paypal_txn_id));
+        $transaction = $DB->get_record('enrol_payment_transaction', array('txnid' => $payment->paypaltxnid));
 
         if ($transaction) {
             return $transaction->payment_status;

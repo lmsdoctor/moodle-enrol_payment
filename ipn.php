@@ -54,8 +54,8 @@ if (!enrol_is_enabled('payment')) {
 
 // Keep out casual intruders
 if (empty($_POST) or !empty($_GET)) {
-	http_response_code(400);
-	echo get_string('invalidrequest', 'core_error');
+    http_response_code(400);
+    echo get_string('invalidrequest', 'core_error');
 }
 
 // Read all the data from PayPal and get it ready for later;
@@ -79,10 +79,10 @@ foreach ($_POST as $key => $value) {
 }
 
 if (empty($data->custom)) {
-    /*	throw new moodle_exception('invalidrequest', 'core_error', '', null, 'Missing request param: custom');
-	The line above has been commented out because PayPal interprets the moodle_exception
-	  with an HTTP response code 500 when anything else but a course is purchased.*/
-	die();
+    // ... throw new moodle_exception('invalidrequest', 'core_error', '', null, 'Missing request param: custom');
+    // The line above has been commented out because PayPal interprets the moodle_exception
+    // with an HTTP response code 500 when anything else but a course is purchased.
+    die();
 }
 
 $payment = helper::get_payment_from_token($data->custom);
@@ -139,9 +139,9 @@ if ($c->get_errno()) {
 if (strlen($result) > 0) {
     if (strcmp($result, "VERIFIED") == 0) {
 
-        // Check the payment_status and payment_reason
+        // Check the paymentstatus and payment_reason
         // If status is not completed or pending then unenrol the student if already enrolled and notify admin
-        if ($data->payment_status != "Completed" and $data->payment_status != "Pending") {
+        if ($data->paymentstatus != "Completed" and $data->paymentstatus != "Pending") {
             if($multiple) {
                 foreach($multiple_userids as $muid) {
                     $plugin->unenrol_user($plugininstance, $muid);
@@ -164,7 +164,7 @@ if (strlen($result) > 0) {
 
         // If status is pending and reason is other than echeck then we are on hold until further notice
         // Email user to let them know. Email admin.
-        if ($data->payment_status == "Pending" and $data->pending_reason != "echeck") {
+        if ($data->paymentstatus == "Pending" and $data->pendingreason != "echeck") {
             $eventdata->courseid          = empty($data->courseid) ? SITEID : $data->courseid;
             $eventdata = new \core\message\message();
             $eventdata->modulename        = 'moodle';
@@ -182,22 +182,22 @@ if (strlen($result) > 0) {
             \enrol_payment\util::message_paypal_error_to_admin("Payment pending", $data);
 
             $DB->insert_record("enrol_payment_transaction", $data);
-            $DB->update_record("enrol_payment_session", array("id" => $payment->id, "paypal_txn_id" => $data->txn_id));
+            $DB->update_record("enrol_payment_session", array("id" => $payment->id, "paypaltxnid" => $data->txnid));
 
             die;
         }
 
         // If our status is not completed or not pending on an echeck clearance then ignore and die.
         // This check is redundant at present but may be useful if paypal extend the return codes in the future.
-        if (! ( $data->payment_status == "Completed" or
-               ($data->payment_status == "Pending" and $data->pending_reason == "echeck") ) ) {
+        if (! ( $data->paymentstatus == "Completed" or
+               ($data->paymentstatus == "Pending" and $data->pendingreason == "echeck") ) ) {
             die;
         }
 
         // At this point we only proceed with a status of completed or pending with a reason of echeck.
         // Make sure this transaction doesn't exist already.
-        if ($existing = $DB->get_record("enrol_payment_transaction", array("txn_id" => $data->txn_id), "*", IGNORE_MULTIPLE)) {
-            \enrol_payment\util::message_paypal_error_to_admin("Transaction $data->txn_id is being repeated!", $data);
+        if ($existing = $DB->get_record("enrol_payment_transaction", array("txnid" => $data->txnid), "*", IGNORE_MULTIPLE)) {
+            \enrol_payment\util::message_paypal_error_to_admin("Transaction $data->txnid is being repeated!", $data);
             die;
         }
 
@@ -253,7 +253,7 @@ if (strlen($result) > 0) {
 
         // All clear.
         $DB->insert_record("enrol_payment_transaction", $data);
-        $DB->update_record("enrol_payment_session", array("id" => $payment->id, "paypal_txn_id" => $data->txn_id));
+        $DB->update_record("enrol_payment_session", array("id" => $payment->id, "paypaltxnid" => $data->txnid));
 
 
         if ($plugininstance->enrolperiod) {

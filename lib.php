@@ -30,6 +30,7 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once('classes/util.php');
 require_once('currencycodes.php');
+require_once($CFG->dirroot.'/user/profile/lib.php');
 
 use enrol_payment\helper;
 
@@ -307,44 +308,41 @@ class enrol_payment_plugin extends enrol_plugin {
      */
     public function get_tax_info($cost) {
         global $USER;
-        if ($this->get_config('definetaxes')) {
-            $taxdefs = $this->get_config('taxdefinitions');
+        profile_load_data($USER);
 
-            $taxdeflines = explode("\n", $taxdefs);
-
-            foreach ($taxdeflines as $l) {
-                $pieces = explode(":", $l);
-                if (count($pieces) == 2) {
-                    $province = strtolower(trim($pieces[0]));
-                    $taxrate = trim($pieces[1]);
-
-                    if ($province == strtolower(trim($USER->msn))) {
-                        if (is_numeric($taxrate)) {
-                            try {
-                                $floattaxrate = floatval($taxrate);
-                                return [
-                                    'taxpercent' => $floattaxrate,
-                                    'taxstring' => '(' . floor($floattaxrate * 100) . '% tax)'
-                                ];
-
-                            } catch (Exception $e) {
-                                debugging("Could not convert tax value for $province into a float.");
-                            }
-                        } else {
-                            debugging('Encountered non-numeric tax value.');
-                        }
-                    }
-                } else {
-                    debugging('Incorrect tax definition format.');
-                }
-            }
-
+        if (!$this->get_config('definetaxes')) {
+            return ['taxpercent' => 0, 'taxstring' => ''];
         }
 
-        return [
-            "taxpercent" => 0,
-            "taxstring" => ""
-        ];
+        $taxdefs = $this->get_config('taxdefinitions');
+        $taxdeflines = explode("\n", $taxdefs);
+
+        foreach ($taxdeflines as $l) {
+            $pieces = explode(":", $l);
+            if (count($pieces) == 2) {
+                $province = strtolower(trim($pieces[0]));
+                $taxrate = trim($pieces[1]);
+
+                if ($province == strtolower(trim($USER->profile_field_taxregion))) {
+                    if (is_numeric($taxrate)) {
+                        try {
+                            $floattaxrate = floatval($taxrate);
+                            return [
+                                'taxpercent' => $floattaxrate,
+                                'taxstring' => '(' . floor($floattaxrate * 100) . '% tax)'
+                            ];
+
+                        } catch (Exception $e) {
+                            debugging("Could not convert tax value for $province into a float.");
+                        }
+                    } else {
+                        debugging('Encountered non-numeric tax value.');
+                    }
+                }
+            } else {
+                debugging('Incorrect tax definition format.');
+            }
+        }
 
     }
 
@@ -357,7 +355,7 @@ class enrol_payment_plugin extends enrol_plugin {
      */
     public function enrol_page_hook(stdClass $instance) {
         global $CFG, $USER, $OUTPUT, $PAGE, $DB;
-
+        profile_load_data($USER);
         ob_start();
 
         if ($DB->record_exists('user_enrolments', array('userid' => $USER->id, 'enrolid' => $instance->id))) {
@@ -434,12 +432,12 @@ class enrol_payment_plugin extends enrol_plugin {
                     'courseid' => $course->id,
                     'instanceid' => $instance->id,
                     'multiple' => false,
-                    'multiple_userids' => null,
-                    'code_given' => false,
+                    'multipleuserids' => null,
+                    'codegiven' => false,
                     'units' => 1,
                     'originalcost' => $originalcost,
                     'taxpercent' => $taxpercent,
-                    'paypal_txn_id' => null,
+                    'paypaltxnid' => null,
                 ];
 
                 $paymentid = $DB->insert_record('enrol_payment_session', $paymentdata);

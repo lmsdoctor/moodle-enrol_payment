@@ -163,10 +163,10 @@ try {
     ));
 
     // Send the file, this line will be reached if no error was thrown above.
-    $data->txn_id = $charge->balance_transaction;
+    $data->txnid = $charge->balance_transaction;
     $data->memo = $charge->id;
-    $data->payment_status = $charge->status;
-    $data->pending_reason = $charge->failure_message;
+    $data->paymentstatus = $charge->status;
+    $data->pendingreason = $charge->failure_message;
     $data->reason_code = $charge->failure_code;
 
 
