@@ -220,10 +220,10 @@ class enrol_payment_privacy_provider_testcase extends \core_privacy\tests\provid
         $this->assertArrayHasKey('memo', $privacyfields);
         $this->assertArrayHasKey('tax', $privacyfields);
         $this->assertArrayHasKey('option_selection1_x', $privacyfields);
-        $this->assertArrayHasKey('payment_status', $privacyfields);
-        $this->assertArrayHasKey('pending_reason', $privacyfields);
+        $this->assertArrayHasKey('paymentstatus', $privacyfields);
+        $this->assertArrayHasKey('pendingreason', $privacyfields);
         $this->assertArrayHasKey('reason_code', $privacyfields);
-        $this->assertArrayHasKey('txn_id', $privacyfields);
+        $this->assertArrayHasKey('txnid', $privacyfields);
         $this->assertArrayHasKey('parent_txn_id', $privacyfields);
         $this->assertArrayHasKey('payment_type', $privacyfields);
         $this->assertArrayHasKey('timeupdated', $privacyfields);
@@ -355,7 +355,7 @@ class enrol_payment_privacy_provider_testcase extends \core_privacy\tests\provid
         $this->assertCount(2, $data->transactions);
         $this->assertEquals(
                 ['STUDENT2-IN-COURSE2-00', 'STUDENT2-IN-COURSE2-01'],
-                array_column($data->transactions, 'txn_id'),
+                array_column($data->transactions, 'txnid'),
                 '', 0.0, 10, true
         );
     }
@@ -641,8 +641,8 @@ class enrol_payment_privacy_provider_testcase extends \core_privacy\tests\provid
             'courseid'       => $course->id,
             'userid'         => $user->id,
             'instanceid'     => $enrol->id,
-            'payment_status' => 'Completed',
-            'txn_id'         => $txnid,
+            'paymentstatus' => 'Completed',
+            'txnid'         => $txnid,
             'payment_type'   => 'instant',
             'timeupdated'    => $time,
         ];

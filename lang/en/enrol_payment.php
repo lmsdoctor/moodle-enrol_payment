@@ -69,15 +69,15 @@ $string['privacy:metadata:enrol_payment:enrol_payment:item_name'] = 'The full na
 $string['privacy:metadata:enrol_payment:enrol_payment:memo'] = 'A note that was entered by the buyer in PayPal website payments note field.';
 $string['privacy:metadata:enrol_payment:enrol_payment:option_selection1_x'] = 'Full name of the buyer.';
 $string['privacy:metadata:enrol_payment:enrol_payment:parent_txn_id'] = 'In the case of a refund, reversal, or canceled reversal, this would be the transaction ID of the original transaction.';
-$string['privacy:metadata:enrol_payment:enrol_payment:payment_status'] = 'The status of the payment.';
+$string['privacy:metadata:enrol_payment:enrol_payment:paymentstatus'] = 'The status of the payment.';
 $string['privacy:metadata:enrol_payment:enrol_payment:payment_type'] = 'Holds whether the payment was funded with an eCheck (echeck), or was funded with PayPal balance, credit card, or instant transfer (instant).';
-$string['privacy:metadata:enrol_payment:enrol_payment:pending_reason'] = 'The reason why payment status is pending (if that is).';
+$string['privacy:metadata:enrol_payment:enrol_payment:pendingreason'] = 'The reason why payment status is pending (if that is).';
 $string['privacy:metadata:enrol_payment:enrol_payment:reason_code'] = 'The reason why payment status is Reversed, Refunded, Canceled_Reversal, or Denied (if the status is one of them).';
 $string['privacy:metadata:enrol_payment:enrol_payment:receiver_email'] = 'Primary email address of the payment recipient (that is, the merchant).';
 $string['privacy:metadata:enrol_payment:enrol_payment:receiver_id'] = 'Unique PayPal account ID of the payment recipient (i.e., the merchant).';
 $string['privacy:metadata:enrol_payment:enrol_payment:tax'] = 'Amount of tax charged on payment.';
 $string['privacy:metadata:enrol_payment:enrol_payment:timeupdated'] = 'The time of Moodle being notified by PayPal about the payment.';
-$string['privacy:metadata:enrol_payment:enrol_payment:txn_id'] = 'The merchant\'s original transaction identification number for the payment from the buyer, against which the case was registered';
+$string['privacy:metadata:enrol_payment:enrol_payment:txnid'] = 'The merchant\'s original transaction identification number for the payment from the buyer, against which the case was registered';
 $string['privacy:metadata:enrol_payment:enrol_payment:userid'] = 'The ID of the user who bought the course enrolment.';
 $string['privacy:metadata:enrol_payment:paypal_com'] = 'The Payment enrolment plugin transmits user data from Moodle to the PayPal website.';
 $string['privacy:metadata:enrol_payment:paypal_com:address'] = 'Address of the user who is buying the course.';
@@ -162,15 +162,23 @@ $string['charge_description1'] = "create customer for email receipt";
 $string['charge_description2'] = 'Charge for Course Enrolment';
 $string['addaregistrant'] = 'Add a registrant';
 $string['removearegistrant'] = 'Remove the registrant';
-
-$string['taxdefinitions'] = 'Custom tax definitions';
-$string['taxdefinitions_help'] = "The format for each entry is Province/State Code : 0.## for tax rate. For instance, assume there are only two taxable provinces: Ontario (code ON and rate 13%) and Quebec (code QC and rate 5%), the entries would be:<br>ON : 0.13<br>QC : 0.05<br>Enter each tax definition on a <b>separate</b> line. The script will pull the province/state code from the MSN field in the user profile (setup instructions are detailed in the ReadMe.txt file) to determine how much tax to add to the course fee.";
 $string['definetaxes'] = 'Allow custom tax definitions';
+$string['definetaxes_desc'] = 'Depending on whether there is an entry in the country or region input box, the script will process either a single tax rate based on the user’s country or a regional tax rate based on the user’s <b>taxregion</b> user profile field value.';
+$string['taxdefinitions'] = 'Regional tax rates';
+$string['taxdefinitions_help'] = '<p>A region can be a province, state, territory, department or anything that has an associated code and tax rate. The format for each entry is Region : 0.## for tax rate. For instance, assume there are only two taxable provinces: Ontario (rate 13%) and Quebec (rate 5%), the entries would be:
+    <br><br>
+    Ontario : 0.13<br>Quebec : 0.05
+    <br><br>
+    Enter each tax definition on a <b>separate</b> line. The label has to be spelled the same way as in the corresponding entry in the “Menu options (one per line)” setting in the (taxregion) user profile field.</p>';
+
+$string['countrytax'] = 'Country single tax rate';
+$string['countrytax_desc'] = 'The format is Country Code : 0.## for tax rate. For instance, assume you are setting a tax rate for Colombia (rate 19%) the entries would be: <b>CO : 0.19</b>';
+
 $string['feestring_taxed'] = 'The fee for <b>{$a->coursefullname}</b><br>
-    is <b>{$a->symbol}<span class="localisedcost-untaxed">{$a->localisedcost_untaxed}</span></b> + {$a->symbol}<span class="taxamountstring">{$a->tax_amount_string}</span> <span class="taxstring">{$a->tax_string}</span> = <b>{$a->symbol}<span class="localisedcost">{$a->localisedcost}</span></b> {$a->currency}.<br>';
+    is <b>{$a->symbol}<span class="localisedcost-untaxed">{$a->localisedcostuntaxed}</span></b> + {$a->symbol}<span class="taxamountstring">{$a->taxamountstring}</span> <span class="taxstring">{$a->taxstring}</span> = <b>{$a->symbol}<span class="localisedcost">{$a->localisedcost}</span></b> {$a->currency}.<br>';
 $string['feestring_notax'] = 'The fee for <b>{$a->coursefullname}</b><br>is <b>{$a->symbol}<span class="localisedcost">{$a->localisedcost}</span></b> {$a->currency}.<br>';
 
-$string['discountwillbeapplied'] = 'A <b>{$a->symbol}{$a->discountAmount}{$a->percentSymbol}{$a->perSeat}</b> discount will be applied to a purchase of <b>{$a->discountThreshold}</b> or more registrations.';
+$string['discountwillbeapplied'] = 'A <b>{$a->symbol}{$a->discountamount}{$a->percentsymbol}{$a->perSeat}</b> discount will be applied to a purchase of <b>{$a->discountthreshold}</b> or more registrations.';
 
 $string['allowbanktransfer'] = 'Allow Bank/Email transfer payment';
 $string['transferinstructions'] = 'Bank/Email transfer payment instructions';
@@ -200,15 +208,15 @@ $string['totalenrolmentfee'] = 'Total enrolment fee:';
 $string['charge_enrolment'] = 'Enrolment in: ';
 $string['error'] = 'Error';
 
-$string['discount_value_success'] = 'The <b>{$a->symbol}{$a->discountAmount}</b> discount has been applied to the fee which is now <b>{$a->currencysign}<span class="localisedcost-untaxed">{$a->localisedcost_untaxed}</span></b>
+$string['discount_value_success'] = 'The <b>{$a->symbol}{$a->discountamount}</b> discount has been applied to the fee which is now <b>{$a->currencysign}<span class="localisedcost-untaxed">{$a->localisedcostuntaxed}</span></b>
     <span class="tax-container">
-        + {$a->currencysign}<span class="taxamountstring">{$a->tax_amount_string}</span> <span class="taxstring">{$a->tax_string}</span>
+        + {$a->currencysign}<span class="taxamountstring">{$a->taxamountstring}</span> <span class="taxstring">{$a->taxstring}</span>
         = <b>{$a->currencysign}<span class="localisedcost">{$a->localisedcost}</span></b>
     </span>{$a->currency}';
 
-$string['discount_percent_success'] = 'The <b>{$a->discountAmount}{$a->percentSymbol}</b> discount has been applied to the fee which is now <b>{$a->currencysign}<span class="localisedcost-untaxed">{$a->localisedcost_untaxed}</span></b>
+$string['discount_percent_success'] = 'The fee is now <b>{$a->currencysign}<span class="localisedcost-untaxed">{$a->localisedcostuntaxed}</span></b>
     <span class="tax-container">
-        + {$a->currencysign}<span class="taxamountstring">{$a->tax_amount_string}</span> <span class="taxstring">{$a->tax_string}</span>
+        + {$a->currencysign}<span class="taxamountstring">{$a->taxamountstring}</span> <span class="taxstring">{$a->taxstring}</span>
         = <b>{$a->currencysign}<span class="localisedcost">{$a->localisedcost}</span></b>
     </span>
-    {$a->currency}';
+    {$a->currency}  (<b>{$a->discountamount}{$a->percentsymbol}</b>) discount';

@@ -5,15 +5,15 @@
 
             $str                        = new stdClass;
             $str->coursefullname        = $coursefullname;
-            $str->localisedcost_untaxed = $localisedcost_untaxed;
-            $str->tax_string            = $tax_string;
-            $str->tax_amount_string     = $tax_amount_string;
+            $str->localisedcostuntaxed  = $localisedcostuntaxed;
+            $str->taxstring             = $taxstring;
+            $str->taxamountstring       = $taxamountstring;
             $str->localisedcost         = $localisedcost;
             $str->currency              = $instance->currency;
             $str->symbol                = $symbol;
             $str->currencysign          = $symbol;
 
-            if ($tax_string) {
+            if ($taxstring) {
                 echo get_string("feestring_taxed", "enrol_payment", $str);
             } else {
                 echo get_string("feestring_notax", "enrol_payment", $str);
@@ -21,21 +21,21 @@
 
             if ($instance->customint3 > 0) {
                 if ($instance->customint3 == 1) {
-                    $str->discountAmount    = $percentDisplay;
-                    $str->percentSymbol     = '%';
+                    $str->discountamount    = $percentdisplay;
+                    $str->percentsymbol     = '%';
                     $str->symbol            = '';
                 } else {
-                    $str->discountAmount    = $discountAmount;
-                    $str->percentSymbol     = '';
+                    $str->discountamount    = $discountamount;
+                    $str->percentsymbol     = '';
                     $str->symbol            = $symbol;
                 }
 
                 $str->currency          = $instance->currency;
-                $str->discountThreshold = $discountThreshold;
+                $str->discountthreshold = $discountthreshold;
             }
 
             // If discount codes are enabled.
-            if ($enableDiscountCodes) {
+            if ($enablediscountcodes) {
             ?>
                 <!-- Discount form. -->
                 <div id="discount-container">
@@ -49,13 +49,13 @@
                 </div>
             <?php
                 // We want to display these notifications only when the Discount threshold is 1.
-                if ($discountThreshold == 1) {
+                if ($discountthreshold == 1) {
             ?>
                     <!-- Notifications when applying the code. -->
                     <div class="row justify-content-md-center">
                         <div class="col-md-auto">
                             <!-- Success alert. -->
-                            <span class="discount-threshold-info alert alert-success" style="display: <?php echo ($discountCodeRequired ? 'none' : 'block') ?> ">
+                            <span class="discount-threshold-info alert alert-success" style="display: <?php echo ($discountcoderequired ? 'none' : 'block') ?> ">
                                 <?php
                                     // Percentage.
                                     if ($instance->customint3 == 1) {
@@ -73,20 +73,20 @@
                     </div>
             <?php
                 } // End if discount threshold validation.
-            } // End if $enableDiscountCodes.
+            } // End if $enablediscountcodes.
             ?>
 
-            <?php if($multiple_enabled): ?>
+            <?php if($multipleenabled): ?>
                 <br>
                 <!-- Notification -->
                 <?php
-                    if ($discountThreshold > 1 && $instance->customint3 > 0) {
+                    if ($discountthreshold > 1 && $instance->customint3 > 0) {
                         $str->perSeat = $instance->customint3 == 2 ? " per-person" : "";
                 ?>
                     <!-- Notifications when applying the code. -->
                     <div class="row justify-content-md-center">
                         <div class="col-md-auto">
-                            <span class="discount-threshold-info alert alert-success" style="display: <?php echo ($discountCodeRequired ? 'none' : 'block') ?> ">
+                            <span class="discount-threshold-info alert alert-success" style="display: <?php echo ($discountcoderequired ? 'none' : 'block') ?> ">
                                 <?php echo get_string("discountwillbeapplied", "enrol_payment", $str) ?>
                             </span>
                             <div class="enrol-payment-error-text alert alert-danger" style="display: none"></div>
@@ -124,10 +124,10 @@
                 <a id="success-modal-trigger"></a>
             </div>
 
-            <?php if($gateways_enabled == 2) { ?>
+            <?php if($gatewaysenabled == 2) { ?>
             <?php } ?>
 
-            <?php if($paypal_enabled) { ?>
+            <?php if($paypalenabled) { ?>
                 <div>
                     <form id="paypal-form" action="<?php echo $paypalurl ?>" method="post">
                         <input type="hidden" name="cmd" value="_xclick" />
@@ -138,21 +138,21 @@
                         <input type="hidden" name="quantity" value="1" />
                         <input type="hidden" name="on0" value="<?php print_string("user") ?>" />
                         <input type="hidden" name="os0" value="<?php echo $userfullname ?>" />
-                        <input id="paypal-custom" class="enrol-payment-custom" type="hidden" name="custom" value="<?php echo "$prepayToken" ?>" />
+                        <input id="paypal-custom" class="enrol-payment-custom" type="hidden" name="custom" value="<?php echo "$prepaytoken" ?>" />
 
                         <input type="hidden" name="currency_code" value="<?php p($instance->currency) ?>" />
-                        <input type="hidden" name="amount" value="<?php p($nonlocalised_untaxed_cost) ?>" />
+                        <input type="hidden" name="amount" value="<?php p($nonlocaliseduntaxedcost) ?>" />
 
                         <input type="hidden" name="for_auction" value="false" />
                         <input type="hidden" name="no_note" value="1" />
-                        <input type="hidden" name="no_shipping" value="<?php p($paypalShipping) ?>">
+                        <input type="hidden" name="no_shipping" value="<?php p($paypalshipping) ?>">
                         <input type="hidden" name="notify_url" value="<?php echo "$CFG->wwwroot/enrol/payment/ipn.php"?>" />
-                        <input type="hidden" name="return" value="<?php echo "$CFG->wwwroot/enrol/payment/return.php?id=$course->id&token=$prepayToken" ?>" />
+                        <input type="hidden" name="return" value="<?php echo "$CFG->wwwroot/enrol/payment/return.php?id=$course->id&token=$prepaytoken" ?>" />
                         <input type="hidden" name="cancel_return" value="<?php echo $CFG->wwwroot ?>" />
                         <input type="hidden" name="rm" value="2" />
                         <input type="hidden" name="cbt" value="<?php print_string("continuetocourse") ?>" />
-                        <input type="hidden" name="tax" value="<?php p($tax_amount) ?>" />
-                        <input type="hidden" name="prov" value="<?php p($USER->msn)?>" />
+                        <input type="hidden" name="tax" value="<?php p($taxamount) ?>" />
+                        <input type="hidden" name="prov" value="<?php p($USER->profile_field_taxregion)?>" />
 
                         <input type="hidden" name="first_name" value="<?php p($userfirstname) ?>" />
                         <input type="hidden" name="last_name" value="<?php p($userlastname) ?>" />
@@ -169,7 +169,7 @@
 
             <?php } ?>
 
-            <?php if($stripe_enabled) { ?>
+            <?php if($stripeenabled) { ?>
                 <p>
                 <?php print_string("or", "enrol_payment"); ?>
                 </p>
@@ -184,14 +184,14 @@
                         <input type="hidden" name="quantity" value="1" />
                         <input type="hidden" name="on0" value="<?php print_string("user") ?>" />
                         <input type="hidden" name="os0" value="<?php p($userfullname) ?>" />
-                        <input type="hidden" name="shippingRequired" value="<?php p($stripeShipping) ?>">
-                        <input id="stripe-custom" class="enrol-payment-custom" type="hidden" name="custom" value="<?php echo "$prepayToken" ?>" />
+                        <input type="hidden" name="shippingrequired" value="<?php p($stripeshipping) ?>">
+                        <input id="stripe-custom" class="enrol-payment-custom" type="hidden" name="custom" value="<?php echo "$prepaytoken" ?>" />
 
                         <input type="hidden" name="currency_code" value="<?php p($instance->currency) ?>" />
-                        <input type="hidden" name="amount" value="<?php p($nonlocalised_untaxed_cost) ?>" />
+                        <input type="hidden" name="amount" value="<?php p($nonlocaliseduntaxedcost) ?>" />
                         <input type="hidden" name="tax" value="0" />
-                        <input type="hidden" name="tax" value="<?php p($tax_amount) ?>" />
-                        <input type="hidden" name="prov" value="<?php p($USER->msn)?>" />
+                        <input type="hidden" name="tax" value="<?php p($taxamount) ?>" />
+                        <input type="hidden" name="prov" value="<?php p($USER->profile_field_taxregion)?>" />
 
                         <input type="hidden" name="for_auction" value="false" />
                         <input type="hidden" name="no_note" value="1" />
@@ -214,7 +214,7 @@
                 </div>
             <?php } ?>
 
-            <?php if ($gateways_enabled < 0) { ?>
+            <?php if ($gatewaysenabled < 0) { ?>
                 <p><?php print_string("nogatewayenabled", "enrol_payment"); ?></p>
             <?php } ?>
         </div>

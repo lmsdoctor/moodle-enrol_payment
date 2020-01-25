@@ -66,8 +66,8 @@ foreach ($_POST as $key => $value) {
 $data->payment_gross    = $data->amount;
 $data->payment_currency = $data->currency_code;
 
-$shippingRequired = required_param('shippingRequired', PARAM_INT);
-$data->no_shipping = !$shippingRequired;
+$shippingrequired = required_param('shippingrequired', PARAM_INT);
+$data->noshipping = !$shippingrequired;
 
 if (empty($data->custom)) {
     throw new moodle_exception('invalidrequest', 'core_error', '', null, 'Missing request param: custom');
@@ -83,7 +83,7 @@ $data->instanceid       = (int)$payment->instanceid;
 $multiple         = (bool)$payment->multiple;
 
 if ($multiple) {
-    $multiple_userids = explode(',',$payment->multiple_userids);
+    $multiple_userids = explode(',', $payment->multiple_userids);
     if(empty($multiple_userids)) {
         throw new moodle_exception('invalidrequest', 'core_error', '', null, "Multiple purchase specified, but no userids found.");
     }
@@ -111,37 +111,36 @@ if (! $context = context_course::instance($course->id, IGNORE_MISSING)) {
 
 $PAGE->set_context($context);
 
-if (! $plugin_instance = $DB->get_record("enrol", array("id" => $data->instanceid, "status" => 0))) {
+if (!$plugininstance = $DB->get_record("enrol", array("id" => $data->instanceid, "status" => 0))) {
     message_payment_error_to_admin("Not a valid instance id", $data);
     redirect($CFG->wwwroot);
 }
 
  // If currency is incorrectly set, then someone may be trying to cheat the system.
 
-if ($data->courseid != $plugin_instance->courseid) {
+if ($data->courseid != $plugininstance->courseid) {
     message_payment_error_to_admin("Course Id does not match to the course settings, received: ".$data->courseid, $data);
     redirect($CFG->wwwroot);
 }
 
 $plugin = enrol_get_plugin('payment');
 
-// Check that amount paid is the correct amount
-if ((float) $plugin_instance->cost <= 0.0 ) {
-    $original_cost = (float) $plugin->get_config('cost');
+// Check that amount paid is the correct amount.
+if ((float) $plugininstance->cost <= 0.0 ) {
+    $originalcost = (float) $plugin->get_config('cost');
 } else {
-    $original_cost = (float) $plugin_instance->cost;
+    $originalcost = (float) $plugininstance->cost;
 }
 
 // Use the same rounding of floats as on the enrol form.
-$original_cost = format_float($original_cost, 2, false);
+$originalcost = format_float($originalcost, 2, false);
 
-//What should the user have paid? Verify using info stored in the
-//database.
-$cost = helper::calculate_cost($plugin_instance, $payment, true)["subtotal_taxed"];
+// What should the user have paid? Verify using info stored in the database.
+$cost = helper::calculate_cost($plugininstance, $payment, true)["subtotaltaxed"];
 
 if ($data->amount + 0.01 < $cost) {
-    //This shouldn't happen unless the user spoofs their requests, but
-    //if it does, the discount is just invalid.
+    // This shouldn't happen unless the user spoofs their requests, but
+    // if it does, the discount is just invalid.
     \enrol_payment\util::message_paypal_error_to_admin("Amount paid is not enough ($data->amount < $cost))", $data);
     die;
 }
@@ -157,27 +156,26 @@ try {
     ));
     $charge = Stripe_Charge::create(array(
       "amount" => $cost * 100,
-      "currency" => $plugin_instance->currency,
+      "currency" => $plugininstance->currency,
       "card" => required_param('stripeToken', PARAM_RAW),
       "description" => get_string('charge_enrolment', 'enrol_payment') . required_param('item_name', PARAM_TEXT),
       "receipt_email" => required_param('stripeEmail', PARAM_EMAIL)
     ));
 
     // Send the file, this line will be reached if no error was thrown above.
-    $data->txn_id = $charge->balance_transaction;
+    $data->txnid = $charge->balance_transaction;
     $data->memo = $charge->id;
-    $data->payment_status = $charge->status;
-    $data->pending_reason = $charge->failure_message;
+    $data->paymentstatus = $charge->status;
+    $data->pendingreason = $charge->failure_message;
     $data->reason_code = $charge->failure_code;
 
 
-    // ALL CLEAR !
-
+    // All clear.
     $DB->insert_record("enrol_payment_transaction", $data);
 
-    if ($plugin_instance->enrolperiod) {
+    if ($plugininstance->enrolperiod) {
         $timestart = time();
-        $timeend   = $timestart + $plugin_instance->enrolperiod;
+        $timeend   = $timestart + $plugininstance->enrolperiod;
     } else {
         $timestart = 0;
         $timeend   = 0;
@@ -208,15 +206,15 @@ try {
             die;
         }
         // Enrol user.
-        $plugin->enrol_user($plugin_instance, $user->id, $plugin_instance->roleid, $timestart, $timeend);
+        $plugin->enrol_user($plugininstance, $user->id, $plugininstance->roleid, $timestart, $timeend);
 
-        if ($plugin_instance->customint1 != ENROL_DO_NOT_SEND_EMAIL) {
-            $plugin->email_welcome_message($plugin_instance, $user);
+        if ($plugininstance->customint1 != ENROL_DO_NOT_SEND_EMAIL) {
+            $plugin->email_welcome_message($plugininstance, $user);
         }
 
         // If group selection is not null
-        if ($plugin_instance->customint2) {
-            groups_add_member($plugin_instance->customint2, $user);
+        if ($plugininstance->customint2) {
+            groups_add_member($plugininstance->customint2, $user);
         }
 
         if (!empty($mailstudents)) {
@@ -291,16 +289,6 @@ try {
         redirect($destination, get_string('paymentthanks', '', $fullname));
     }
 
-    //if (is_enrolled($context, null, '', true)) {
-
-    //} else {   // Somehow they aren't enrolled yet!
-    //    $PAGE->set_url($destination);
-    //    echo $OUTPUT->header();
-    //    $a = new stdClass();
-    //    $a->teacher = get_string('defaultcourseteacher');
-    //    $a->fullname = $fullname;
-    //    notice(get_string('paymentsorry', '', $a), $destination);
-    //}
 } catch (\Stripe\Error\Card $e) {
     $PAGE->set_url($destination);
     echo $OUTPUT->header();
@@ -337,9 +325,6 @@ catch (Stripe_InvalidRequestError $e) {
     echo $e->getMessage();
     echo '</pre>';
 }
-
-
-    // --- HELPER FUNCTIONS --------------------------------------------------------------------------------------!
 
 /**
  * Send payment error message to the admin.
