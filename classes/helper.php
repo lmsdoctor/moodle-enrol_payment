@@ -74,11 +74,11 @@ class helper {
     /**
      * Calculate cost.
      *
-     * @param $instance enrol_payment instance
-     * @param $payment payment object from enrol_payment_session
-     * @return object with "subtotal" and "subtotallocalised" fields.
+     * @param stdClass $instance enrol_payment instance
+     * @param stdClass $payment payment object from enrol_payment_session
+     * @return array
      */
-    public static function calculate_cost($instance, $payment, $addtax = false) {
+    public static function calculate_cost(stdClass $instance, stdClass $payment, bool $addtax = false) {
         $discountthreshold = $instance->customint8;
         $discountcoderequired = $instance->customint7;
         $discountamount = 0.0;
@@ -87,11 +87,11 @@ class helper {
         $subtotal = $cost;
 
         if ($discountamount < 0.00) {
-            throw new \Exception(get_string("negativediscount", "enrol_payment"));
+            throw new moodle_exception('negativediscount', 'enrol_payment');
         }
 
         if ($payment->units < 1) {
-            throw new \Exception(get_string("notenoughunits", "enrol_payment"));
+            throw new moodle_exception('notenoughunits', 'enrol_payment');
         }
 
         // If conditions have been met for a discount, apply it.
