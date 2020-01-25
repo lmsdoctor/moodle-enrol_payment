@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<libraries>
+    <library>
+        <location>Stripe</location>
+        <name>Stripe</name>
+        <version>1.18.0</version>
+        <license>MIT</license>
+    </library>
+</libraries>
