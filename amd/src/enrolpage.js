@@ -317,7 +317,6 @@ function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner, Ajax, 
                             symbol: enrolPage.symbol,
                         },
                         done: function(response) {
-                            console.log(response);
                             self.handleEmailSubmitAJAXResponse(response, enrolPage);
                         }.bind(this),
                         fail: Notification.exception
