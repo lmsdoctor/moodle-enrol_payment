@@ -154,11 +154,28 @@ class helper {
         return $ret;
     }
 
+    /**
+     * Calculate the total discount of a percentage.
+     *
+     * @param  int $total
+     * @param  int $discount
+     * @return int
+     */
     protected static function calculate_discount($total, $discount) {
         return $total * $discount / 100;
     }
 
-    public static function get_object_of_costs($ret, $symbol, $currency, $units, $taxstring) {
+    /**
+     * Returns and object holding the cost values.
+     *
+     * @param  array  $ret
+     * @param  string $symbol
+     * @param  string $currency
+     * @param  int    $units
+     * @param  string $taxstring
+     * @return [type]
+     */
+    public static function get_object_of_costs(array $ret, string $symbol, string $currency, int $units, string $taxstring) {
 
         $data                   = new \stdClass;
         $data->symbol           = $symbol;
@@ -174,19 +191,68 @@ class helper {
 
     }
 
-    public static function get_percentage_calculation_string($a) {
-        return "{$a->symbol}{$a->originalcost} - {$a->symbol}{$a->unitdiscount} ({$a->percentdiscount}% discount) × {$a->units} {$a->taxstring} = <b>{$a->symbol}{$a->subtotaltaxed}</b> {$a->currency}";
+    /**
+     * Check if the value is negative.
+     *
+     * @param  float   $number
+     * @return boolean
+     */
+    private static function is_negative_value(float $number) {
+        if ($number < 0.00) {
+            throw new moodle_exception('negativediscount', 'enrol_payment');
+        }
     }
 
-    public static function get_percentage_discount_string($a) {
+    /**
+     * Check if units are 0.
+     *
+     * @param  int    $units
+     * @throws moodle_exception
+     */
+    private static function not_enough_units(int $units) {
+        if (empty($units)) {
+            throw new moodle_exception('notenoughunits', 'enrol_payment');
+        }
+    }
+
+    /**
+     * Returns the precentage calculation string.
+     *
+     * @param  stdClass $a
+     * @return string
+     */
+    public static function get_percentage_calculation_string(stdClass $a) {
+        return "{$a->symbol}{$a->originalcost} - {$a->symbol}{$a->unitdiscount} ({$a->percentdiscount}% discount) × {$a->units} {$a->taxstring}
+                = <b>{$a->symbol}{$a->subtotaltaxed}</b> {$a->currency}";
+    }
+
+    /**
+     * Returns the percentage discount string.
+     *
+     * @param  stdClass $a
+     * @return string
+     */
+    public static function get_percentage_discount_string(stdClass $a) {
         return "The {$a->symbol}{$a->percentdiscount}% discount has been applied.";
     }
 
-    public static function get_value_calculation_string($a) {
+    /**
+     * Returns the value calculation string.
+     *
+     * @param  stdClass $a
+     * @return string
+     */
+    public static function get_value_calculation_string(stdClass $a) {
         return "{$a->symbol}{$a->originalcost} - {$a->symbol}{$a->discountvalue} discount × {$a->units} {$a->taxstring} = <b>{$a->symbol}{$a->subtotaltaxed}</b> {$a->currency}";
     }
 
-    public static function get_value_discount_string($a) {
+    /**
+     * Returns the value discount string.
+     *
+     * @param  stdClass $a
+     * @return string
+     */
+    public static function get_value_discount_string(stdClass $a) {
         return "The {$a->symbol}{$a->discountvalue} discount per-seat has been applied.";
     }
 
@@ -254,7 +320,7 @@ class helper {
     /**
      * Look for users using email addresses.
      *
-     * @param  string $emails
+     * @param  array $emails
      * @return array
      */
     public static function get_moodle_users_by_emails($emails) {
