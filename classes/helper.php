@@ -29,6 +29,10 @@ namespace enrol_payment;
 
 defined('MOODLE_INTERNAL') || die();
 
+use moodle_exception;
+use moodle_url;
+use stdClass;
+
 /**
  * Forum subscription manager.
  *
