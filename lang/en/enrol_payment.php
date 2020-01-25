@@ -220,3 +220,6 @@ $string['discount_percent_success'] = 'The fee is now <b>{$a->currencysign}<span
         = <b>{$a->currencysign}<span class="localisedcost">{$a->localisedcost}</span></b>
     </span>
     {$a->currency}  (<b>{$a->discountamount}{$a->percentsymbol}</b>) discount';
+
+$string['paypalmixeduse'] = 'Mixed-use PayPal account';
+$string['paypalmixeduse_desc'] = 'If other products then enrolments are processes via the PayPal account (e.g., videos, books, etc) than tick the checkbox';

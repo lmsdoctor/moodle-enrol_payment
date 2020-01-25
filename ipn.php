@@ -79,10 +79,13 @@ foreach ($_POST as $key => $value) {
 }
 
 if (empty($data->custom)) {
-    // ... throw new moodle_exception('invalidrequest', 'core_error', '', null, 'Missing request param: custom');
-    // The line above has been commented out because PayPal interprets the moodle_exception
-    // with an HTTP response code 500 when anything else but a course is purchased.
-    die();
+    // If the this is a mixed-use paypal, then die.
+    if (get_config('paypalmixeduse', 'enrol_payment')) {
+        // ... PayPal interprets the moodle_exception
+        // with an HTTP response code 500 when anything else but a course is purchased.
+        throw new moodle_exception('invalidrequest', 'core_error', '', null, 'Missing request param: custom');
+        die();
+    }
 }
 
 $payment = helper::get_payment_from_token($data->custom);
@@ -114,7 +117,7 @@ $context = context_course::instance($course->id, MUST_EXIST);
 
 $PAGE->set_context($context);
 
-$plugininstance = $DB->get_record("enrol", array("id" => $data->instanceid, "enrol" => "payment", "status" => 0), "*", MUST_EXIST);
+$plugininstance = $DB->get_record("enrol", array("id" => $data->instanceid, "enrol" => "payment", "status" => 0));
 $plugin = enrol_get_plugin('payment');
 
 // Open a connection back to PayPal to validate the data

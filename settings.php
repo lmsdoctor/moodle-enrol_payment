@@ -44,6 +44,13 @@ if ($ADMIN->fulltree) {
         PARAM_EMAIL
     ));
 
+    $settings->add(new admin_setting_configcheckbox(
+        'enrol_payment/paypalmixeduse',
+        get_string('paypalmixeduse', 'enrol_payment'),
+        get_string('paypalmixeduse_desc', 'enrol_payment'),
+        0
+    ));
+
     $settings->add(new admin_setting_configtext(
         'enrol_payment/stripesecretkey',
         get_string('stripesecretkey', 'enrol_payment'),
