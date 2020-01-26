@@ -168,11 +168,12 @@ function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner, Ajax, 
 
                 minus.click(function() {
                     //Pop the whole email input line off the DOM.
-                    $(this).parent().remove();
+                    console.log($(this).parent());
+                    $(this).parent().parent().remove();
 
                     //Add a plus icon to the last line, if it's not already there
-                    if (! $(".mr-email-line:last .plus-container").length) {
-                        $(".mr-email-line:last").append(self.makePlusSign(mdlstr));
+                    if (! $(".form-group:last .plus-container").length) {
+                        $(".form-group:last").append(self.makePlusSign(mdlstr));
                         self.addPlusClickHandler($('.plus-container'), mdlstr);
                     }
 
@@ -183,11 +184,10 @@ function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner, Ajax, 
 
             /**
              * Returns HTML for a plus icon
-             *
              */
             makePlusSign: function(mdlstr) {
-                var plusSign = "<div class=\"plus-container\" title=\"" + mdlstr["addaregistrant"] + "\"><img src=\""
-                             + MoodleCfg.wwwroot + "/enrol/payment/pix/user_add.gif\" class=\"plus\"></div>";
+                var title = mdlstr["addaregistrant"];
+                var plusSign = '<div class="plus-container" title="' + title + '"><i style="color: green;" class="icon fa fa-user-plus"></i></div>';
                 return plusSign;
             },
 
@@ -201,8 +201,8 @@ function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner, Ajax, 
              */
             makePlusAndMinusSigns: function(n, mdlstr) {
                 var plusSign = this.makePlusSign(mdlstr);
-                var minusSign = "<div class=\"minus-container\" title=\"" + mdlstr["removearegistrant"] + "\"><img src=\""
-                             + MoodleCfg.wwwroot + "/enrol/payment/pix/user_delete.gif\" class=\"minus\"></div>";
+                var title = mdlstr["removearegistrant"];
+                var minusSign = '<div class="minus-container" title="' + title + '"><i style="color: red;" class="icon fa fa-user-times fa-fw"></i></div>';
                 if (n > 1) {
                     return plusSign + minusSign;
                 } else {
@@ -234,15 +234,17 @@ function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner, Ajax, 
                 self.nextEmailID = self.nextEmailID + 1;
 
                 var inputID = "\"multiple-registration-email-" + n + "\"";
-                var div = "<div class=\"mr-email-line\">";
-                var label = "<div class=\"mr-email-label-container\"><label for=" + inputID + ">"
-                          + "Email <span class=\"email-num\">" + m + "</span>:&nbsp;&nbsp;&nbsp;</label></div>";
-                var emailEntryLine = "<input id=" + inputID + " type=\"text\" class=\"multiple-registration-email\" />";
-                var endDiv = "</div>";
+                var div2 = '<div class="form-inline mr-email-line">'
+                            + '<div class="form-group ">'
+                                + '<label for=' + inputID + ' class="mb-2 col-form-label">Email <span class="email-num"> ' + m + ' </span></label>'
+                                + '<div class="mb-2 mx-sm-3">'
+                                    + '<input id=' + inputID + ' type="text" class="form-control multiple-registration-email" placeholder="Enter an email address">'
+                                + '</div>';
+                var endDiv = "</div></div>";
 
                 // Passing n into makePlusAndMinusSigns works because the first
                 // row never gets a minus.
-                return div + label + emailEntryLine + this.makePlusAndMinusSigns(n, mdlstr) + endDiv;
+                return div2 + this.makePlusAndMinusSigns(n, mdlstr) + endDiv;
             },
 
             checkoutConfirmModal: function(enrolPage, successmessage) {

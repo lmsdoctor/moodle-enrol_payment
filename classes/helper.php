@@ -225,7 +225,12 @@ class helper {
      * @param  stdClass $a
      * @return string
      */
-    public static function get_percentage_calculation_string(stdClass $a) {
+    public static function get_percentage_calculation_string(stdClass $a, bool $codegiven, bool $hasdiscount) {
+
+        if (!$codegiven || !$hasdiscount) {
+            return "{$a->symbol}{$a->originalcost} × {$a->units} {$a->taxstring}
+                = <b>{$a->symbol}{$a->subtotaltaxed}</b> {$a->currency}";
+        }
         return "{$a->symbol}{$a->originalcost} - {$a->symbol}{$a->unitdiscount} ({$a->percentdiscount}% discount) × {$a->units} {$a->taxstring}
                 = <b>{$a->symbol}{$a->subtotaltaxed}</b> {$a->currency}";
     }
@@ -236,7 +241,11 @@ class helper {
      * @param  stdClass $a
      * @return string
      */
-    public static function get_percentage_discount_string(stdClass $a) {
+    public static function get_percentage_discount_string(stdClass $a, bool $codegiven, bool $hasdiscount) {
+
+        if (!$codegiven || !$hasdiscount) {
+            return '';
+        }
         return "The {$a->symbol}{$a->percentdiscount}% discount has been applied.";
     }
 
