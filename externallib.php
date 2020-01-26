@@ -168,6 +168,9 @@ class enrol_payment_external extends external_api {
             helper::update_payment_data(true, $ret['users'], $payment);
             $instance = $DB->get_record('enrol', ['id' => $params['enrolid']]);
 
+            // Set the discount threshold to validate when showing the discount text.
+            $threshold = $instance->customint8;
+
             // Tack new subtotals onto return data.
             $ret = array_merge($ret, helper::calculate_cost($instance, $payment, true));
 
@@ -186,8 +189,12 @@ class enrol_payment_external extends external_api {
             if ($instance->customint3 == 1) {
 
                 $strings = new \stdClass;
-                $strings->discount = helper::get_percentage_discount_string($objcosts);
-                $strings->calculation = helper::get_percentage_calculation_string($objcosts);
+
+                // This string should only be displayed for the multienrollment and if the code
+                // was given, otherwise we don't display the string.
+                $hasdiscount = (count($ret['users']) >= $threshold);
+                $strings->discount = helper::get_percentage_discount_string($objcosts, $payment->codegiven, $hasdiscount);
+                $strings->calculation = helper::get_percentage_calculation_string($objcosts, $payment->codegiven, $hasdiscount);
 
                 $ret['successmessage'] = get_string('multipleregistrationconfirmuserlist', 'enrol_payment')
                 . implode('<li>', $stremails)
@@ -256,7 +263,7 @@ class enrol_payment_external extends external_api {
         try {
             $instance = $DB->get_record('enrol', ['id' => $params['enrolid']]);
             $payment = helper::get_payment_from_token($params['prepaytoken']);
-            update_payment_data(false, null, $payment);
+            helper::update_payment_data(false, null, $payment);
             $ret = helper::calculate_cost($instance, $payment, true);
             $ret['success'] = true;
         } catch (Exception $e) {
