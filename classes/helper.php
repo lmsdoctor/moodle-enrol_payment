@@ -154,7 +154,8 @@ class helper {
         $ret['ocdiscounted'] = format_float($ocdiscounted, 2, true);
         $ret['percentdiscount'] = floor($normalizeddiscount * 100);
         $ret['originalunitprice'] = format_float($cost, 2, true);
-        $ret['percentdiscountunit'] = format_float(self::calculate_discount($ret['originalunitprice'], $ret['percentdiscount']), 2, true);
+        $percentdiscountunit = self::calculate_discount($ret['originalunitprice'], $ret['percentdiscount']);
+        $ret['percentdiscountunit'] = format_float($percentdiscountunit, 2, true);
         $ret['discountvalue'] = format_float($discountamount, 2);
 
         return $ret;
@@ -223,7 +224,7 @@ class helper {
     }
 
     /**
-     * Returns the precentage calculation string.
+     * Returns the percentage calculation string.
      *
      * @param  stdClass $a
      * @return string
@@ -234,8 +235,8 @@ class helper {
             return "{$a->symbol}{$a->originalcost} × {$a->units} {$a->taxstring}
                 = <b>{$a->symbol}{$a->subtotaltaxed}</b> {$a->currency}";
         }
-        return "{$a->symbol}{$a->originalcost} - {$a->symbol}{$a->unitdiscount} ({$a->percentdiscount}% discount) × {$a->units} {$a->taxstring}
-                = <b>{$a->symbol}{$a->subtotaltaxed}</b> {$a->currency}";
+        return "{$a->symbol}{$a->originalcost} - {$a->symbol}{$a->unitdiscount} ({$a->percentdiscount}% discount)
+        × {$a->units} {$a->taxstring} = <b>{$a->symbol}{$a->subtotaltaxed}</b> {$a->currency}";
     }
 
     /**
@@ -259,7 +260,8 @@ class helper {
      * @return string
      */
     public static function get_value_calculation_string(stdClass $a) {
-        return "{$a->symbol}{$a->originalcost} - {$a->symbol}{$a->discountvalue} discount × {$a->units} {$a->taxstring} = <b>{$a->symbol}{$a->subtotaltaxed}</b> {$a->currency}";
+        return "{$a->symbol}{$a->originalcost} - {$a->symbol}{$a->discountvalue} discount
+        × {$a->units} {$a->taxstring} = <b>{$a->symbol}{$a->subtotaltaxed}</b> {$a->currency}";
     }
 
     /**

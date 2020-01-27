@@ -378,10 +378,11 @@ class enrol_payment_plugin extends enrol_plugin {
             return ob_get_clean();
         }
 
+        $stripelogourl = null;
         if ($this->get_config('stripelogo')) {
-            $stripelogourl = (string) moodle_url::make_pluginfile_url(1, "enrol_payment", "stripelogo", null, "/", str_replace('/', '', $this->get_config('stripelogo')));
-        } else {
-            $stripelogourl = null;
+            $stripelogourl = (string) moodle_url::make_pluginfile_url(
+                1, "enrol_payment", "stripelogo", null, "/", str_replace('/', '', $this->get_config('stripelogo'))
+            );
         }
 
         $shortname = format_string($course->shortname, true, array('context' => $context));
@@ -389,18 +390,16 @@ class enrol_payment_plugin extends enrol_plugin {
         $strcourses = get_string("courses");
 
         // Pass $view=true to filter hidden caps if the user cannot see them.
+        $teacher = false;
         if ($users = get_users_by_capability($context, 'moodle/course:update', 'u.*', 'u.id ASC',
                                              '', '', '', '', false, true)) {
             $users = sort_by_roleassignment_authority($users, $context);
             $teacher = array_shift($users);
-        } else {
-            $teacher = false;
         }
 
+        $originalcost = (float) $instance->cost;
         if ( (float) $instance->cost <= 0 ) {
             $originalcost = (float) $this->get_config('cost');
-        } else {
-            $originalcost = (float) $instance->cost;
         }
 
         $taxstring = "";
@@ -414,11 +413,10 @@ class enrol_payment_plugin extends enrol_plugin {
             echo '<p>' . get_string('nocost', 'enrol_payment') . '</p>';
         } else {
 
-            $wwwroot = $CFG->wwwroot;
-
             $multipleenabled = ($this->get_config('allowmultipleenrol') && $instance->customint5);
             $paypalenabled = (bool) trim($this->get_config('paypalbusiness'));
-            $stripeenabled = ((bool) trim($this->get_config('stripesecretkey'))) && ((bool) trim($this->get_config('stripepublishablekey')));
+            $stripesecret = $this->get_config('stripesecretkey');
+            $stripeenabled = ((bool) trim($stripesecret)) && ((bool) trim($this->get_config('stripepublishablekey')));
             $gatewaysenabled = ((int) $paypalenabled) + ((int) $stripeenabled);
             $stripepublishablekey = $stripeenabled ? $this->get_config('stripepublishablekey') : null;
 
@@ -864,7 +862,8 @@ function enrol_payment_pluginfile($course, $cm, $context, $filearea, $args, $for
         return false;
     }
 
-    // Make sure the user is logged in and has access to the module (plugins that are not course modules should leave out the 'cm' part).
+    // Make sure the user is logged in and has access to the module
+    // (plugins that are not course modules should leave out the 'cm' part).
     require_login($course, true, $cm);
 
     // Extract the filename / filepath from the $args array.
