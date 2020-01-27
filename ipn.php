@@ -41,6 +41,7 @@ require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->dirroot . '/group/lib.php');
 
 use enrol_payment\helper;
+use enrol_payment\util;
 
 // PayPal does not like when we return error messages here,
 // the custom handler just logs exceptions and stops.
@@ -52,7 +53,7 @@ if (!enrol_is_enabled('payment')) {
     throw new moodle_exception('errdisabled', 'enrol_payment');
 }
 
-// Keep out casual intruders
+// Keep out casual intruders.
 if (empty($_POST) or !empty($_GET)) {
     http_response_code(400);
     echo get_string('invalidrequest', 'core_error');
@@ -105,8 +106,8 @@ $data->timeupdated      = time();
 
 $multiple         = (bool)$payment->multiple;
 if ($multiple) {
-    $multiple_userids = explode(',',$payment->multiple_userids);
-    if(empty($multiple_userids)) {
+    $multipleuserids = explode(',', $payment->multipleuserids);
+    if (empty($multipleuserids)) {
         throw new moodle_exception('invalidrequest', 'core_error', '', null, "Multiple purchase specified, but no userids found.");
     }
 }
@@ -120,7 +121,7 @@ $PAGE->set_context($context);
 $plugininstance = $DB->get_record("enrol", array("id" => $data->instanceid, "enrol" => "payment", "status" => 0));
 $plugin = enrol_get_plugin('payment');
 
-// Open a connection back to PayPal to validate the data
+// Open a connection back to PayPal to validate the data.
 $paypaladdr = empty($CFG->usepaypalsandbox) ? 'ipnpb.paypal.com' : 'ipnpb.sandbox.paypal.com';
 $c = new curl();
 $options = array(
@@ -143,16 +144,16 @@ if (strlen($result) > 0) {
     if (strcmp($result, "VERIFIED") == 0) {
 
         // Check the paymentstatus and payment_reason
-        // If status is not completed or pending then unenrol the student if already enrolled and notify admin
+        // If status is not completed or pending then unenrol the student if already enrolled and notify admin.
         if ($data->paymentstatus != "Completed" and $data->paymentstatus != "Pending") {
-            if($multiple) {
-                foreach($multiple_userids as $muid) {
+            if ($multiple) {
+                foreach ($multipleuserids as $muid) {
                     $plugin->unenrol_user($plugininstance, $muid);
                 }
             } else {
                 $plugin->unenrol_user($plugininstance, $data->userid);
             }
-            \enrol_payment\util::message_paypal_error_to_admin("Status not completed or pending. User unenrolled from course",
+            util::message_paypal_error_to_admin("Status not completed or pending. User unenrolled from course",
                                                               $data);
             die;
         }
@@ -219,12 +220,12 @@ if (strlen($result) > 0) {
             die;
         }
 
-        if (!$user = $DB->get_record('user', array('id'=>$data->userid))) {   // Check that user exists
+        if (!$user = $DB->get_record('user', array('id' => $data->userid))) {   // Check that user exists.
             \enrol_payment\util::message_paypal_error_to_admin("User $data->userid doesn't exist", $data);
             die;
         }
 
-        if (!$course = $DB->get_record('course', array('id'=>$data->courseid))) { // Check that course exists
+        if (!$course = $DB->get_record('course', array('id' => $data->courseid))) { // Check that course exists.
             \enrol_payment\util::message_paypal_error_to_admin("Course $data->courseid doesn't exist", $data);
             die;
         }
@@ -267,9 +268,9 @@ if (strlen($result) > 0) {
             $timeend   = 0;
         }
 
-        if(!$multiple) {
+        if (!$multiple) {
             // Make a singleton array so that we can do this whole thing in a foreach loop.
-            $multiple_userids = [$user->id];
+            $multipleuserids = [$user->id];
         }
 
         $mailstudents = $plugin->get_config('mailstudents');
@@ -277,7 +278,7 @@ if (strlen($result) > 0) {
         $mailadmins   = $plugin->get_config('mailadmins');
         $shortname = $course->shortname;
 
-        // Pass $view=true to filter hidden caps if the user cannot see them
+        // Pass $view=true to filter hidden caps if the user cannot see them.
         if ($users = get_users_by_capability($context, 'moodle/course:update', 'u.*', 'u.id ASC',
                                              '', '', '', '', false, true)) {
             $users = sort_by_roleassignment_authority($users, $context);
@@ -286,8 +287,8 @@ if (strlen($result) > 0) {
             $teacher = false;
         }
 
-        foreach($multiple_userids as $uid) {
-            if (!$user = $DB->get_record('user', array('id'=>$uid))) {   // Check that user exists
+        foreach ($multipleuserids as $uid) {
+            if (!$user = $DB->get_record('user', array('id' => $uid))) {   // Check that user exists.
                 \enrol_payment\util::message_paypal_error_to_admin("User $data->userid doesn't exist", $data);
                 die;
             }
@@ -364,7 +365,8 @@ if (strlen($result) > 0) {
             }
         }
 
-    } else if (strcmp ($result, "INVALID") == 0) { // ERROR
+    } else if (strcmp ($result, "INVALID") == 0) {
+        // ... error.
         $DB->insert_record("enrol_payment_transaction", $data, false);
         throw new moodle_exception('erripninvalid', 'enrol_payment', '', null, json_encode($data));
     }
