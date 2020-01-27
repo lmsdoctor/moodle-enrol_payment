@@ -25,7 +25,8 @@
 
 namespace paymentlib;
 
-require_once(dirname(__FILE__) . '/../../config.php');
+defined('MOODLE_INTERNAL') || die();
+
 require_once("$CFG->libdir/moodlelib.php");
 
 global $DB;
