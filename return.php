@@ -32,9 +32,9 @@ $id = required_param('id', PARAM_INT);
 $token = required_param('token', PARAM_RAW);
 $userid = $USER->id;
 $payment = helper::get_payment_from_token($token);
-$purchasing_for_self = true;
+$purchasingforself = true;
 
-if (!$course = $DB->get_record("course", array("id"=>$id))) {
+if (!$course = $DB->get_record("course", array("id" => $id))) {
     redirect($CFG->wwwroot);
 }
 
@@ -50,20 +50,20 @@ if (!empty($SESSION->wantsurl)) {
     $destination = "$CFG->wwwroot/course/view.php?id=$course->id";
 }
 
-if($payment->multiple) {
-    $userids = explode(',',$payment->multiple_userids);
+if ($payment->multiple) {
+    $userids = explode(',', $payment->multiple_userids);
 
-    if(!in_array(strval($userid), $userids)) {
-        $purchasing_for_self = false;
+    if (!in_array(strval($userid), $userids)) {
+        $purchasingforself = false;
     }
 }
 
 $fullname = format_string($course->fullname, true, array('context' => $context));
 
-if($purchasing_for_self) {
-    if (is_enrolled($context, NULL, '', true)) { // TODO: use real paypal check
+if ($purchasingforself) {
+    if (is_enrolled($context, null, '', true)) { // TODO: use real paypal check.
         redirect($destination, get_string('paymentthanks', '', $fullname));
-    } else {   /// IPN is slow, and doesn't always complete immediately...
+    } else {   // IPN is slow, and doesn't always complete immediately...
         $ajaxurl = "$CFG->wwwroot/enrol/payment/ajax/checkEnrol.php";
 
         $PAGE->requires->css('/enrol/payment/style/styles.css');

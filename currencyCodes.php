@@ -24,13 +24,15 @@
  * @author     Seth Yoder <seth.a.yoder@gmail.com>
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * Return currency codes.
  *
  * @return mix
  */
 function enrol_payment_get_currency_codes() {
-    $currencyCodes = <<<EOF
+    $currencycodes = <<<EOF
     {
         "USD": {
             "symbol": "$",
@@ -1096,14 +1098,13 @@ function enrol_payment_get_currency_codes() {
         }
     }
 EOF;
-    return json_decode($currencyCodes, true);
+    return json_decode($currencycodes, true);
 }
 
 function enrol_payment_get_currency_symbol($code) {
-    $currencyCodes = enrol_payment_get_currency_codes();
-    if (array_key_exists($code, $currencyCodes)) {
-        return $currencyCodes[$code]["symbol_native"];
-    } else {
-        return "";
+    $currencycodes = enrol_payment_get_currency_codes();
+    if (array_key_exists($code, $currencycodes)) {
+        return $currencycodes[$code]["symbol_native"];
     }
+    return "";
 }

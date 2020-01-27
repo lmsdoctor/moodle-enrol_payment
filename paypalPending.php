@@ -25,6 +25,8 @@
 
 require(__DIR__ . '/../../config.php');
 
+require_login();
+
 $id = required_param('id', PARAM_INT);
 $reason = required_param('reason', PARAM_TEXT);
 

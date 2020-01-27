@@ -83,8 +83,8 @@ $data->instanceid       = (int)$payment->instanceid;
 $multiple         = (bool)$payment->multiple;
 
 if ($multiple) {
-    $multiple_userids = explode(',', $payment->multiple_userids);
-    if(empty($multiple_userids)) {
+    $multipleuserids = explode(',', $payment->multipleuserids);
+    if (empty($multipleuserids)) {
         throw new moodle_exception('invalidrequest', 'core_error', '', null, "Multiple purchase specified, but no userids found.");
     }
 }
@@ -96,7 +96,7 @@ if (! $user = $DB->get_record("user", array("id" => $data->userid))) {
     redirect($CFG->wwwroot);
 }
 
-// For later redirect
+// For later redirect.
 $purchaser = $user;
 
 if (! $course = $DB->get_record("course", array("id" => $data->courseid))) {
@@ -182,8 +182,8 @@ try {
     }
 
     if (!$multiple) {
-        //Make a singleton array so that we can do this whole thing in a foreach loop.
-        $multiple_userids = [$user->id];
+        // Make a singleton array so that we can do this whole thing in a foreach loop.
+        $multipleuserids = [$user->id];
     }
 
     $mailstudents = $plugin->get_config('mailstudents');
@@ -200,8 +200,8 @@ try {
         $teacher = false;
     }
 
-    foreach($multiple_userids as $uid) {
-        if (!$user = $DB->get_record('user', array('id'=>$uid))) {   // Check that user exists
+    foreach ($multipleuserids as $uid) {
+        if (!$user = $DB->get_record('user', array('id' => $uid))) {   // Check that user exists.
             \enrol_payment\util::message_paypal_error_to_admin("User $data->userid doesn't exist", $data);
             die;
         }
@@ -212,7 +212,7 @@ try {
             $plugin->email_welcome_message($plugininstance, $user);
         }
 
-        // If group selection is not null
+        // If group selection is not null.
         if ($plugininstance->customint2) {
             groups_add_member($plugininstance->customint2, $user);
         }
@@ -276,8 +276,8 @@ try {
     }
 
     $fullname = $course->fullname;
-    if($multiple) {
-        if(in_array(strval($purchaser->id), $multiple_userids)) {
+    if ($multiple) {
+        if (in_array(strval($purchaser->id), $multipleuserids)) {
             $destination = "$CFG->wwwroot/course/view.php?id=$course->id";
             redirect($destination, get_string('paymentthanks', '', $fullname));
         } else {

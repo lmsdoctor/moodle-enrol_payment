@@ -20,7 +20,7 @@ define(['jquery', 'enrol_payment/spin', 'core/str', 'core/config', 'core/ajax'],
                         window.location.href = dest;
                     } else if (res['result'] === false && res['reason']) {
                         window.location.href = MoodleCfg.wwwroot +
-                                              "/enrol/payment/paypalPending.php?id=" +
+                                              "/enrol/payment/paypalpending.php?id=" +
                                               courseid.toString() + "&reason=" + res['reason'];
                     } else {
                         return;
