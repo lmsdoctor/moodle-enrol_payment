@@ -1,4 +1,19 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Float2 type form element
  *
@@ -9,6 +24,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
 global $CFG;
 
 require_once("HTML/QuickForm/text.php");
@@ -27,11 +43,11 @@ require_once($CFG->libdir . "/form/templatable_form_element.php");
 class MoodleQuickForm_float2 extends HTML_QuickForm_text implements templatable {
     use templatable_form_element;
 
-    /** @var string html for help button, if empty then no help */
-    var $_helpbutton='';
+    // String html for help button, if empty then no help.
+    var $_helpbutton = '';
 
-    /** @var bool if true label will be hidden */
-    var $_hiddenLabel=false;
+    // Bool if true label will be hidden.
+    var $_hiddenLabel = false;
 
     /** @var bool Whether to force the display of this element to flow LTR. */
     protected $forceltr = false;

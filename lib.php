@@ -385,7 +385,7 @@ class enrol_payment_plugin extends enrol_plugin {
             );
         }
 
-        $shortname = format_string($course->shortname, true, array('context' => $context));
+        $shortname = format_string($course->shortname, true, ['context' => $context]);
         $strloginto = get_string("loginto", "", $shortname);
         $strcourses = get_string("courses");
 
