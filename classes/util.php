@@ -28,9 +28,11 @@ defined('MOODLE_INTERNAL') || die();
 
 final class util {
 
-    public static function myURLEncode($string) {
+    public static function my_url_encode($string) {
         $entities = array('!', '*', "'", "(", ")", ";", ":", "@", "&", "=", "+", "$", ",", "/", "?", "%", "#", "[", "]");
-        $replacements = array('%21', '%2A', '%27', '%28', '%29', '%3B', '%3A', '%40', '%26', '%3D', '%2B', '%24', '%2C', '%2F', '%3F', '%25', '%23', '%5B', '%5D');
+        $replacements = array(
+                '%21', '%2A', '%27', '%28', '%29', '%3B', '%3A',
+                '%40', '%26', '%3D', '%2B', '%24', '%2C', '%2F', '%3F', '%25', '%23', '%5B', '%5D');
         return str_replace($entities, $replacements, $string);
     }
 
@@ -73,11 +75,11 @@ final class util {
         return function($ex) {
             $info = get_exception_info($ex);
 
-            $logerrmsg = "enrol_payment IPN exception handler: ".$info->message;
+            $logerrmsg = "enrol_payment IPN exception handler: " . $info->message;
             if (debugging('', DEBUG_NORMAL)) {
-                $logerrmsg .= ' Debug: '.$info->debuginfo."\n".format_backtrace($info->backtrace, true);
+                $logerrmsg .= ' Debug: ' . $info->debuginfo . "\n" . format_backtrace($info->backtrace, true);
             }
-            error_log($logerrmsg);
+            echo $logerrmsg;
 
             if (http_response_code() == 200) {
                 http_response_code(500);
@@ -90,6 +92,7 @@ final class util {
 
 require_once($CFG->libdir.'/editorlib.php');
 require_once($CFG->libdir.'/adminlib.php');
+
 /**
  * General text area with html editor. No default info displayed.
  */
@@ -119,11 +122,11 @@ class admin_setting_confightmleditor_nodefaultinfo extends \admin_setting_config
      * @param string $query
      * @return string XHTML string for the editor
      */
-    public function output_html($data, $query='') {
+    public function output_html($data, $query = '') {
         global $OUTPUT;
         $editor = editors_get_preferred_editor(FORMAT_HTML);
         $editor->set_text($data);
-        $editor->use_editor($this->get_id(), array('noclean'=>true));
+        $editor->use_editor($this->get_id(), array('noclean' => true));
 
         $default = $this->get_defaultsetting();
         $defaultinfo = '';
@@ -141,11 +144,13 @@ class admin_setting_confightmleditor_nodefaultinfo extends \admin_setting_config
         ];
         $element = $OUTPUT->render_from_template('core_admin/setting_configtextarea', $context);
 
-        return format_admin_setting_nodefaultinfo($this, $this->visiblename, $element, $this->description, true, '', $defaultinfo, $query);
+        return format_admin_setting_nodefaultinfo($this, $this->visiblename,
+            $element, $this->description, true, '', $defaultinfo, $query);
     }
 }
 
-function format_admin_setting_nodefaultinfo($setting, $title='', $form='', $description='', $label=true, $warning='', $defaultinfo=NULL, $query='') {
+function format_admin_setting_nodefaultinfo($setting, $title='', $form='', $description='',
+        $label=true, $warning='', $defaultinfo=null, $query='') {
     global $CFG, $OUTPUT;
 
     $context = (object) [
@@ -171,7 +176,8 @@ function format_admin_setting_nodefaultinfo($setting, $title='', $form='', $desc
             $context->override = get_string('configoverride', 'admin');
         }
     } else {
-        if (array_key_exists($setting->plugin, $CFG->forced_plugin_settings) and array_key_exists($setting->name, $CFG->forced_plugin_settings[$setting->plugin])) {
+        if (array_key_exists($setting->plugin, $CFG->forced_plugin_settings) &&
+            array_key_exists($setting->name, $CFG->forced_plugin_settings[$setting->plugin])) {
             $context->override = get_string('configoverride', 'admin');
         }
     }
