@@ -30,7 +30,8 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once('classes/util.php');
 require_once('currencycodes.php');
-require_once($CFG->dirroot.'/user/profile/lib.php');
+require_once($CFG->dirroot . '/user/profile/lib.php');
+require_once($CFG->dirroot . '/lib/enrollib.php');
 
 use enrol_payment\helper;
 
@@ -161,7 +162,7 @@ class enrol_payment_plugin extends enrol_plugin {
     /**
      * Add new instance of enrol plugin.
      *
-     * @param object $course
+     * @param stdClass $course
      * @param array $fields instance fields
      * @return int id of new instance, null if can not be created
      */
@@ -204,13 +205,13 @@ class enrol_payment_plugin extends enrol_plugin {
                 $croles = explode(',', $CFG->coursecontact);
                 list($sort, $sortparams) = users_order_by_sql('u');
                 // We only use the first user.
-                $i = 0;
+                $counter = 0;
                 do {
                     $allnames = get_all_user_name_fields(true, 'u');
-                    $rusers = get_role_users($croles[$i], $context, true, 'u.id,  u.confirmed, u.username, '. $allnames . ',
+                    $rusers = get_role_users($croles[$counter], $context, true, 'u.id,  u.confirmed, u.username, '. $allnames . ',
                     u.email, r.sortorder, ra.id', 'r.sortorder, ra.id ASC, ' . $sort, null, '', '', '', '', $sortparams);
-                    $i++;
-                } while (empty($rusers) && !empty($croles[$i]));
+                    $counter++;
+                } while (empty($rusers) && !empty($croles[$counter]));
             }
             if ($rusers) {
                 $contact = array_values($rusers)[0];
@@ -370,20 +371,12 @@ class enrol_payment_plugin extends enrol_plugin {
         profile_load_data($USER);
         ob_start();
 
-        if ($DB->record_exists('user_enrolments', array('userid' => $USER->id, 'enrolid' => $instance->id))) {
-            return ob_get_clean();
-        }
-
-        if ($instance->enrolstartdate != 0 && $instance->enrolstartdate > time()) {
-            return ob_get_clean();
-        }
-
-        if ($instance->enrolenddate != 0 && $instance->enrolenddate < time()) {
-            return ob_get_clean();
-        }
-
         $course = $DB->get_record('course', array('id' => $instance->courseid));
         $context = context_course::instance($course->id);
+
+        if (is_enrolled($context, $USER)) {
+            return ob_get_clean();
+        }
 
         if ($this->get_config('stripelogo')) {
             $stripelogourl = (string) moodle_url::make_pluginfile_url(1, "enrol_payment", "stripelogo", null, "/", str_replace('/', '', $this->get_config('stripelogo')));
@@ -418,7 +411,7 @@ class enrol_payment_plugin extends enrol_plugin {
 
         // No cost, other enrolment methods (instances) should be used.
         if (abs($originalcost) < 0.01) {
-            echo '<p>'.get_string('nocost', 'enrol_payment').'</p>';
+            echo '<p>' . get_string('nocost', 'enrol_payment') . '</p>';
         } else {
 
             $wwwroot = $CFG->wwwroot;
@@ -431,7 +424,7 @@ class enrol_payment_plugin extends enrol_plugin {
 
             // Force login only for guest user, not real users with guest role.
             if (isguestuser()) {
-                echo '<p><a href="'.$wwwroot.'/login/">'.get_string('loginsite').'</a></p>';
+                echo '<p><a href="' . $CFG->wwwroot . '/login/">' . get_string('loginsite') . '</a></p>';
             } else {
                 // Used to verify payment data so that it can't be spoofed.
                 $prepaytoken = bin2hex(random_bytes(16));

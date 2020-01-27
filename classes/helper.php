@@ -75,7 +75,8 @@ class helper {
      * Calculate cost.
      *
      * @param stdClass $instance enrol_payment instance
-     * @param stdClass $payment payment object from enrol_payment_session
+     * @param stdClass $payment  payment object from enrol_payment_session
+     *
      * @return array
      */
     public static function calculate_cost(stdClass $instance, stdClass $payment, bool $addtax = false) {
@@ -164,6 +165,7 @@ class helper {
      *
      * @param  int $total
      * @param  int $discount
+     *
      * @return int
      */
     protected static function calculate_discount(int $total, int $discount) {
@@ -364,7 +366,7 @@ class helper {
     /**
      * Pretty print user.
      *
-     * @param  array $u
+     * @param  array $user
      * @return string
      */
     public static function pretty_print_user(array $user) {
