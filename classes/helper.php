@@ -20,9 +20,9 @@
  * You can have a rather longer description of the file as well,
  * if you like, and it can span multiple lines.
  *
- * @package    enrol_payment
- * @copyright  2020 Andrés Ramos, LMS Doctor <andres.ramos@lmsdoctor.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   enrol_payment
+ * @copyright 2020 Andrés Ramos, LMS Doctor <andres.ramos@lmsdoctor.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 namespace enrol_payment;
@@ -36,8 +36,9 @@ use stdClass;
 /**
  * Forum subscription manager.
  *
- * @copyright  2014 Andrew Nicols <andrew@nicols.co.uk>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   enrol_payment
+ * @copyright 2020 Andrés Ramos, LMS Doctor <andres.ramos@lmsdoctor.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class helper {
 
@@ -45,9 +46,9 @@ class helper {
      * Get the payment from token.
      *
      * @param  string $prepaytoken
-     * @return object
+     * @return stdClass
      */
-    public static function get_payment_from_token($prepaytoken) {
+    public static function get_payment_from_token(string $prepaytoken) {
         global $DB;
         return $DB->get_record_sql('
             SELECT * FROM {enrol_payment_session}
@@ -59,16 +60,15 @@ class helper {
     /**
      * Normalize percent discount.
      *
-     * @param  object $instance
+     * @param  stdClass $instance
      * @return int
      */
-    public static function normalize_percent_discount($instance) {
+    public static function normalize_percent_discount(stdClass $instance) {
         $amount = $instance->customdec1;
         if ($instance->customint3 == 1 && $amount > 1.0) {
             return $amount * 0.01;
-        } else {
-            return $amount;
         }
+        return $amount;
     }
 
     /**
@@ -137,14 +137,15 @@ class helper {
                 break;
         }
 
+        $taxamount = 0;
+        $subtotaltaxed = $subtotal;
+
         if ($payment->taxpercent && $addtax) {
             $taxamount = $subtotal * $payment->taxpercent;
             $subtotaltaxed = $subtotal + $taxamount;
-        } else {
-            $taxamount = 0;
-            $subtotaltaxed = $subtotal;
         }
 
+        $ret = [];
         $ret['subtotal'] = format_float($subtotal, 2, false);
         $ret['subtotallocalised'] = format_float($subtotal, 2, true);
         $ret['subtotaltaxed'] = format_float($subtotaltaxed, 2, true);
@@ -165,7 +166,7 @@ class helper {
      * @param  int $discount
      * @return int
      */
-    protected static function calculate_discount($total, $discount) {
+    protected static function calculate_discount(int $total, int $discount) {
         return $total * $discount / 100;
     }
 
@@ -181,7 +182,7 @@ class helper {
      */
     public static function get_object_of_costs(array $ret, string $symbol, string $currency, int $units, string $taxstring) {
 
-        $data                   = new \stdClass;
+        $data                   = new stdClass;
         $data->symbol           = $symbol;
         $data->originalcost     = $ret['originalunitprice'];
         $data->unitdiscount     = $ret['percentdiscountunit'];
@@ -275,10 +276,10 @@ class helper {
      *
      * @param  bool $multiple
      * @param  array $users
-     * @param  object &$payment
+     * @param  stdClass &$payment
      * @return void
      */
-    public static function update_payment_data($multiple, $users, &$payment) {
+    public static function update_payment_data(bool $multiple, array $users, stdClass &$payment) {
         global $DB;
 
         $userids = array();
@@ -289,7 +290,7 @@ class helper {
         }
 
         $payment->multiple = $multiple;
-        $payment->multiple_userids = $multiple ? implode(",", $userids) : null;
+        $payment->multipleuserids = $multiple ? implode(",", $userids) : null;
         $payment->units = $multiple ? count($userids) : 1;
         $DB->update_record('enrol_payment_session', $payment);
     }
@@ -300,16 +301,17 @@ class helper {
      * @param  int $paymentid
      * @return bool
      */
-    public static function payment_pending($paymentid) {
+    public static function payment_pending(int $paymentid) {
         global $DB;
         $payment = $DB->get_record('enrol_payment_session', array('id' => $paymentid));
         $transaction = $DB->get_record('enrol_payment_transaction', array('txnid' => $payment->paypaltxnid));
 
         if ($transaction) {
             return ($transaction->payment_status == "Pending");
-        } else {
-            return false;
         }
+
+        return false;
+
     }
 
     /**
@@ -318,16 +320,15 @@ class helper {
      * @param  int $paymentid
      * @return string
      */
-    public static function get_payment_status($paymentid) {
+    public static function get_payment_status(int $paymentid) {
         global $DB;
         $payment = $DB->get_record('enrol_payment_session', array('id' => $paymentid));
         $transaction = $DB->get_record('enrol_payment_transaction', array('txnid' => $payment->paypaltxnid));
 
         if ($transaction) {
-            return $transaction->payment_status;
-        } else {
-            return false;
+            return $transaction->paymentstatus;
         }
+        return false;
     }
 
     /**
@@ -336,7 +337,7 @@ class helper {
      * @param  array $emails
      * @return array
      */
-    public static function get_moodle_users_by_emails($emails) {
+    public static function get_moodle_users_by_emails(array $emails) {
         global $DB;
 
         $users = [
@@ -366,8 +367,8 @@ class helper {
      * @param  array $u
      * @return string
      */
-    public static function pretty_print_user($u) {
-        return $u['name'] . " &lt;" . $u['email'] . "&gt;";
+    public static function pretty_print_user(array $user) {
+        return $user['name'] . " &lt;" . $user['email'] . "&gt;";
     }
 
 }
