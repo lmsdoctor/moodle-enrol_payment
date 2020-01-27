@@ -1,4 +1,19 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * This file keeps track of upgrades to the enrolment plugin
  *
@@ -31,18 +46,6 @@ function xmldb_enrol_payment_upgrade($oldversion) {
     global $DB;
 
     $dbman = $DB->get_manager();
-
-    // Automatically generated Moodle v3.2.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Automatically generated Moodle v3.3.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Automatically generated Moodle v3.4.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Automatically generated Moodle v3.5.0 release upgrade line.
-    // Put any upgrade step following this.
 
     if ($oldversion < 2018051401) {
 
@@ -124,14 +127,14 @@ function xmldb_enrol_payment_upgrade($oldversion) {
     }
 
     if ($oldversion < 2019013001) {
-        $old_transaction_table = new xmldb_table('enrol_payment');
-        if($dbman->table_exists($old_transaction_table)) {
-            $dbman->rename_table($old_transaction_table, 'enrol_payment_transaction');
+        $oldtransactiontable = new xmldb_table('enrol_payment');
+        if ($dbman->table_exists($oldtransactiontable)) {
+            $dbman->rename_table($oldtransactiontable, 'enrol_payment_transaction');
         }
 
-        $old_session_table = new xmldb_table('enrol_payment_ipn');
-        if($dbman->table_exists($old_session_table)) {
-            $dbman->rename_table($old_session_table, 'enrol_payment_session');
+        $oldsessiontable = new xmldb_table('enrol_payment_ipn');
+        if ($dbman->table_exists($oldsessiontable)) {
+            $dbman->rename_table($oldsessiontable, 'enrol_payment_session');
         }
 
         // Rename field discounted on table enrol_payment_session to code_given.
@@ -139,7 +142,7 @@ function xmldb_enrol_payment_upgrade($oldversion) {
         $field = new xmldb_field('discounted', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, 'multiple_userids');
         $newfield = new xmldb_field('code_given', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, 'multiple_userids');
 
-        if(!($dbman->field_exists($table, $newfield))) {
+        if (!($dbman->field_exists($table, $newfield))) {
             // Launch rename field code_given.
             $dbman->rename_field($table, $field, 'code_given');
         }
@@ -149,15 +152,15 @@ function xmldb_enrol_payment_upgrade($oldversion) {
     }
 
     // There was an upgrade issue in the 2019013001 version, so re-doing those steps here if necessary.
-    if($oldversion < 2019013100) {
-        $old_transaction_table = new xmldb_table('enrol_payment');
-        if($dbman->table_exists($old_transaction_table)) {
-            $dbman->rename_table($old_transaction_table, 'enrol_payment_transaction');
+    if ($oldversion < 2019013100) {
+        $oldtransactiontable = new xmldb_table('enrol_payment');
+        if ($dbman->table_exists($oldtransactiontable)) {
+            $dbman->rename_table($oldtransactiontable, 'enrol_payment_transaction');
         }
 
-        $old_session_table = new xmldb_table('enrol_payment_ipn');
-        if($dbman->table_exists($old_session_table)) {
-            $dbman->rename_table($old_session_table, 'enrol_payment_session');
+        $oldsessiontable = new xmldb_table('enrol_payment_ipn');
+        if ($dbman->table_exists($oldsessiontable)) {
+            $dbman->rename_table($oldsessiontable, 'enrol_payment_session');
         }
 
         // Rename field discounted on table enrol_payment_session to code_given.
@@ -165,7 +168,7 @@ function xmldb_enrol_payment_upgrade($oldversion) {
         $field = new xmldb_field('discounted', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, 'multiple_userids');
         $newfield = new xmldb_field('code_given', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, 'multiple_userids');
 
-        if(!($dbman->field_exists($table, $newfield))) {
+        if (!($dbman->field_exists($table, $newfield))) {
             // Launch rename field code_given.
             $dbman->rename_field($table, $field, 'code_given');
         }

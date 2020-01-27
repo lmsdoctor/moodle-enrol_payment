@@ -429,21 +429,9 @@ class enrol_payment_plugin extends enrol_plugin {
                 $discountcoderequired = $instance->customint7;
                 $discountthreshold = $instance->customint8;
 
-                $paymentdata = [
-                    'prepaytoken' => $prepaytoken,
-                    'userid' => $USER->id,
-                    'courseid' => $course->id,
-                    'instanceid' => $instance->id,
-                    'multiple' => false,
-                    'multipleuserids' => null,
-                    'codegiven' => false,
-                    'units' => 1,
-                    'originalcost' => $originalcost,
-                    'taxpercent' => $taxpercent,
-                    'paypaltxnid' => null,
-                ];
-
-                $paymentid = $DB->insert_record('enrol_payment_session', $paymentdata);
+                $paymentid = helper::store_payment_session(
+                        $prepaytoken, $USER->id, $course->id,
+                        $instance->id, $originalcost, $taxpercent);
 
                 // Calculate localised and "." cost, make sure we send PayPal/Stripe the same value,
                 // please note PayPal expects amount with 2 decimal places and "." separator.
@@ -856,7 +844,7 @@ class enrol_payment_plugin extends enrol_plugin {
  * @param array $options additional options affecting the file serving
  * @return bool false if the file not found, just send the file otherwise and do not return anything
  */
-function enrol_payment_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
+function enrol_payment_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array()) {
     // Make sure the filearea is one of those used by the plugin.
     if ($filearea !== 'stripelogo') {
         return false;

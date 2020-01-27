@@ -375,4 +375,37 @@ class helper {
         return $user['name'] . " &lt;" . $user['email'] . "&gt;";
     }
 
+    /**
+     * Store payment session in the db.
+     *
+     * @param  string $prepaytoken
+     * @param  int    $userid
+     * @param  int    $courseid
+     * @param  int    $enrolid
+     * @param  int    $originalcost
+     * @param  float  $taxpercent
+     *
+     * @return stdClass
+     */
+    public static function store_payment_session(string $prepaytoken, int $userid, int $courseid,
+        int $enrolid, int $originalcost, float $taxpercent) {
+
+        global $DB;
+
+        return $DB->insert_record('enrol_payment_session', [
+            'prepaytoken' => $prepaytoken,
+            'userid' => $userid,
+            'courseid' => $courseid,
+            'instanceid' => $enrolid,
+            'multiple' => false,
+            'multipleuserids' => null,
+            'codegiven' => false,
+            'units' => 1,
+            'originalcost' => $originalcost,
+            'taxpercent' => $taxpercent,
+            'paypaltxnid' => null,
+        ]);
+
+    }
+
 }
