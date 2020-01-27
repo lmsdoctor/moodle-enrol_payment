@@ -397,6 +397,7 @@ function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner, Ajax, 
                 var discountCode = $("#discountcode").val();
 
                 // Always clean this div first.
+                $("span.discount-threshold-info").hide();
                 $("div.enrol-payment-error-text").hide();
 
                 Ajax.call([{
@@ -412,7 +413,10 @@ function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner, Ajax, 
                         if (obj.error) {
                             enrolPage.errorFromDiscount(obj.errormsg);
                         } else {
-                            $('#discount-dimmer').css('display','block');
+
+                            // Hide the discount-container.
+                            $('#discount-container').hide();
+
                             enrolPage.subtotal = obj.subtotal;
                             enrolPage.updateCostView();
                             $('.discount-threshold-info').css('display','block');
@@ -444,6 +448,7 @@ function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner, Ajax, 
         },
 
         errorFromDiscount: function(message) {
+            $("span.discount-threshold-info").hide();
             $("div.enrol-payment-error-text").show();
             $("div.enrol-payment-error-text").text(message);
         },
