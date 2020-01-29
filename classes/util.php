@@ -26,72 +26,8 @@ namespace enrol_payment;
 
 defined('MOODLE_INTERNAL') || die();
 
-final class util {
-
-    public static function my_url_encode($string) {
-        $entities = array('!', '*', "'", "(", ")", ";", ":", "@", "&", "=", "+", "$", ",", "/", "?", "%", "#", "[", "]");
-        $replacements = array(
-                '%21', '%2A', '%27', '%28', '%29', '%3B', '%3A',
-                '%40', '%26', '%3D', '%2B', '%24', '%2C', '%2F', '%3F', '%25', '%23', '%5B', '%5D');
-        return str_replace($entities, $replacements, $string);
-    }
-
-    /**
-     * Alerts site admin of potential problems.
-     *
-     * @param string   $subject email subject
-     * @param stdClass $data    PayPal IPN data
-     */
-    public static function message_paypal_error_to_admin($subject, $data) {
-        $admin = get_admin();
-        $site = get_site();
-
-        $message = "$site->fullname:  Transaction failed.\n\n$subject\n\n";
-
-        foreach ($data as $key => $value) {
-            $message .= "$key => $value\n";
-        }
-
-        $eventdata = new \stdClass();
-        $eventdata->modulename        = 'moodle';
-        $eventdata->component         = 'enrol_payment';
-        $eventdata->name              = 'payment_enrolment';
-        $eventdata->userfrom          = $admin;
-        $eventdata->userto            = $admin;
-        $eventdata->subject           = "PAYPAL ERROR: ".$subject;
-        $eventdata->fullmessage       = $message;
-        $eventdata->fullmessageformat = FORMAT_PLAIN;
-        $eventdata->fullmessagehtml   = '';
-        $eventdata->smallmessage      = '';
-        message_send($eventdata);
-    }
-
-    /**
-     * Silent exception handler.
-     *
-     * @return callable exception handler
-     */
-    public static function get_exception_handler() {
-        return function($ex) {
-            $info = get_exception_info($ex);
-
-            $logerrmsg = "enrol_payment IPN exception handler: " . $info->message;
-            if (debugging('', DEBUG_NORMAL)) {
-                $logerrmsg .= ' Debug: ' . $info->debuginfo . "\n" . format_backtrace($info->backtrace, true);
-            }
-            echo $logerrmsg;
-
-            if (http_response_code() == 200) {
-                http_response_code(500);
-            }
-
-            exit(0);
-        };
-    }
-}
-
-require_once($CFG->libdir.'/editorlib.php');
-require_once($CFG->libdir.'/adminlib.php');
+require_once($CFG->libdir . '/editorlib.php');
+require_once($CFG->libdir . '/adminlib.php');
 
 /**
  * General text area with html editor. No default info displayed.

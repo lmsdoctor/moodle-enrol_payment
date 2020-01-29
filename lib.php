@@ -34,6 +34,7 @@ require_once($CFG->dirroot . '/user/profile/lib.php');
 require_once($CFG->dirroot . '/lib/enrollib.php');
 
 use enrol_payment\helper;
+use enrol_payment\output\main;
 
 /**
  * Payment enrolment plugin implementation.
@@ -356,7 +357,6 @@ class enrol_payment_plugin extends enrol_plugin {
         }
 
         return $taxholder;
-
     }
 
     /**
@@ -367,136 +367,28 @@ class enrol_payment_plugin extends enrol_plugin {
      * @return string html text, usually a form in a text box
      */
     public function enrol_page_hook(stdClass $instance) {
-        global $CFG, $USER, $OUTPUT, $PAGE, $DB;
-        profile_load_data($USER);
-        ob_start();
+        global $PAGE;
 
-        $course = $DB->get_record('course', array('id' => $instance->courseid));
-        $context = context_course::instance($course->id);
+        $config = $this->get_instance_configuration($instance);
 
-        if (is_enrolled($context, $USER)) {
-            return ob_get_clean();
-        }
+        $renderable = new main($instance, $config);
+        $renderer = $PAGE->get_renderer('enrol_payment');
+        return $renderer->render($renderable);
 
-        $stripelogourl = null;
-        if ($this->get_config('stripelogo')) {
-            $stripelogourl = (string) moodle_url::make_pluginfile_url(
-                1, "enrol_payment", "stripelogo", null, "/", str_replace('/', '', $this->get_config('stripelogo'))
-            );
-        }
+    }
 
-        $shortname = format_string($course->shortname, true, ['context' => $context]);
-        $strloginto = get_string("loginto", "", $shortname);
-        $strcourses = get_string("courses");
+    private function get_instance_configuration(stdClass $instance) {
+        $config                 = new stdClass;
+        $config->taxinfo        = $this->get_tax_info($instance->cost);
+        $config->allowmultiple  = ($this->get_config('allowmultipleenrol') && $instance->customint5);
+        $config->haspaypal      = (bool) trim($this->get_config('paypalbusiness'));
+        $config->paypalaccount  = $this->get_config('paypalbusiness');
 
-        // Pass $view=true to filter hidden caps if the user cannot see them.
-        $teacher = false;
-        if ($users = get_users_by_capability($context, 'moodle/course:update', 'u.*', 'u.id ASC',
-                                             '', '', '', '', false, true)) {
-            $users = sort_by_roleassignment_authority($users, $context);
-            $teacher = array_shift($users);
-        }
+        $stripesecret           = $this->get_config('stripesecretkey');
+        $config->stripekey      = $this->get_config('stripepublishablekey');
+        $config->hasstripe      = ((bool) trim($stripesecret)) && ((bool) trim($instance->stripekey));
 
-        $originalcost = (float) $instance->cost;
-        if ( (float) $instance->cost <= 0 ) {
-            $originalcost = (float) $this->get_config('cost');
-        }
-
-        $taxstring = "";
-
-        $taxinfo = $this->get_tax_info($originalcost);
-        $taxstring = $taxinfo["taxstring"];
-        $taxpercent = $taxinfo["taxpercent"];
-
-        // No cost, other enrolment methods (instances) should be used.
-        if (abs($originalcost) < 0.01) {
-            echo '<p>' . get_string('nocost', 'enrol_payment') . '</p>';
-        } else {
-
-            $multipleenabled = ($this->get_config('allowmultipleenrol') && $instance->customint5);
-            $paypalenabled = (bool) trim($this->get_config('paypalbusiness'));
-            $stripesecret = $this->get_config('stripesecretkey');
-            $stripeenabled = ((bool) trim($stripesecret)) && ((bool) trim($this->get_config('stripepublishablekey')));
-            $gatewaysenabled = ((int) $paypalenabled) + ((int) $stripeenabled);
-            $stripepublishablekey = $stripeenabled ? $this->get_config('stripepublishablekey') : null;
-
-            // Force login only for guest user, not real users with guest role.
-            if (isguestuser()) {
-                echo '<p><a href="' . $CFG->wwwroot . '/login/">' . get_string('loginsite') . '</a></p>';
-            } else {
-                // Used to verify payment data so that it can't be spoofed.
-                $prepaytoken = bin2hex(random_bytes(16));
-                $discountcoderequired = $instance->customint7;
-                $discountthreshold = $instance->customint8;
-
-                $paymentid = helper::store_payment_session(
-                        $prepaytoken, $USER->id, $course->id,
-                        $instance->id, $originalcost, $taxpercent);
-
-                // Calculate localised and "." cost, make sure we send PayPal/Stripe the same value,
-                // please note PayPal expects amount with 2 decimal places and "." separator.
-                $paymentobj = $DB->get_record('enrol_payment_session', ['id' => $paymentid]);
-
-                $calculatecost = helper::calculate_cost($instance, $paymentobj, true);
-                $calculatecostuntaxed = helper::calculate_cost($instance, $paymentobj, false);
-                $localisedcost = $calculatecost['subtotallocalised'];
-                $localisedcostuntaxed = $calculatecostuntaxed['subtotallocalised'];
-
-                // If percentage discount, get the percentage amount to display.
-                if ($instance->customint3 == 1) {
-                    $percentdisplay = $calculatecost['percentdiscount'];
-                }
-
-                $originalcost = format_float($originalcost, 2, false);
-                $nonlocaliseduntaxedcost = helper::calculate_cost($instance, $paymentobj, false)['subtotal'];
-
-                $coursefullname  = format_string($course->fullname, true, array('context' => $context));
-                $enablediscountcodes = $this->get_config('enablediscounts') && $instance->customint7 && $instance->customint3; // Are discounts enabled in the admin settings?
-                $validatezipcode = $this->get_config('validatezipcode');
-                $billingaddressrequired = $this->get_config('billingaddress');
-                $discountamount = format_float($instance->customdec1, 2, true);
-
-                $symbol = enrol_payment_get_currency_symbol($instance->currency);
-
-                $jsdata = [ $instance->id
-                           , $stripepublishablekey
-                           , $originalcost
-                           , $prepaytoken
-                           , htmlspecialchars_decode($coursefullname)
-                           , $instance->customint4
-                           , $stripelogourl
-                           , $taxpercent
-                           , $localisedcostuntaxed
-                           , $validatezipcode
-                           , $billingaddressrequired
-                           , $USER->email
-                           , $instance->currency
-                           , $symbol
-                           , $discountcoderequired
-                           , $discountthreshold
-                           ];
-                $PAGE->requires->js_call_amd('enrol_payment/enrolpage', 'init', $jsdata);
-                $PAGE->requires->css('/enrol/payment/style/styles.css');
-
-                // Sanitise some fields before building the PayPal form.
-                $courseshortname   = $shortname;
-                $userfullname      = fullname($USER);
-                $userfirstname     = $USER->firstname;
-                $userlastname      = $USER->lastname;
-                $useraddress       = $USER->address;
-                $usercity          = $USER->city;
-                $paypalshipping    = $instance->customint4 ? 2 : 1;
-                $stripeshipping    = $instance->customint4;
-                $instancename      = $this->get_instance_name($instance);
-                $taxamountstring = format_float($taxpercent * $originalcost, 2, true);
-                $taxamount        = format_float($taxpercent * $originalcost, 2, false);
-
-                include($CFG->dirroot.'/enrol/payment/enrol.html');
-            }
-
-        }
-
-        return $OUTPUT->box(ob_get_clean());
+        return $config;
     }
 
     /**

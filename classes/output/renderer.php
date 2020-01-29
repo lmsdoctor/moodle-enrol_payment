@@ -15,18 +15,34 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Payment enrolment plugin version specification.
+ * rolelist block rendrer
  *
  * @package    enrol_payment
- * @copyright  2018 Seth Yoder
- * @author     Seth Yoder
+ * @copyright  2016 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace enrol_payment\output;
+defined('MOODLE_INTERNAL') || die;
 
-defined('MOODLE_INTERNAL') || die();
+use plugin_renderer_base;
+use renderable;
 
-$plugin->version   = 2020012303;
-$plugin->requires  = 2018120300;
-$plugin->component = 'enrol_payment';
-$plugin->maturity  = MATURITY_RC;
-$plugin->release   = '1.0.4';
+/**
+ * rolelist block renderer
+ *
+ * @package    enrol_payment
+ * @copyright  Andres, Solin
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class renderer extends plugin_renderer_base {
+
+    /**
+     * Return the main content for the block overview.
+     *
+     * @param main $main The main renderable
+     * @return string HTML string
+     */
+    public function render_main(main $main) {
+        return $this->render_from_template('enrol_payment/main', $main->export_for_template($this));
+    }
+}

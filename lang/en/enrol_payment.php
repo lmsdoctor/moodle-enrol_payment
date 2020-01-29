@@ -174,9 +174,9 @@ $string['taxdefinitions_help'] = '<p>A region can be a province, state, territor
 $string['countrytax'] = 'Country single tax rate';
 $string['countrytax_desc'] = 'The format is Country Code : 0.## for tax rate. For instance, assume you are setting a tax rate for Colombia (rate 19%) the entries would be: <b>CO : 0.19</b>';
 
-$string['feestring_taxed'] = 'The fee for <b>{$a->coursefullname}</b><br>
+$string['feestringtaxed'] = 'The fee for <b>{$a->coursename}</b><br>
     is <b>{$a->symbol}<span class="localisedcost-untaxed">{$a->localisedcostuntaxed}</span></b> + {$a->symbol}<span class="taxamountstring">{$a->taxamountstring}</span> <span class="taxstring">{$a->taxstring}</span> = <b>{$a->symbol}<span class="localisedcost">{$a->localisedcost}</span></b> {$a->currency}.<br>';
-$string['feestring_notax'] = 'The fee for <b>{$a->coursefullname}</b><br>is <b>{$a->symbol}<span class="localisedcost">{$a->localisedcost}</span></b> {$a->currency}.<br>';
+$string['feestringnotax'] = 'The fee for <b>{$a->coursename}</b><br>is <b>{$a->symbol}<span class="localisedcost">{$a->localisedcost}</span></b> {$a->currency}.<br>';
 
 $string['discountwillbeapplied'] = 'A <b>{$a->symbol}{$a->discountamount}{$a->percentsymbol}{$a->perSeat}</b> discount will be applied to a purchase of <b>{$a->discountthreshold}</b> or more registrations.';
 

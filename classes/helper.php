@@ -408,4 +408,71 @@ class helper {
 
     }
 
+    /**
+     * Returns the stripe logo url.
+     *
+     * @return string
+     */
+    public static function get_stripe_logo_url() {
+        $stripelogo = get_config('stripelogourl', 'enrol_payment');
+        if (empty($stripelogo)) {
+            return '';
+        }
+        $strippedlogo = str_replace('/', '', $stripelogo);
+        return (string) moodle_url::make_pluginfile_url(1, 'enrol_payment', 'stripelogo', null, '/', $strippedlogo);
+    }
+
+    /**
+     * Alerts site admin of potential problems.
+     *
+     * @param string   $subject email subject
+     * @param stdClass $data    PayPal IPN data
+     */
+    public static function message_paypal_error_to_admin(string $subject, stdClass $data) {
+        $admin = get_admin();
+        $site = get_site();
+
+        $message = "$site->fullname:  Transaction failed.\n\n$subject\n\n";
+
+        foreach ($data as $key => $value) {
+            $message .= "$key => $value\n";
+        }
+
+        $eventdata = new \stdClass();
+        $eventdata->modulename        = 'moodle';
+        $eventdata->component         = 'enrol_payment';
+        $eventdata->name              = 'payment_enrolment';
+        $eventdata->userfrom          = $admin;
+        $eventdata->userto            = $admin;
+        $eventdata->subject           = "PAYPAL ERROR: ".$subject;
+        $eventdata->fullmessage       = $message;
+        $eventdata->fullmessageformat = FORMAT_PLAIN;
+        $eventdata->fullmessagehtml   = '';
+        $eventdata->smallmessage      = '';
+        message_send($eventdata);
+    }
+
+    /**
+     * Silent exception handler.
+     *
+     * @return callable exception handler
+     */
+    public static function get_exception_handler() {
+        return function($ex) {
+            $info = get_exception_info($ex);
+
+            $logerrmsg = "enrol_payment IPN exception handler: " . $info->message;
+            if (debugging('', DEBUG_NORMAL)) {
+                $logerrmsg .= ' Debug: ' . $info->debuginfo . "\n" . format_backtrace($info->backtrace, true);
+            }
+            echo $logerrmsg;
+
+            if (http_response_code() == 200) {
+                http_response_code(500);
+            }
+
+            exit(0);
+        };
+    }
+
 }

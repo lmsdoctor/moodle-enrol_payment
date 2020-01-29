@@ -39,13 +39,14 @@ require_once("lib.php");
 require_once($CFG->libdir.'/enrollib.php');
 require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->dirroot . '/group/lib.php');
+require_once($CFG->libdir.'/adminlib.php');
 
 use enrol_payment\helper;
 use enrol_payment\util;
 
 // PayPal does not like when we return error messages here,
 // the custom handler just logs exceptions and stops.
-set_exception_handler(util::get_exception_handler());
+set_exception_handler(helper::get_exception_handler());
 
 // Make sure we are enabled in the first place.
 if (!enrol_is_enabled('payment')) {
@@ -154,14 +155,14 @@ if (strlen($result) > 0) {
             } else {
                 $plugin->unenrol_user($plugininstance, $data->userid);
             }
-            util::message_paypal_error_to_admin("Status not completed or pending. User unenrolled from course",
+            helper::message_paypal_error_to_admin("Status not completed or pending. User unenrolled from course",
                                                               $data);
             die;
         }
 
         // If currency is incorrectly set then someone maybe trying to cheat the system.
         if ($data->mc_currency != $plugininstance->currency) {
-            util::message_paypal_error_to_admin(
+            helper::message_paypal_error_to_admin(
                 "Currency does not match course settings, received: ".$data->mc_currency,
                 $data);
             die;
@@ -184,7 +185,7 @@ if (strlen($result) > 0) {
             $eventdata->smallmessage      = '';
             message_send($eventdata);
 
-            util::message_paypal_error_to_admin("Payment pending", $data);
+            helper::message_paypal_error_to_admin("Payment pending", $data);
 
             $DB->insert_record("enrol_payment_transaction", $data);
             $DB->update_record("enrol_payment_session", array("id" => $payment->id, "paypaltxnid" => $data->txnid));
@@ -202,7 +203,7 @@ if (strlen($result) > 0) {
         // At this point we only proceed with a status of completed or pending with a reason of echeck.
         // Make sure this transaction doesn't exist already.
         if ($existing = $DB->get_record("enrol_payment_transaction", array("txnid" => $data->txnid), "*", IGNORE_MULTIPLE)) {
-            util::message_paypal_error_to_admin("Transaction $data->txnid is being repeated!", $data);
+            helper::message_paypal_error_to_admin("Transaction $data->txnid is being repeated!", $data);
             die;
         }
 
@@ -216,18 +217,18 @@ if (strlen($result) > 0) {
         }
 
         if (core_text::strtolower($recipient) !== core_text::strtolower($plugin->get_config('paypalbusiness'))) {
-            util::message_paypal_error_to_admin("Business email is {$recipient} (not ".
+            helper::message_paypal_error_to_admin("Business email is {$recipient} (not ".
                     $plugin->get_config('paypalbusiness').")", $data);
             die;
         }
 
         if (!$user = $DB->get_record('user', array('id' => $data->userid))) {   // Check that user exists.
-            util::message_paypal_error_to_admin("User $data->userid doesn't exist", $data);
+            helper::message_paypal_error_to_admin("User $data->userid doesn't exist", $data);
             die;
         }
 
         if (!$course = $DB->get_record('course', array('id' => $data->courseid))) { // Check that course exists.
-            util::message_paypal_error_to_admin("Course $data->courseid doesn't exist", $data);
+            helper::message_paypal_error_to_admin("Course $data->courseid doesn't exist", $data);
             die;
         }
 
@@ -249,7 +250,7 @@ if (strlen($result) > 0) {
         if ($data->payment_gross + 0.01 < $cost) {
             // This shouldn't happen unless the user spoofs their requests, but
             // if it does, the discount is just invalid.
-            util::message_paypal_error_to_admin("Amount paid is not enough ($data->payment_gross < $cost))", $data);
+            helper::message_paypal_error_to_admin("Amount paid is not enough ($data->payment_gross < $cost))", $data);
             die;
         }
 
@@ -290,7 +291,7 @@ if (strlen($result) > 0) {
 
         foreach ($multipleuserids as $uid) {
             if (!$user = $DB->get_record('user', array('id' => $uid))) {   // Check that user exists.
-                util::message_paypal_error_to_admin("User $data->userid doesn't exist", $data);
+                helper::message_paypal_error_to_admin("User $data->userid doesn't exist", $data);
                 die;
             }
 

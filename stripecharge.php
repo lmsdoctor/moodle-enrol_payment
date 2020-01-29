@@ -141,7 +141,7 @@ $cost = helper::calculate_cost($plugininstance, $payment, true)["subtotaltaxed"]
 if ($data->amount + 0.01 < $cost) {
     // This shouldn't happen unless the user spoofs their requests, but
     // if it does, the discount is just invalid.
-    \enrol_payment\util::message_paypal_error_to_admin("Amount paid is not enough ($data->amount < $cost))", $data);
+    helper::message_paypal_error_to_admin("Amount paid is not enough ($data->amount < $cost))", $data);
     die;
 }
 
@@ -202,7 +202,7 @@ try {
 
     foreach ($multipleuserids as $uid) {
         if (!$user = $DB->get_record('user', array('id' => $uid))) {   // Check that user exists.
-            \enrol_payment\util::message_paypal_error_to_admin("User $data->userid doesn't exist", $data);
+            helper::message_paypal_error_to_admin("User $data->userid doesn't exist", $data);
             die;
         }
         // Enrol user.
