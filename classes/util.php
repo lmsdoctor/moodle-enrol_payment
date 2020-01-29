@@ -85,6 +85,20 @@ class admin_setting_confightmleditor_nodefaultinfo extends \admin_setting_config
     }
 }
 
+/**
+ * Format admin setting with no default info.
+ *
+ * @param  strClass  $setting
+ * @param  string  $title
+ * @param  string  $form
+ * @param  string  $description
+ * @param  boolean $label
+ * @param  string  $warning
+ * @param  string  $defaultinfo
+ * @param  string  $query
+ *
+ * @return string
+ */
 function format_admin_setting_nodefaultinfo($setting, $title='', $form='', $description='',
         $label=true, $warning='', $defaultinfo=null, $query='') {
     global $CFG, $OUTPUT;

@@ -220,17 +220,17 @@ class main implements renderable, templatable {
         $payment->strcontinue   = get_string('continuetocourse');
 
         $totemplate = [
-            'cost'                  => $cost,
-            'payment'               => $payment,
-            'hastax'                => (empty($taxstring)) ? false : true,
-            'discounttype'          => $discounttype,
-            'coderequired'          => $coderequired,
-            'singleuser'            => $singleuser,
             'allowmultiple'         => $this->config->allowmultiple,
-            'multipleusers'         => $multipleusers,
-            'paypalenabled'         => $this->config->haspaypal,
+            'coderequired'          => $coderequired,
+            'cost'                  => $cost,
+            'discounttype'          => $discounttype,
             'gatewaysenabled'       => $gatewaysenabled,
             'hasdiscountcode'       => $enablediscountcodes,
+            'hastax'                => (empty($taxstring)) ? false : true,
+            'multipleusers'         => $multipleusers,
+            'payment'               => $payment,
+            'paypalenabled'         => $this->config->haspaypal,
+            'singleuser'            => $singleuser,
             'user'                  => $USER,
         ];
 
