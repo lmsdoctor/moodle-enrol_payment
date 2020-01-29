@@ -38,6 +38,7 @@ use enrol_payment\output\main;
 
 /**
  * Payment enrolment plugin implementation.
+ *
  * @copyright  2018 Seth Yoder
  * @copyright  based on work by 2010 Eugene Venter (originally for enrol_paypal)
  * @author     Seth Yoder - based on code by Eugene Venter, Martin Dougiamas and others
@@ -302,31 +303,40 @@ class enrol_payment_plugin extends enrol_plugin {
         }
     }
 
-    private function get_tax_amount($tax, $field) {
+    /**
+     * Return the tax amount.
+     *
+     * @param  string $tax
+     * @param  string $userfield
+     *
+     * @return array
+     */
+    private function get_tax_amount(string $tax, string $userfield) {
         $pieces = explode(":", $tax);
-        if (count($pieces) == 2) {
-
-            $province = strtolower(trim($pieces[0]));
-            $taxrate = trim($pieces[1]);
-
-            if ($province == strtolower(trim($field))) {
-                if (is_numeric($taxrate)) {
-                    try {
-                        $floattaxrate = floatval($taxrate);
-                        return [
-                            'taxpercent' => $floattaxrate,
-                            'taxstring' => '(' . floor($floattaxrate * 100) . '% tax)'
-                        ];
-
-                    } catch (Exception $e) {
-                        debugging("Could not convert tax value for $province into a float.");
-                    }
-                } else {
-                    debugging('Encountered non-numeric tax value.');
-                }
-            }
-        } else {
+        if (count($pieces) != 2) {
             debugging('Incorrect tax definition format.');
+        }
+
+        $province = strtolower(trim($pieces[0]));
+        $taxrate = trim($pieces[1]);
+
+        if ($province != strtolower(trim($userfield))) {
+            return [];
+        }
+
+        if (!is_numeric($taxrate)) {
+            debugging('Encountered non-numeric tax value.');
+        }
+
+        try {
+            $floattaxrate = floatval($taxrate);
+            return [
+                'taxpercent' => $floattaxrate,
+                'taxstring'  => '(' . floor($floattaxrate * 100) . '% tax)'
+            ];
+
+        } catch (Exception $e) {
+            debugging("Could not convert tax value for $province into a float.");
         }
     }
 
@@ -345,15 +355,20 @@ class enrol_payment_plugin extends enrol_plugin {
         }
 
         // If the tax country is not empty, use it. Otherwise use the tax region.
+        $taxdefs = $this->get_config('taxdefinitions');
+        $taxdeflines = explode("\n", $taxdefs);
+
+        // Return if this is empty.
+        if (empty($taxdeflines)) {
+            return ['taxpercent' => 0, 'taxstring' => ''];
+        }
+
+        foreach ($taxdeflines as $taxline) {
+            $taxholder = $this->get_tax_amount($taxline, $USER->profile_field_taxregion);
+        }
+
         if (!empty($countrytax = $this->get_config('countrytax'))) {
             $taxholder = $this->get_tax_amount($countrytax, $USER->country);
-        } else {
-            $taxdefs = $this->get_config('taxdefinitions');
-            $taxdeflines = explode("\n", $taxdefs);
-
-            foreach ($taxdeflines as $taxline) {
-                $taxholder = $this->get_tax_amount($taxline, $USER->profile_field_taxregion);
-            }
         }
 
         return $taxholder;
@@ -369,10 +384,9 @@ class enrol_payment_plugin extends enrol_plugin {
     public function enrol_page_hook(stdClass $instance) {
         global $PAGE;
 
-        $config = $this->get_instance_configuration($instance);
-
+        $config     = $this->get_instance_configuration($instance);
         $renderable = new main($instance, $config);
-        $renderer = $PAGE->get_renderer('enrol_payment');
+        $renderer   = $PAGE->get_renderer('enrol_payment');
         return $renderer->render($renderable);
 
     }
@@ -723,7 +737,7 @@ class enrol_payment_plugin extends enrol_plugin {
 }
 
 /**
- * Serve the files from the MYPLUGIN file areas
+ * Serve the files from the enrol_payment file areas.
  *
  * @param stdClass $course the course object
  * @param stdClass $cm the course module object
