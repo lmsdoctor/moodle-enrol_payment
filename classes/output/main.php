@@ -15,10 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Class containing data for my rolelist block.
+ * Renderable main class.
  *
  * @package    enrol_payment
- * @copyright  2017 Ryan Wyllie <ryan@moodle.com>
+ * @copyright  2020 LMS Doctor
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace enrol_payment\output;
@@ -36,17 +36,14 @@ use html_writer;
 require_once($CFG->dirroot . '/lib/enrollib.php');
 
 /**
- * Class containing data for my rolelist block.
+ * Renderable main class.
  *
- * @package  enrol_payment
- * @copyright  Andrés, Solin
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   enrol_payment
+ * @copyright 2020 LMS Doctor
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class main implements renderable, templatable {
 
-    /**
-     * @var string for Mode 1 or 2.
-     */
     protected $instance;
     protected $config;
     protected $originalcost;
@@ -54,10 +51,10 @@ class main implements renderable, templatable {
     /**
      * Constructor.
      *
-     * @param string $instance If either Mode 1 or 2.
-     * @param array $configroles Having the roles selected.
+     * @param string $instance
+     * @param array  $config
      */
-    public function __construct(stdClass $instance, $config) {
+    public function __construct(stdClass $instance, stdClass $config) {
         $this->instance = $instance;
         $this->config = $config;
         $this->originalcost = $instance->cost;

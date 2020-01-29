@@ -15,10 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * rolelist block rendrer
+ * Payment enrol plugin render.
  *
  * @package    enrol_payment
- * @copyright  2016 Ryan Wyllie <ryan@moodle.com>
+ * @copyright  2020 LMS Doctor
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace enrol_payment\output;
@@ -28,10 +28,10 @@ use plugin_renderer_base;
 use renderable;
 
 /**
- * rolelist block renderer
+ * Payment enrol plugin render.
  *
  * @package    enrol_payment
- * @copyright  Andres, Solin
+ * @copyright  2020 LMS Doctor
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class renderer extends plugin_renderer_base {
