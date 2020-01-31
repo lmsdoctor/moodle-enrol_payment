@@ -210,8 +210,8 @@ if (strlen($result) > 0) {
         // Check that the receiver email is the one we want it to be.
         if (isset($data->business)) {
             $recipient = $data->business;
-        } else if (isset($data->receiver_email)) {
-            $recipient = $data->receiver_email;
+        } else if (isset($data->receiveremail)) {
+            $recipient = $data->receiveremail;
         } else {
             $recipient = 'empty';
         }
