@@ -42,6 +42,71 @@ use stdClass;
  */
 class helper {
 
+    protected $istaxable = false;
+    protected $usertax = 0;
+
+    /**
+     * Constructor.
+     *
+     * @param string $instance
+     * @param array  $config
+     */
+    public function __construct() {
+        // Empty constructor.
+    }
+
+    // public function product_has_tax() {
+    //     global $USER;
+    //     profile_load_data($USER);
+
+    //     $istaxable = get_config('definetaxes', 'enrol_payment');
+    //     if (!$istaxable) {
+    //         return false;
+    //     }
+
+    //     // If the tax country is not empty, use it. Otherwise use the tax region.
+    //     $taxlist = get_config('taxdefinitions', 'enrol_payment');
+    //     $taxes = explode("\n", $taxlist);
+
+    //     // Return if this is empty.
+    //     if (empty($taxes)) {
+    //         return false;
+    //     }
+
+    //     return true;
+
+    // }
+
+    // public function user_has_tax() {
+
+    //     foreach ($taxes as $tax) {
+
+    //         $pieces = explode(":", $tax);
+    //         if (count($pieces) != 2) {
+    //             moodle_exception('Incorrect tax definition format.');
+    //         }
+
+    //         $province = strtolower(trim($pieces[0]));
+    //         $taxrate = trim($pieces[1]);
+
+    //         if (!is_numeric($taxrate)) {
+    //             moodle_exception('Encountered non-numeric tax value.');
+    //         }
+
+    //         if ($province == strtolower(trim($userfield))) {
+    //             $this->istaxable = true;
+    //             $this->usertax = floatval($taxrate);
+    //             return true;
+    //         }
+
+    //     }
+
+    //     if (!empty($countrytax = $this->get_config('countrytax'))) {
+    //         $taxholder = $this->get_tax_amount($countrytax, $USER->country);
+    //     }
+
+    // }
+
     /**
      * Get the payment from token.
      *
@@ -63,9 +128,8 @@ class helper {
      * @param  stdClass $instance
      * @return int
      */
-    public static function normalize_percent_discount(stdClass $instance) {
-        $amount = $instance->customdec1;
-        if ($instance->customint3 == 1 && $amount > 1.0) {
+    public static function normalize_percent_discount(int $amount, int $discounttype) {
+        if ($discounttype == 1 && $amount > 1.0) {
             return $amount * 0.01;
         }
         return $amount;
@@ -87,11 +151,11 @@ class helper {
         $cost = $payment->originalcost;
         $subtotal = $cost;
 
-        if ($discountamount < 0.00) {
+        if (self::is_negative_value($discountamount)) {
             throw new moodle_exception('negativediscount', 'enrol_payment');
         }
 
-        if ($payment->units < 1) {
+        if (self::not_enough_units($payment->units)) {
             throw new moodle_exception('notenoughunits', 'enrol_payment');
         }
 
@@ -100,18 +164,19 @@ class helper {
         // Assuming the discount theshold is met:
         // If a discount code isn't required, apply the discount.
         // If a discount code is required and the user has provided it, apply the discount.
-        $applydiscount = 0;
+        $discounttype = 0;
+        $discountamount = 0;
         if ($payment->units >= $discountthreshold) {
             if (!$discountcoderequired || ($discountcoderequired && $payment->codegiven)) {
-                $applydiscount = $instance->customint3;
+                $discounttype = $instance->customint3;
                 $discountamount = $instance->customdec1;
             }
         }
 
         $ocdiscounted = $cost;
-        $normalizeddiscount = self::normalize_percent_discount($instance);
+        $normalizeddiscount = self::normalize_percent_discount($discountamount, $discounttype);
 
-        switch ($applydiscount) {
+        switch ($discounttype) {
             case 0:
                 $subtotal = $cost * $payment->units;
                 break;
@@ -205,10 +270,11 @@ class helper {
      * @param  float   $number
      * @return boolean
      */
-    private static function is_negative_value(float $number) {
+    public static function is_negative_value(float $number) {
         if ($number < 0.00) {
-            throw new moodle_exception('negativediscount', 'enrol_payment');
+            return true;
         }
+        return false;
     }
 
     /**
@@ -217,10 +283,11 @@ class helper {
      * @param  int    $units
      * @throws moodle_exception
      */
-    private static function not_enough_units(int $units) {
+    public static function not_enough_units(int $units) {
         if (empty($units)) {
-            throw new moodle_exception('notenoughunits', 'enrol_payment');
+            return true;
         }
+        return false;
     }
 
     /**
@@ -231,7 +298,7 @@ class helper {
      */
     public static function get_percentage_calculation_string(stdClass $a, bool $codegiven, bool $hasdiscount) {
 
-        if (!$codegiven || !$hasdiscount) {
+        if (!$hasdiscount) {
             return "{$a->symbol}{$a->originalcost} × {$a->units} {$a->taxstring}
                 = <b>{$a->symbol}{$a->subtotaltaxed}</b> {$a->currency}";
         }
@@ -247,31 +314,10 @@ class helper {
      */
     public static function get_percentage_discount_string(stdClass $a, bool $codegiven, bool $hasdiscount) {
 
-        if (!$codegiven || !$hasdiscount) {
+        if (!$hasdiscount) {
             return '';
         }
-        return "The {$a->symbol}{$a->percentdiscount}% discount has been applied.";
-    }
-
-    /**
-     * Returns the value calculation string.
-     *
-     * @param  stdClass $a
-     * @return string
-     */
-    public static function get_value_calculation_string(stdClass $a) {
-        return "{$a->symbol}{$a->originalcost} - {$a->symbol}{$a->discountvalue} discount
-        × {$a->units} {$a->taxstring} = <b>{$a->symbol}{$a->subtotaltaxed}</b> {$a->currency}";
-    }
-
-    /**
-     * Returns the value discount string.
-     *
-     * @param  stdClass $a
-     * @return string
-     */
-    public static function get_value_discount_string(stdClass $a) {
-        return "The {$a->symbol}{$a->discountvalue} discount per-seat has been applied.";
+        return "The {$a->percentdiscount}% discount has been applied.";
     }
 
     /**

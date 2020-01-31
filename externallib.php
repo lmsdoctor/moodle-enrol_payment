@@ -205,8 +205,8 @@ class enrol_payment_external extends external_api {
 
                 // ... it is value discount and we want to reflect that.
                 $strings = new \stdClass;
-                $strings->discount = helper::get_value_discount_string($objcosts);
-                $strings->calculation = helper::get_value_calculation_string($objcosts);
+                $strings->discount = get_string('getvaluediscount', 'enrol_payment', $objcosts);
+                $strings->calculation = get_string('getvaluecalculation', 'enrol_payment', $objcosts);
 
                 $ret['successmessage'] = get_string('multipleregistrationconfirmuserlist', 'enrol_payment')
                 . implode('<li>', $stremails)

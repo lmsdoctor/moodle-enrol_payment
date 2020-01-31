@@ -58,43 +58,45 @@
                         </div>
                     </form>
                 </div>
-
-                {{#singleuser}}
-                    <!-- Notifications when applying the code. -->
-                    <div class="row justify-content-md-center">
-                        <div class="col-md-auto">
-                            <!-- Success alert. -->
-                            <span class="discount-threshold-info alert alert-success"
-                                style="display: {{#coderequired}} none {{/coderequired}} {{^coderequired}} block {{/coderequired}}">
-
-                                    {{#discounttype}}
-                                        {{#cost}}
-                                        The fee is now <b>{{currencysign}}<span class="localisedcost-untaxed">{{localisedcostuntaxed}}</span></b>
-                                        <span class="tax-container">
-                                            + {{currencysign}}<span class="taxamountstring">{{taxamountstring}}</span> <span class="taxstring">{{taxstring}}</span>
-                                            = <b>{{currencysign}}<span class="localisedcost">{{localisedcost}}</span></b>
-                                        </span>
-                                        {{currency}}  (<b>{{discountamount}}%</b>) discount
-                                        {{/cost}}
-                                    {{/discounttype}}
-
-                                    {{^discounttype}}
-                                        {{#cost}}
-                                        The <b>{{symbol}}{{discountamount}}</b> discount has been applied to the fee which is now <b>{{currencysign}}<span class="localisedcost-untaxed">{{localisedcostuntaxed}}</span></b>
-                                        <span class="tax-container">
-                                            + {{currencysign}}<span class="taxamountstring">{{taxamountstring}}</span> <span class="taxstring">{{taxstring}}</span>
-                                            = <b>{{currencysign}}<span class="localisedcost">{{localisedcost}}</span></b>
-                                        </span>{{currency}}
-                                        {{/cost}}
-                                    {{/discounttype}}
-                            </span>
-
-                            <!-- Error alert. -->
-                            <div class="enrol-payment-error-text alert alert-danger" style="display: none"></div>
-                        </div>
-                    </div>
-                {{/singleuser}}
             {{/hasdiscountcode}}
+
+            {{#singleuser}}
+                <!-- Notifications when applying the code. -->
+                <div class="row justify-content-md-center">
+                    <div class="col-md-auto">
+                        <!-- Success alert. -->
+                        <span class="discount-threshold-info alert alert-success"
+                            style="display: {{#coderequired}} none {{/coderequired}} {{^coderequired}} block {{/coderequired}}">
+
+                                {{#discounttype}}
+                                    {{#cost}}
+                                    The fee is now <b>{{currencysign}}<span class="localisedcost-untaxed">{{localisedcostuntaxed}}</span></b>
+                                    <span class="tax-container">
+                                        + {{currencysign}}<span class="taxamountstring">{{taxamountstring}}</span> <span class="taxstring">{{taxstring}}</span>
+                                        = <b>{{currencysign}}<span class="localisedcost">{{localisedcost}}</span></b>
+                                    </span>
+                                    {{currency}}
+                                    {{#discountispercentage}} (<b>{{discountamount}}%</b>) discount{{/discountispercentage}}
+                                    {{#discountisvalue}} (<b>{{currencysign}}{{discountamount}}</b>) discount{{/discountisvalue}}
+                                    {{/cost}}
+                                {{/discounttype}}
+
+                                {{^discounttype}}
+                                    {{#cost}}
+                                    The <b>{{symbol}}{{discountamount}}</b> discount has been applied to the fee which is now <b>{{currencysign}}<span class="localisedcost-untaxed">{{localisedcostuntaxed}}</span></b>
+                                    <span class="tax-container">
+                                        + {{currencysign}}<span class="taxamountstring">{{taxamountstring}}</span> <span class="taxstring">{{taxstring}}</span>
+                                        = <b>{{currencysign}}<span class="localisedcost">{{localisedcost}}</span></b>
+                                    </span>{{currency}}
+                                    {{/cost}}
+                                {{/discounttype}}
+                        </span>
+
+                        <!-- Error alert. -->
+                        <div class="enrol-payment-error-text alert alert-danger" style="display: none"></div>
+                    </div>
+                </div>
+            {{/singleuser}}
 
             {{#allowmultiple}}
                 <br>
@@ -108,9 +110,17 @@
                                 style="display: {{#coderequired}} none {{/coderequired}}
                                 {{^coderequired}} block {{/coderequired}}">
                                     {{#cost}}
-                                    A <b>{{symbol}}{{discountamount}}{{percentsymbol}}{{perseat}}</b>
-                                    discount will be applied to a purchase of <b>{{threshold}}</b> or more registrations.
+                                        {{#discountispercentage}}
+                                            A <b>{{discountamount}}{{percentsymbol}}{{perseat}}</b>
+                                            discount will be applied to a purchase of <b>{{threshold}}</b> or more registrations.
+                                        {{/discountispercentage}}
+
+                                        {{#discountisvalue}}
+                                            A <b>{{symbol}}{{discountamount}}{{perseat}}</b>
+                                            discount will be applied to a purchase of <b>{{threshold}}</b> or more registrations.
+                                        {{/discountisvalue}}
                                     {{/cost}}
+
                             </span>
                             <div class="enrol-payment-error-text alert alert-danger" style="display: none"></div>
                         </div>

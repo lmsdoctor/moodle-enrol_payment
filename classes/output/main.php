@@ -119,15 +119,7 @@ class main implements renderable, templatable {
         $calculatecostuntaxed = helper::calculate_cost($this->instance, $paymentobj, false);
         $localisedcost = $calculatecost['subtotallocalised'];
         $localisedcostuntaxed = $calculatecostuntaxed['subtotallocalised'];
-
-        // If percentage discount, get the percentage amount to display.
-        $discounttype = ($this->instance->customint3) ?? 0;
-        if ($discounttype) {
-            $percentdisplay = $calculatecost['percentdiscount'];
-        }
-
         $originalcost = format_float($originalcost, 2, false);
-
         $coursefullname  = format_string($course->fullname, true, array('context' => $context));
 
         // Are discounts enabled in the admin settings?
@@ -183,6 +175,22 @@ class main implements renderable, templatable {
         $cost->taxamount             = format_float($taxpercent * $originalcost, 2, false);
         $cost->threshold             = $threshold;
 
+        $discounttype = $this->instance->customint3;
+        // If percentage discount, get the percentage amount to display.
+        $cost->discountispercentage = false;
+        $cost->discountisvalue = false;
+        switch ($discounttype) {
+            case 1:
+                $cost->discountispercentage = true;
+                break;
+            case 2:
+                $cost->discountisvalue = true;
+        }
+
+        if ($discounttype) {
+            $percentdisplay = $calculatecost['percentdiscount'];
+        }
+
         // Check if applies for multiple users.
         $cost->perseat = '';
         $multipleusers = false;
@@ -195,11 +203,9 @@ class main implements renderable, templatable {
         if ($discounttype > 0) {
             $cost->discountamount    = $discountamount;
             $cost->percentsymbol     = '';
-            $cost->symbol            = $symbol;
             if ($discounttype == 1) {
-                $cost->discountamount    = $percentdisplay;
+                $cost->discountamount    = $discountamount;
                 $cost->percentsymbol     = '%';
-                $cost->symbol            = '';
             }
         }
 
