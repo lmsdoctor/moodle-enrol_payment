@@ -73,7 +73,7 @@ $string['privacy:metadata:enrol_payment:enrol_payment:paymentstatus'] = 'The sta
 $string['privacy:metadata:enrol_payment:enrol_payment:payment_type'] = 'Holds whether the payment was funded with an eCheck (echeck), or was funded with PayPal balance, credit card, or instant transfer (instant).';
 $string['privacy:metadata:enrol_payment:enrol_payment:pendingreason'] = 'The reason why payment status is pending (if that is).';
 $string['privacy:metadata:enrol_payment:enrol_payment:reason_code'] = 'The reason why payment status is Reversed, Refunded, Canceled_Reversal, or Denied (if the status is one of them).';
-$string['privacy:metadata:enrol_payment:enrol_payment:receiver_email'] = 'Primary email address of the payment recipient (that is, the merchant).';
+$string['privacy:metadata:enrol_payment:enrol_payment:receiveremail'] = 'Primary email address of the payment recipient (that is, the merchant).';
 $string['privacy:metadata:enrol_payment:enrol_payment:receiver_id'] = 'Unique PayPal account ID of the payment recipient (i.e., the merchant).';
 $string['privacy:metadata:enrol_payment:enrol_payment:tax'] = 'Amount of tax charged on payment.';
 $string['privacy:metadata:enrol_payment:enrol_payment:timeupdated'] = 'The time of Moodle being notified by PayPal about the payment.';
@@ -223,3 +223,7 @@ $string['discount_percent_success'] = 'The fee is now <b>{$a->currencysign}<span
 
 $string['paypalmixeduse'] = 'Mixed-use PayPal account';
 $string['paypalmixeduse_desc'] = 'If other products then enrolments are processes via the PayPal account (e.g., videos, books, etc) than tick the checkbox';
+
+$string['getvaluediscount'] = 'The {$a->symbol}{$a->discountvalue} discount per-seat has been applied.';
+
+$string['getvaluecalculation'] = '{$a->symbol}{$a->originalcost} - {$a->symbol}{$a->discountvalue} discount × {$a->units} {$a->taxstring} = <b>{$a->symbol}{$a->subtotaltaxed}</b> {$a->currency}';
