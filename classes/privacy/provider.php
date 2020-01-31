@@ -70,21 +70,21 @@ class provider implements
                 'enrol_payment_transaction',
                 [
                     'business'            => 'privacy:metadata:enrol_payment:enrol_payment_transaction:business',
-                    'receiver_email'      => 'privacy:metadata:enrol_payment:enrol_payment_transaction:receiver_email',
-                    'receiver_id'         => 'privacy:metadata:enrol_payment:enrol_payment_transaction:receiver_id',
-                    'item_name'           => 'privacy:metadata:enrol_payment:enrol_payment_transaction:item_name',
+                    'receiveremail'      => 'privacy:metadata:enrol_payment:enrol_payment_transaction:receiveremail',
+                    'receiverid'         => 'privacy:metadata:enrol_payment:enrol_payment_transaction:receiverid',
+                    'itemname'           => 'privacy:metadata:enrol_payment:enrol_payment_transaction:itemname',
                     'courseid'            => 'privacy:metadata:enrol_payment:enrol_payment_transaction:courseid',
                     'userid'              => 'privacy:metadata:enrol_payment:enrol_payment_transaction:userid',
                     'instanceid'          => 'privacy:metadata:enrol_payment:enrol_payment_transaction:instanceid',
                     'memo'                => 'privacy:metadata:enrol_payment:enrol_payment_transaction:memo',
                     'tax'                 => 'privacy:metadata:enrol_payment:enrol_payment_transaction:tax',
-                    'option_selection1_x' => 'privacy:metadata:enrol_payment:enrol_payment_transaction:option_selection1_x',
+                    'optionselection1x' => 'privacy:metadata:enrol_payment:enrol_payment_transaction:optionselection1x',
                     'paymentstatus'      => 'privacy:metadata:enrol_payment:enrol_payment_transaction:paymentstatus',
                     'pendingreason'      => 'privacy:metadata:enrol_payment:enrol_payment_transaction:pendingreason',
-                    'reason_code'         => 'privacy:metadata:enrol_payment:enrol_payment_transaction:reason_code',
+                    'reasoncode'         => 'privacy:metadata:enrol_payment:enrol_payment_transaction:reasoncode',
                     'txnid'              => 'privacy:metadata:enrol_payment:enrol_payment_transaction:txnid',
-                    'parent_txn_id'       => 'privacy:metadata:enrol_payment:enrol_payment_transaction:parent_txn_id',
-                    'payment_type'        => 'privacy:metadata:enrol_payment:enrol_payment_transaction:payment_type',
+                    'parenttxnid'       => 'privacy:metadata:enrol_payment:enrol_payment_transaction:parenttxnid',
+                    'paymenttype'        => 'privacy:metadata:enrol_payment:enrol_payment_transaction:paymenttype',
                     'timeupdated'         => 'privacy:metadata:enrol_payment:enrol_payment_transaction:timeupdated'
                 ],
                 'privacy:metadata:enrol_payment:enrol_payment_transaction'
@@ -102,14 +102,14 @@ class provider implements
     public static function get_contexts_for_userid(int $userid) : contextlist {
         $contextlist = new contextlist();
 
-        // Values of ep.receiver_email and ep.business are already normalised to lowercase characters by PayPal,
+        // Values of ep.receiveremail and ep.business are already normalised to lowercase characters by PayPal,
         // therefore there is no need to use LOWER() on them in the following query.
         $sql = "SELECT ctx.id
                   FROM {enrol_payment_transaction} ep
                   JOIN {enrol} e ON ep.instanceid = e.id
                   JOIN {context} ctx ON e.courseid = ctx.instanceid AND ctx.contextlevel = :contextcourse
              LEFT JOIN {user} u ON u.id = :emailuserid AND (
-                    LOWER(u.email) = ep.receiver_email
+                    LOWER(u.email) = ep.receiveremail
                         OR
                     LOWER(u.email) = ep.business
                 )
@@ -142,14 +142,14 @@ class provider implements
 
         list($contextsql, $contextparams) = $DB->get_in_or_equal($contextlist->get_contextids(), SQL_PARAMS_NAMED);
 
-        // Values of ep.receiver_email and ep.business are already normalised to lowercase characters by PayPal,
+        // Values of ep.receiveremail and ep.business are already normalised to lowercase characters by PayPal,
         // therefore there is no need to use LOWER() on them in the following query.
         $sql = "SELECT ep.*
                   FROM {enrol_payment_transaction} ep
                   JOIN {enrol} e ON ep.instanceid = e.id
                   JOIN {context} ctx ON e.courseid = ctx.instanceid AND ctx.contextlevel = :contextcourse
              LEFT JOIN {user} u ON u.id = :emailuserid AND (
-                    LOWER(u.email) = ep.receiver_email
+                    LOWER(u.email) = ep.receiveremail
                         OR
                     LOWER(u.email) = ep.business
                 )
@@ -186,21 +186,21 @@ class provider implements
             }
 
             $transaction = (object) [
-                'receiver_id'         => $paypalrecord->receiver_id,
-                'item_name'           => $paypalrecord->item_name,
+                'receiverid'         => $paypalrecord->receiverid,
+                'itemname'           => $paypalrecord->itemname,
                 'userid'              => $paypalrecord->userid,
                 'memo'                => $paypalrecord->memo,
                 'tax'                 => $paypalrecord->tax,
-                'option_name1'        => $paypalrecord->option_name1,
-                'option_selection1_x' => $paypalrecord->option_selection1_x,
-                'option_name2'        => $paypalrecord->option_name2,
-                'option_selection2_x' => $paypalrecord->option_selection2_x,
+                'optionname1'        => $paypalrecord->optionname1,
+                'optionselection1x' => $paypalrecord->optionselection1x,
+                'optionname2'        => $paypalrecord->optionname2,
+                'optionselection2x' => $paypalrecord->optionselection2x,
                 'paymentstatus'      => $paypalrecord->paymentstatus,
                 'pendingreason'      => $paypalrecord->pendingreason,
-                'reason_code'         => $paypalrecord->reason_code,
+                'reasoncode'         => $paypalrecord->reasoncode,
                 'txnid'              => $paypalrecord->txnid,
-                'parent_txn_id'       => $paypalrecord->parent_txn_id,
-                'payment_type'        => $paypalrecord->payment_type,
+                'parenttxnid'       => $paypalrecord->parenttxnid,
+                'paymenttype'        => $paypalrecord->paymenttype,
                 'timeupdated'         => \core_privacy\local\request\transform::datetime($paypalrecord->timeupdated),
             ];
             if ($paypalrecord->userid == $user->id) {
@@ -209,8 +209,8 @@ class provider implements
             if ($paypalrecord->business == \core_text::strtolower($user->email)) {
                 $transaction->business = $paypalrecord->business;
             }
-            if ($paypalrecord->receiver_email == \core_text::strtolower($user->email)) {
-                $transaction->receiver_email = $paypalrecord->receiver_email;
+            if ($paypalrecord->receiveremail == \core_text::strtolower($user->email)) {
+                $transaction->receiveremail = $paypalrecord->receiveremail;
             }
 
             $transactions[] = $paypalrecord;
@@ -279,8 +279,8 @@ class provider implements
         $params = $inparams + ['business' => \core_text::strtolower($user->email)];
         $DB->set_field_select('enrol_payment_transaction', 'business', '', $select, $params);
 
-        $select = "receiver_email = :receiver_email AND courseid $insql";
-        $params = $inparams + ['receiver_email' => \core_text::strtolower($user->email)];
-        $DB->set_field_select('enrol_payment_transaction', 'receiver_email', '', $select, $params);
+        $select = "receiveremail = :receiveremail AND courseid $insql";
+        $params = $inparams + ['receiveremail' => \core_text::strtolower($user->email)];
+        $DB->set_field_select('enrol_payment_transaction', 'receiveremail', '', $select, $params);
     }
 }

@@ -36,7 +36,7 @@
       </KEYS>
       <INDEXES>
         <INDEX NAME="business" UNIQUE="false" FIELDS="business"/>
-        <INDEX NAME="receiver_email" UNIQUE="false" FIELDS="receiver_email"/>
+        <INDEX NAME="receiveremail" UNIQUE="false" FIELDS="receiveremail"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="enrol_payment_session" COMMENT="Keeps track of payment data in a session.">

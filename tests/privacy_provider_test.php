@@ -1,4 +1,19 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Privacy provider tests.
  *
@@ -31,13 +46,13 @@ class enrol_payment_privacy_provider_testcase extends \core_privacy\tests\provid
     /** @var stdClass A user whose email address matches the business field in some of the PayPal transactions. */
     protected $businessuser3;
 
-    /** @var stdClass A user whose email address matches the receiver_email field in some of the PayPal transactions. */
+    /** @var stdClass A user whose email address matches the receiveremail field in some of the PayPal transactions. */
     protected $receiveruser1;
 
-    /** @var stdClass A user whose email address matches the receiver_email field in some of the PayPal transactions. */
+    /** @var stdClass A user whose email address matches the receiveremail field in some of the PayPal transactions. */
     protected $receiveruser2;
 
-    /** @var stdClass A user whose email address matches the receiver_email field in some of the PayPal transactions. */
+    /** @var stdClass A user whose email address matches the receiveremail field in some of the PayPal transactions. */
     protected $receiveruser3;
 
     /** @var stdClass A user who is not enrolled in any course. */
@@ -87,17 +102,17 @@ class enrol_payment_privacy_provider_testcase extends \core_privacy\tests\provid
         $this->course3 = $generator->create_course();
 
         // Create enrolment instances.
-        $paypalplugin = enrol_get_plugin('paypal');
+        $paymentplugin = enrol_get_plugin('payment');
 
-        $enrolinstanceid = $paypalplugin->add_instance($this->course1,
+        $enrolinstanceid = $paymentplugin->add_instance($this->course1,
                 ['roleid'   => $studentrole->id, 'courseid' => $this->course1->id]);
         $enrolinstance1  = $DB->get_record('enrol', array('id' => $enrolinstanceid));
 
-        $enrolinstanceid = $paypalplugin->add_instance($this->course2,
+        $enrolinstanceid = $paymentplugin->add_instance($this->course2,
                 ['roleid'   => $studentrole->id, 'courseid' => $this->course2->id]);
         $enrolinstance2 = $DB->get_record('enrol', array('id' => $enrolinstanceid));
 
-        $enrolinstanceid = $paypalplugin->add_instance($this->course3,
+        $enrolinstanceid = $paymentplugin->add_instance($this->course3,
                 ['roleid'   => $studentrole->id, 'courseid' => $this->course3->id]);
         $enrolinstance3 = $DB->get_record('enrol', array('id' => $enrolinstanceid));
 
@@ -109,7 +124,7 @@ class enrol_payment_privacy_provider_testcase extends \core_privacy\tests\provid
         $this->student12 = $generator->create_user();
 
         // Enrol student1 in course1.
-        $paypalplugin->enrol_user($enrolinstance1, $this->student1->id, $studentrole->id);
+        $paymentplugin->enrol_user($enrolinstance1, $this->student1->id, $studentrole->id);
         $this->create_enrol_payment_record(
             $this->businessuser1,
             $this->receiveruser1,
@@ -121,7 +136,7 @@ class enrol_payment_privacy_provider_testcase extends \core_privacy\tests\provid
         );
 
         // Enrol student2 in course2.
-        $paypalplugin->enrol_user($enrolinstance2, $this->student2->id, $studentrole->id);
+        $paymentplugin->enrol_user($enrolinstance2, $this->student2->id, $studentrole->id);
         // This user has 2 transaction histories.
         // Here is the first one.
         $this->create_enrol_payment_record(
@@ -147,7 +162,7 @@ class enrol_payment_privacy_provider_testcase extends \core_privacy\tests\provid
 
         // Enrol student12 in course1 and course2.
         // First in course1.
-        $paypalplugin->enrol_user($enrolinstance1, $this->student12->id, $studentrole->id);
+        $paymentplugin->enrol_user($enrolinstance1, $this->student12->id, $studentrole->id);
         $this->create_enrol_payment_record(
             $this->businessuser2,
             $this->receiveruser1,
@@ -158,7 +173,7 @@ class enrol_payment_privacy_provider_testcase extends \core_privacy\tests\provid
             time()
         );
         // Then in course2.
-        $paypalplugin->enrol_user($enrolinstance2, $this->student12->id, $studentrole->id);
+        $paymentplugin->enrol_user($enrolinstance2, $this->student12->id, $studentrole->id);
         $this->create_enrol_payment_record(
             $this->businessuser2,
             $this->receiveruser2,
@@ -170,7 +185,7 @@ class enrol_payment_privacy_provider_testcase extends \core_privacy\tests\provid
         );
 
         // Enrol student3 in course3 with businessuser3 as the receiver.
-        $paypalplugin->enrol_user($enrolinstance1, $this->student1->id, $studentrole->id);
+        $paymentplugin->enrol_user($enrolinstance1, $this->student1->id, $studentrole->id);
         $this->create_enrol_payment_record(
             $this->businessuser3,
             $this->receiveruser3,
@@ -206,26 +221,26 @@ class enrol_payment_privacy_provider_testcase extends \core_privacy\tests\provid
         $this->assertArrayHasKey('country', $privacyfields);
 
         $table = next($itemcollection);
-        $this->assertEquals('enrol_payment', $table->get_name());
-        $this->assertEquals('privacy:metadata:enrol_payment:enrol_payment', $table->get_summary());
+        $this->assertEquals('enrol_payment_transaction', $table->get_name());
+        $this->assertEquals('privacy:metadata:enrol_payment:enrol_payment_transaction', $table->get_summary());
 
         $privacyfields = $table->get_privacy_fields();
         $this->assertArrayHasKey('business', $privacyfields);
-        $this->assertArrayHasKey('receiver_email', $privacyfields);
-        $this->assertArrayHasKey('receiver_id', $privacyfields);
-        $this->assertArrayHasKey('item_name', $privacyfields);
+        $this->assertArrayHasKey('receiveremail', $privacyfields);
+        $this->assertArrayHasKey('receiverid', $privacyfields);
+        $this->assertArrayHasKey('itemname', $privacyfields);
         $this->assertArrayHasKey('courseid', $privacyfields);
         $this->assertArrayHasKey('userid', $privacyfields);
         $this->assertArrayHasKey('instanceid', $privacyfields);
         $this->assertArrayHasKey('memo', $privacyfields);
         $this->assertArrayHasKey('tax', $privacyfields);
-        $this->assertArrayHasKey('option_selection1_x', $privacyfields);
+        $this->assertArrayHasKey('optionselection1x', $privacyfields);
         $this->assertArrayHasKey('paymentstatus', $privacyfields);
         $this->assertArrayHasKey('pendingreason', $privacyfields);
-        $this->assertArrayHasKey('reason_code', $privacyfields);
+        $this->assertArrayHasKey('reasoncode', $privacyfields);
         $this->assertArrayHasKey('txnid', $privacyfields);
-        $this->assertArrayHasKey('parent_txn_id', $privacyfields);
-        $this->assertArrayHasKey('payment_type', $privacyfields);
+        $this->assertArrayHasKey('parenttxnid', $privacyfields);
+        $this->assertArrayHasKey('paymenttype', $privacyfields);
         $this->assertArrayHasKey('timeupdated', $privacyfields);
     }
 
@@ -372,11 +387,11 @@ class enrol_payment_privacy_provider_testcase extends \core_privacy\tests\provid
         // Before deletion, we should have 2 PayPal transactions in course1 and 3 PayPal transactions in course2.
         $this->assertEquals(
                 2,
-                $DB->count_records('enrol_payment', ['courseid' => $this->course1->id])
+                $DB->count_records('enrol_payment_transaction', ['courseid' => $this->course1->id])
         );
         $this->assertEquals(
                 3,
-                $DB->count_records('enrol_payment', ['courseid' => $this->course2->id])
+                $DB->count_records('enrol_payment_transaction', ['courseid' => $this->course2->id])
         );
 
         // Delete data based on context.
@@ -385,11 +400,11 @@ class enrol_payment_privacy_provider_testcase extends \core_privacy\tests\provid
         // After deletion, PayPal transactions in course1 should have been deleted.
         $this->assertEquals(
                 0,
-                $DB->count_records('enrol_payment', ['courseid' => $this->course1->id])
+                $DB->count_records('enrol_payment_transaction', ['courseid' => $this->course1->id])
         );
         $this->assertEquals(
                 3,
-                $DB->count_records('enrol_payment', ['courseid' => $this->course2->id])
+                $DB->count_records('enrol_payment_transaction', ['courseid' => $this->course2->id])
         );
     }
 
@@ -405,11 +420,11 @@ class enrol_payment_privacy_provider_testcase extends \core_privacy\tests\provid
         // Before deletion, we should have 2 PayPal transactions in course1 and 3 PayPal transactions in course2.
         $this->assertEquals(
                 2,
-                $DB->count_records('enrol_payment', ['courseid' => $this->course1->id])
+                $DB->count_records('enrol_payment_transaction', ['courseid' => $this->course1->id])
         );
         $this->assertEquals(
                 3,
-                $DB->count_records('enrol_payment', ['courseid' => $this->course2->id])
+                $DB->count_records('enrol_payment_transaction', ['courseid' => $this->course2->id])
         );
 
         // Delete data based on context.
@@ -418,11 +433,11 @@ class enrol_payment_privacy_provider_testcase extends \core_privacy\tests\provid
         // After deletion, PayPal transactions in course2 should have been deleted.
         $this->assertEquals(
                 2,
-                $DB->count_records('enrol_payment', ['courseid' => $this->course1->id])
+                $DB->count_records('enrol_payment_transaction', ['courseid' => $this->course1->id])
         );
         $this->assertEquals(
                 0,
-                $DB->count_records('enrol_payment', ['courseid' => $this->course2->id])
+                $DB->count_records('enrol_payment_transaction', ['courseid' => $this->course2->id])
         );
     }
 
@@ -440,42 +455,42 @@ class enrol_payment_privacy_provider_testcase extends \core_privacy\tests\provid
         // and 3 PayPal transactions (1 of them for student12) in course2.
         $this->assertEquals(
                 2,
-                $DB->count_records('enrol_payment', ['courseid' => $this->course1->id])
+                $DB->count_records('enrol_payment_transaction', ['courseid' => $this->course1->id])
         );
         $this->assertEquals(
                 1,
-                $DB->count_records('enrol_payment', ['courseid' => $this->course1->id, 'userid' => $this->student12->id])
+                $DB->count_records('enrol_payment_transaction', ['courseid' => $this->course1->id, 'userid' => $this->student12->id])
         );
         $this->assertEquals(
                 3,
-                $DB->count_records('enrol_payment', ['courseid' => $this->course2->id])
+                $DB->count_records('enrol_payment_transaction', ['courseid' => $this->course2->id])
         );
         $this->assertEquals(
                 1,
-                $DB->count_records('enrol_payment', ['courseid' => $this->course2->id, 'userid' => $this->student12->id])
+                $DB->count_records('enrol_payment_transaction', ['courseid' => $this->course2->id, 'userid' => $this->student12->id])
         );
 
         // Delete data for user.
-        $contextlist = new \core_privacy\local\request\approved_contextlist($this->student12, 'enrol_payment',
+        $contextlist = new \core_privacy\local\request\approved_contextlist($this->student12, 'enrol_payment_transaction',
                 [$coursecontext1->id]);
         provider::delete_data_for_user($contextlist);
 
         // After deletion, PayPal transactions for student12 in course1 should have been deleted.
         $this->assertEquals(
                 1,
-                $DB->count_records('enrol_payment', ['courseid' => $this->course1->id])
+                $DB->count_records('enrol_payment_transaction', ['courseid' => $this->course1->id])
         );
         $this->assertEquals(
                 0,
-                $DB->count_records('enrol_payment', ['courseid' => $this->course1->id, 'userid' => $this->student12->id])
+                $DB->count_records('enrol_payment_transaction', ['courseid' => $this->course1->id, 'userid' => $this->student12->id])
         );
         $this->assertEquals(
                 3,
-                $DB->count_records('enrol_payment', ['courseid' => $this->course2->id])
+                $DB->count_records('enrol_payment_transaction', ['courseid' => $this->course2->id])
         );
         $this->assertEquals(
                 1,
-                $DB->count_records('enrol_payment', ['courseid' => $this->course2->id, 'userid' => $this->student12->id])
+                $DB->count_records('enrol_payment_transaction', ['courseid' => $this->course2->id, 'userid' => $this->student12->id])
         );
     }
 
@@ -494,42 +509,42 @@ class enrol_payment_privacy_provider_testcase extends \core_privacy\tests\provid
         // and 3 PayPal transactions (1 of them for student12) in course2.
         $this->assertEquals(
                 2,
-                $DB->count_records('enrol_payment', ['courseid' => $this->course1->id])
+                $DB->count_records('enrol_payment_transaction', ['courseid' => $this->course1->id])
         );
         $this->assertEquals(
                 1,
-                $DB->count_records('enrol_payment', ['courseid' => $this->course1->id, 'userid' => $this->student12->id])
+                $DB->count_records('enrol_payment_transaction', ['courseid' => $this->course1->id, 'userid' => $this->student12->id])
         );
         $this->assertEquals(
                 3,
-                $DB->count_records('enrol_payment', ['courseid' => $this->course2->id])
+                $DB->count_records('enrol_payment_transaction', ['courseid' => $this->course2->id])
         );
         $this->assertEquals(
                 1,
-                $DB->count_records('enrol_payment', ['courseid' => $this->course2->id, 'userid' => $this->student12->id])
+                $DB->count_records('enrol_payment_transaction', ['courseid' => $this->course2->id, 'userid' => $this->student12->id])
         );
 
         // Delete data for user.
-        $contextlist = new \core_privacy\local\request\approved_contextlist($this->student12, 'enrol_payment',
+        $contextlist = new \core_privacy\local\request\approved_contextlist($this->student12, 'enrol_payment_transaction',
                 [$coursecontext1->id, $coursecontext2->id]);
         provider::delete_data_for_user($contextlist);
 
         // After deletion, PayPal enrolment data for student12 in both course1 and course2 should have been deleted.
         $this->assertEquals(
                 1,
-                $DB->count_records('enrol_payment', ['courseid' => $this->course1->id])
+                $DB->count_records('enrol_payment_transaction', ['courseid' => $this->course1->id])
         );
         $this->assertEquals(
                 0,
-                $DB->count_records('enrol_payment', ['courseid' => $this->course1->id, 'userid' => $this->student12->id])
+                $DB->count_records('enrol_payment_transaction', ['courseid' => $this->course1->id, 'userid' => $this->student12->id])
         );
         $this->assertEquals(
                 2,
-                $DB->count_records('enrol_payment', ['courseid' => $this->course2->id])
+                $DB->count_records('enrol_payment_transaction', ['courseid' => $this->course2->id])
         );
         $this->assertEquals(
                 0,
-                $DB->count_records('enrol_payment', ['courseid' => $this->course2->id, 'userid' => $this->student12->id])
+                $DB->count_records('enrol_payment_transaction', ['courseid' => $this->course2->id, 'userid' => $this->student12->id])
         );
     }
 
@@ -547,34 +562,34 @@ class enrol_payment_privacy_provider_testcase extends \core_privacy\tests\provid
         // 3 of which paid to businessuser1 and 2 of which paid to businessuser2.
         $this->assertEquals(
                 3,
-                $DB->count_records('enrol_payment', ['business' => $this->businessuser1->email])
+                $DB->count_records('enrol_payment_transaction', ['business' => $this->businessuser1->email])
         );
         $this->assertEquals(
                 2,
-                $DB->count_records('enrol_payment', ['business' => $this->businessuser2->email])
+                $DB->count_records('enrol_payment_transaction', ['business' => $this->businessuser2->email])
         );
 
         // Delete data for user in $coursecontext1.
-        $contextlist = new \core_privacy\local\request\approved_contextlist($this->businessuser1, 'enrol_payment',
+        $contextlist = new \core_privacy\local\request\approved_contextlist($this->businessuser1, 'enrol_payment_transaction',
                 [$coursecontext1->id]);
         provider::delete_data_for_user($contextlist);
 
         // After deletion, PayPal enrolment data for businessuser1 in course1 should have been deleted.
         $this->assertEquals(
                 0,
-                $DB->count_records('enrol_payment', ['courseid' => $this->course1->id, 'business' => $this->businessuser1->email])
+                $DB->count_records('enrol_payment_transaction', ['courseid' => $this->course1->id, 'business' => $this->businessuser1->email])
         );
         $this->assertEquals(
                 2,
-                $DB->count_records('enrol_payment', ['business' => $this->businessuser1->email])
+                $DB->count_records('enrol_payment_transaction', ['business' => $this->businessuser1->email])
         );
         $this->assertEquals(
                 1,
-                $DB->count_records('enrol_payment', ['courseid' => $this->course1->id, 'business' => ''])
+                $DB->count_records('enrol_payment_transaction', ['courseid' => $this->course1->id, 'business' => ''])
         );
         $this->assertEquals(
                 2,
-                $DB->count_records('enrol_payment', ['business' => $this->businessuser2->email])
+                $DB->count_records('enrol_payment_transaction', ['business' => $this->businessuser2->email])
         );
     }
 
@@ -592,11 +607,11 @@ class enrol_payment_privacy_provider_testcase extends \core_privacy\tests\provid
         // 2 of which paid to receiveruser1 and 3 of which paid to receiveruser2.
         $this->assertEquals(
                 2,
-                $DB->count_records('enrol_payment', ['receiver_email' => $this->receiveruser1->email])
+                $DB->count_records('enrol_payment_transaction', ['receiveremail' => $this->receiveruser1->email])
         );
         $this->assertEquals(
                 3,
-                $DB->count_records('enrol_payment', ['receiver_email' => $this->receiveruser2->email])
+                $DB->count_records('enrol_payment_transaction', ['receiveremail' => $this->receiveruser2->email])
         );
 
         // Delete data for user.
@@ -607,15 +622,15 @@ class enrol_payment_privacy_provider_testcase extends \core_privacy\tests\provid
         // After deletion, PayPal enrolment data for receiveruser1 in course1 should have been deleted.
         $this->assertEquals(
                 0,
-                $DB->count_records('enrol_payment', ['receiver_email' => $this->receiveruser1->email])
+                $DB->count_records('enrol_payment_transaction', ['receiveremail' => $this->receiveruser1->email])
         );
         $this->assertEquals(
                 2,
-                $DB->count_records('enrol_payment', ['receiver_email' => ''])
+                $DB->count_records('enrol_payment_transaction', ['receiveremail' => ''])
         );
         $this->assertEquals(
                 3,
-                $DB->count_records('enrol_payment', ['receiver_email' => $this->receiveruser2->email])
+                $DB->count_records('enrol_payment_transaction', ['receiveremail' => $this->receiveruser2->email])
         );
     }
 
@@ -633,19 +648,19 @@ class enrol_payment_privacy_provider_testcase extends \core_privacy\tests\provid
     protected function create_enrol_payment_record($business, $receiver, $course, $user, $enrol, $txnid, $time) {
         global $DB;
 
-        $paypaldata = [
+        $paymentdata = [
             'business'       => $business->email,
-            'receiver_email' => $receiver->email,
-            'receiver_id'    => 'SELLERSID',
-            'item_name'      => $course->fullname,
+            'receiveremail'  => $receiver->email,
+            'receiverid'    => 'SELLERSID',
+            'itemname'      => $course->fullname,
             'courseid'       => $course->id,
             'userid'         => $user->id,
             'instanceid'     => $enrol->id,
-            'paymentstatus' => 'Completed',
-            'txnid'         => $txnid,
-            'payment_type'   => 'instant',
+            'paymentstatus'  => 'Completed',
+            'txnid'          => $txnid,
+            'paymenttype'   => 'instant',
             'timeupdated'    => $time,
         ];
-        $DB->insert_record('enrol_payment', $paypaldata);
+        $DB->insert_record('enrol_payment_transaction', $paymentdata);
     }
 }
