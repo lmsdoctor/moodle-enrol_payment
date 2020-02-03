@@ -317,11 +317,15 @@ class enrol_payment_plugin extends enrol_plugin {
             debugging('Incorrect tax definition format.');
         }
 
-        $province = strtolower(trim($pieces[0]));
+        $taxregion = strtolower(trim($pieces[0]));
         $taxrate = trim($pieces[1]);
 
-        if ($province != strtolower(trim($userfield))) {
-            return [];
+        // If the user country and the tax country does not match, return with empty values.
+        if ($taxregion != strtolower(trim($userfield))) {
+            return [
+                'taxpercent' => 0,
+                'taxstring'  => ''
+            ];
         }
 
         if (!is_numeric($taxrate)) {
@@ -350,8 +354,25 @@ class enrol_payment_plugin extends enrol_plugin {
         global $USER;
         profile_load_data($USER);
 
-        if (!$this->get_config('definetaxes')) {
+        // If the option is disabled, return.
+        $hastaxes = $this->get_config('definetaxes');
+        if (!$hastaxes) {
             return ['taxpercent' => 0, 'taxstring' => ''];
+        }
+
+        $taxdefs        = $this->get_config('taxdefinitions');
+        $countrytax     = $this->get_config('countrytax');
+        $usertaxregion  = $USER->profile_field_taxregion;
+
+        // If country tax are set and the user country is empty. Force user to edit his profile.
+        if (!empty($countrytax) && empty($USER->country)) {
+            $urltogo = new moodle_url('/user/edit.php', ['id' => $USER->id]);
+            redirect($urltogo, 'You must choose your country', null, \core\output\notification::NOTIFY_WARNING);
+        }
+
+        if (!empty($countrytax)) {
+            $taxholder = $this->get_tax_amount($countrytax, $USER->country);
+            return $taxholder;
         }
 
         // If the tax country is not empty, use it. Otherwise use the tax region.
@@ -359,16 +380,12 @@ class enrol_payment_plugin extends enrol_plugin {
         $taxdeflines = explode("\n", $taxdefs);
 
         // Return if this is empty.
-        if (empty($taxdeflines)) {
+        if (empty($taxdefs)) {
             return ['taxpercent' => 0, 'taxstring' => ''];
         }
 
         foreach ($taxdeflines as $taxline) {
             $taxholder = $this->get_tax_amount($taxline, $USER->profile_field_taxregion);
-        }
-
-        if (!empty($countrytax = $this->get_config('countrytax'))) {
-            $taxholder = $this->get_tax_amount($countrytax, $USER->country);
         }
 
         return $taxholder;
@@ -393,7 +410,7 @@ class enrol_payment_plugin extends enrol_plugin {
 
     protected function get_instance_configuration(stdClass $instance) {
         $config                 = new stdClass;
-        $config->taxinfo        = $this->get_tax_info($instance->cost);
+        $config->taxinfo        = $this->get_tax_info($instance->cost, $instance->courseid);
         $config->allowmultiple  = ($this->get_config('allowmultipleenrol') && $instance->customint5);
         $config->haspaypal      = (bool) trim($this->get_config('paypalbusiness'));
         $config->paypalaccount  = $this->get_config('paypalbusiness');
