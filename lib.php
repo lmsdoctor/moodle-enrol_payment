@@ -391,7 +391,7 @@ class enrol_payment_plugin extends enrol_plugin {
 
     }
 
-    private function get_instance_configuration(stdClass $instance) {
+    protected function get_instance_configuration(stdClass $instance) {
         $config                 = new stdClass;
         $config->taxinfo        = $this->get_tax_info($instance->cost);
         $config->allowmultiple  = ($this->get_config('allowmultipleenrol') && $instance->customint5);
@@ -485,6 +485,11 @@ class enrol_payment_plugin extends enrol_plugin {
      */
     public function edit_instance_form($instance, MoodleQuickForm $mform, $context) {
 
+        // Add "float2" element for float formatting.
+        require_once('HTML/QuickForm.php');
+        MoodleQuickForm::registerElementType('float2', dirname(__FILE__) . '/classes/float2.php',
+            "MoodleQuickForm_float2");
+
         // Custom fields:
         // customint1 - Send course welcome message (bool)
         // customint2 - Enrol user into a group (Group id)
@@ -561,9 +566,8 @@ class enrol_payment_plugin extends enrol_plugin {
 
             // Discount amount.
             $attributes = ['size' => 10];
-            $mform->addElement('text', 'customdec1', get_string('discountamount', 'enrol_payment'), $attributes);
-            $mform->setType('customdec1', PARAM_INT);
-            $mform->setDefault('customdec1', 0);
+            $mform->addElement('float2', 'customdec1', get_string('discountamount', 'enrol_payment'), $attributes);
+            $mform->setType('customdec1', PARAM_RAW);
             $mform->disabledIf('customdec1', 'customint3', 'eq', 0);
             $mform->addHelpButton('customdec1', 'discountamount', 'enrol_payment');
 
