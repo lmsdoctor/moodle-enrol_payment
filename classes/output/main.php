@@ -179,12 +179,19 @@ class main implements renderable, templatable {
         // If percentage discount, get the percentage amount to display.
         $cost->discountispercentage = false;
         $cost->discountisvalue = false;
+        $cost->hasdiscount = false;
         switch ($discounttype) {
             case 1:
+                $cost->hasdiscount = true;
                 $cost->discountispercentage = true;
                 break;
             case 2:
+                $cost->hasdiscount = true;
                 $cost->discountisvalue = true;
+                break;
+            default:
+                $cost->hasdiscount = false;
+                break;
         }
 
         if ($discounttype) {
@@ -209,7 +216,7 @@ class main implements renderable, templatable {
             }
         }
 
-        $USER->taxregion = $USER->profile_field_taxregion;
+        $USER->taxregion = isset($USER->profile_field_taxregion) ?? '';
 
         // Store all payment related values in an object.
         $payment                = new stdClass;
