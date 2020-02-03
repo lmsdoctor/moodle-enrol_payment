@@ -128,8 +128,8 @@ class helper {
      * @param  stdClass $instance
      * @return int
      */
-    public static function normalize_percent_discount(int $amount, int $discounttype) {
-        if ($discounttype == 1 && $amount > 1.0) {
+    public static function normalize_percent_discount(float $amount, int $discounttype) {
+        if ($discounttype == 1 && $amount > 1) {
             return $amount * 0.01;
         }
         return $amount;

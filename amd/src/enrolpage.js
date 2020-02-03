@@ -236,7 +236,7 @@ function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner, Ajax, 
                 var inputID = "\"multiple-registration-email-" + n + "\"";
                 var div2 = '<div class="form-inline mr-email-line">'
                             + '<div class="form-group ">'
-                                + '<label for=' + inputID + ' class="mb-2 col-form-label">Email <span class="email-num"> ' + m + ' </span></label>'
+                                + '<label for=' + inputID + ' class="mb-2 col-form-label">Email &nbsp; <span class="email-num"> ' + m + ' </span></label>'
                                 + '<div class="mb-2 mx-sm-3">'
                                     + '<input id=' + inputID + ' type="text" class="form-control multiple-registration-email" placeholder="Enter an email address">'
                                 + '</div>';
@@ -255,6 +255,7 @@ function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner, Ajax, 
                     type: ModalFactory.types.SAVE_CANCEL,
                     title: enrolPage.mdlstr["confirmpurchase"],
                     body: successmessage,
+                    large: true,
                 }, trigger).done(function(modal) {
                     modal.setSaveButtonText(enrolPage.mdlstr["continue"]);
                     modal.getRoot().on(ModalEvents.save, function() {
@@ -380,6 +381,7 @@ function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner, Ajax, 
                                     type: ModalFactory.types.DEFAULT,
                                     body: response['failmessage'],
                                     closebuttontitle: enrolPage.mdlstr['dismiss'],
+                                    large: true,
                                 }, trigger).done(function(modal) { enrolPage.removeDimmer(modal); });
                                 $('#error-modal-trigger').click();
                             }

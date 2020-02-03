@@ -179,18 +179,18 @@ class main implements renderable, templatable {
         // If percentage discount, get the percentage amount to display.
         $cost->discountispercentage = false;
         $cost->discountisvalue = false;
-        $cost->hasdiscount = false;
+        $hasdiscount = false;
         switch ($discounttype) {
             case 1:
-                $cost->hasdiscount = true;
+                $hasdiscount = true;
                 $cost->discountispercentage = true;
                 break;
             case 2:
-                $cost->hasdiscount = true;
+                $hasdiscount = true;
                 $cost->discountisvalue = true;
                 break;
             default:
-                $cost->hasdiscount = false;
+                $hasdiscount = false;
                 break;
         }
 
@@ -239,6 +239,7 @@ class main implements renderable, templatable {
             'discounttype'          => $discounttype,
             'gatewaysenabled'       => $gatewaysenabled,
             'hasdiscountcode'       => $enablediscountcodes,
+            'hasdiscount'           => $hasdiscount,
             'hastax'                => (empty($taxstring)) ? false : true,
             'multipleusers'         => $multipleusers,
             'payment'               => $payment,
