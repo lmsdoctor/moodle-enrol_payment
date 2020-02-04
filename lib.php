@@ -417,7 +417,7 @@ class enrol_payment_plugin extends enrol_plugin {
 
         $stripesecret           = $this->get_config('stripesecretkey');
         $config->stripekey      = $this->get_config('stripepublishablekey');
-        $config->hasstripe      = ((bool) trim($stripesecret)) && ((bool) trim($instance->stripekey));
+        $config->hasstripe      = ((bool) trim($stripesecret)) && ((bool) trim($config->stripekey));
 
         return $config;
     }
