@@ -263,7 +263,7 @@ class enrol_payment_external extends external_api {
         try {
             $instance = $DB->get_record('enrol', ['id' => $params['enrolid']]);
             $payment = helper::get_payment_from_token($params['prepaytoken']);
-            helper::update_payment_data(false, null, $payment);
+            helper::update_payment_data(false, [], $payment);
             $ret = helper::calculate_cost($instance, $payment, true);
             $ret['success'] = true;
         } catch (Exception $e) {
