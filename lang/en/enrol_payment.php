@@ -144,7 +144,7 @@ $string['sameemailaccountsallowed'] = "Error: Accounts sharing the same email ad
 $string['duplicateemail'] = "Error: Duplicate emails were entered in the multiple registration form.";
 $string['paypalaccountnotneeded'] = "<b>A PayPal account is not needed to pay by credit card.</b> <br>At the PayPal site, there is a <i>\"Pay with a credit or Visa Debit card\"</i> <br>button. Please note that the name and address on the form <b>must</b><br><b>match</b> the name and address associated with the credit card.";
 $string['or'] = "OR";
-$string['usersnotfoundwithemail'] = 'Either the following registrant(s) have not yet created an account or their account is associated with a different email address: {$a}';
+$string['usersnotfoundwithemail'] = 'The following registrant(s) have not yet created an account: {$a}';
 $string['totalcost'] = '<p>If your intention is to register <b>yourself as well</b> and your name is not in the list, click <b>Cancel</b>. On the Enrolment page, enter your email address as one of the <b>others</b> to enrol.</p>
     <p>{$a->discount}</p>
     <p>Total cost: {$a->calculation}</p>';
