@@ -78,7 +78,7 @@
 
                                     {{^discounttype}}
                                         {{#cost}}
-                                        The <b>{{symbol}}{{discountamount}}</b> discount has been applied to the fee which is now <b>{{currencysign}}<span class="localisedcost-untaxed">{{localisedcostuntaxed}}</span></b>
+                                        The fee is now <b>{{currencysign}}<span class="localisedcost-untaxed">{{localisedcostuntaxed}}</span></b>
                                         <span class="tax-container">
                                             + {{currencysign}}<span class="taxamountstring">{{taxamountstring}}</span> <span class="taxstring">{{taxstring}}</span>
                                             = <b>{{currencysign}}<span class="localisedcost">{{localisedcost}}</span></b>
@@ -119,7 +119,7 @@
 
                     <div id="multiple-registration-container" class="justify-content-md-center"></div>
                     <div id="multiple-registration-btn-container">
-                        <a id="multiple-registration-btn" class="btn btn-outline-secondary enable-mr">
+                        <a id="multiple-registration-btn" role="button" class="btn btn-outline-secondary enable-mr">
                             {{# str }}enrolothers, enrol_payment{{/ str }}
                         </a>
                     </div>
@@ -177,9 +177,9 @@
                         <input type="hidden" name="email" value="{{email}}" />
                         <input type="hidden" name="country" value="{{country}}" />
                         {{/user}}
-                        <a id="paypal-button" class="btn btn-info payment-checkout">
+                        <button id="paypal-button" class="btn btn-info payment-checkout">
                             {{#str}}sendpaymentbutton_paypal, enrol_payment{{/str}}
-                        </a>
+                        </button>
                     </form>
                 </div>
                 {{/payment}}

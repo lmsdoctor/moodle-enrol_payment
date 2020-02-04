@@ -1,8 +1,8 @@
 @enrol @enrol_payment @javascript
-Feature: User can purchase a course
-  In order for the user to purchase a course
+Feature: User has a simple discount when purchasing a course
+  In order for the user to purchase a course with discount
   As an authenticated user
-  User can see the pricing and the Payment button
+  I must see the discounted amount in the course home page
 
     Background:
     Given the following "users" exist:
@@ -25,16 +25,19 @@ Feature: User can purchase a course
     And I am on "Course 1" course homepage
 
     And I add "Payment" enrolment method with:
-      | Custom instance name  | Pay Course 1  |
+      | Custom instance name  | Discount course 1  |
       | Enrol cost            | 200           |
       | Currency              | US Dollar     |
+      | Percentage discount   | 1             |
+      | Discount amount       | 25            |
 
     And I am on "Course 1" course homepage
     And I log out
 
-    Scenario: See the correct pricing in the course home page
+    Scenario: See the discounted amount
     When I log in as "student1"
     Then I am on "Course 1" course homepage
     And I should see "The fee for Course 1"
-    And I should see "is $200.00"
+    And I should see "is $150.00 USD"
+    And I should see "The fee is now"
     And I should see "Send payment via PayPal"
