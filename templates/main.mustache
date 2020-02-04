@@ -29,20 +29,16 @@
 <div class="path-enrol-payment d-flex justify-content-center">
     <div id="enrolpage">
         <div id="enrolpage-centered" align="center">
-            <p>
             {{#hastax}}
                 {{#cost}}
-                    The fee for <b>{{ coursename }}</b><br>
-                    is <b>{{ symbol }}<span class="localisedcost-untaxed">{{ localisedcostuntaxed }}</span></b> + {{ symbol }}<span class="taxamountstring">{{ taxamountstring }}</span> <span class="taxstring">{{ taxstring }}</span> = <b>{{ symbol }}<span class="localisedcost">{{ localisedcost }}</span></b> {{ currency }}.<br>
+                    <p>The fee for <strong>{{ coursename }}</strong><br>is <b>{{ symbol }}{{ localisedcostuntaxed }}</b> + {{ symbol }}{{ taxamountstring }} {{ taxstring }} = <b>{{ symbol }}{{ localisedcost }}</b> {{ currency }}.</p>
                 {{/cost}}
             {{/hastax}}
             {{^hastax}}
                 {{#cost}}
-                    The fee for <b>{{ coursename }}</b><br>
-                    is <b>{{ symbol }}<span class="localisedcost">{{ localisedcost }}</span></b> {{ currency }}.<br>
+                    <p>The fee for <strong>{{ coursename }}</strong> is <br><b>{{ symbol }}{{ localisedcost }}</b> {{ currency }}.</p>
                 {{/cost}}
             {{/hastax}}
-            </p>
             {{#hasdiscount}}
                 {{#hasdiscountcode}}
                     <div id="discount-container">
@@ -167,7 +163,7 @@
                         <input type="hidden" name="cbt" value="{{strcontinue}}" />
 
                         {{#user}}
-                        <input type="hidden" name="on0" value="{{!user}}" />
+                        <input type="hidden" name="on0" value="User" />
                         <input type="hidden" name="os0" value="{{userfullname}}" />
                         <input type="hidden" name="prov" value="{{taxregion}}" />
                         <input type="hidden" name="first_name" value="{{firstname}}" />
@@ -183,7 +179,8 @@
                     </form>
                 </div>
                 {{/payment}}
-                {{#str}}paypalaccountnotneeded, enrol_payment{{/str}}
+                <br>
+                <p>{{#str}}paypalaccountnotneeded, enrol_payment{{/str}}</p>
 
             {{/paypalenabled}}
 
@@ -200,7 +197,7 @@
 
                         <input type="hidden" name="quantity" value="1" />
                         <input type="hidden" name="shippingrequired" value="{{shipping}}">
-                        <input id="paypal-custom" class="enrol-payment-custom" type="hidden" name="custom" value="{{prepaytoken}}" />
+                        <input id="stripe-custom" class="enrol-payment-custom" type="hidden" name="custom" value="{{prepaytoken}}" />
 
                         {{#cost}}
                         <input type="hidden" name="item_name" value="{{coursename}}" />
@@ -219,7 +216,7 @@
                         <input type="hidden" name="cbt" value="{{strcontinue}}" />
 
                         {{#user}}
-                        <input type="hidden" name="on0" value="{{user}}" />
+                        <input type="hidden" name="on0" value="User" />
                         <input type="hidden" name="os0" value="{{userfullname}}" />
                         <input type="hidden" name="prov" value="{{taxregion}}" />
                         <input type="hidden" name="first_name" value="{{firstname}}" />
@@ -239,6 +236,7 @@
                 <p>{{# str }}nogatewayenabled, enrol_payment{{/ str }}</p>
             {{/gatewaysenabled}}
         </div>
+        <br>
         {{transferinstructions}}
     </div>
 </div>

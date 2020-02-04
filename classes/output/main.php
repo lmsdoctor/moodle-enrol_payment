@@ -176,6 +176,7 @@ class main implements renderable, templatable {
         $cost->threshold             = $threshold;
 
         $discounttype = $this->instance->customint3;
+
         // If percentage discount, get the percentage amount to display.
         $cost->discountispercentage = false;
         $cost->discountisvalue = false;
@@ -206,12 +207,11 @@ class main implements renderable, templatable {
             $cost->perseat = ($discounttype == 2) ? ' per-person' : '';
         }
 
-        // TODO: Refactor this logic.
+        // Refactor this logic.
         if ($discounttype > 0) {
-            $cost->discountamount    = $discountamount;
-            $cost->percentsymbol     = '';
+            $cost->discountamount = $discountamount;
             if ($discounttype == 1) {
-                $cost->discountamount    = $discountamount;
+                $cost->discountamount    = format_float($discountamount, 0);
                 $cost->percentsymbol     = '%';
             }
         }
@@ -244,6 +244,7 @@ class main implements renderable, templatable {
             'multipleusers'         => $multipleusers,
             'payment'               => $payment,
             'paypalenabled'         => $this->config->haspaypal,
+            'stripeenabled'         => $this->config->hasstripe,
             'singleuser'            => $singleuser,
             'user'                  => $USER,
         ];
