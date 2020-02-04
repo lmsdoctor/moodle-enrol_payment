@@ -41,16 +41,16 @@ Feature: User has discount when purchasing a course
 
     @javascript
     Scenario: Add multiple users to access the discount
-    When I log in as "student1"
-    Then I am on "Course 1" course homepage
+    Given I log in as "student1"
+    And I am on "Course 1" course homepage
     And I should see "The fee for Course 1"
     And I should see "is $200.00 USD"
     And I click on "Enrol other(s)" "button"
     And I click on ".plus-container" "css_element"
 
-    And I set the following fields to these values:
+    When I set the following fields to these values:
     | multiple-registration-email-1 | student2@example.com |
     | multiple-registration-email-2 | student3@example.com |
 
     And I click on "Send payment via PayPal" "button"
-    And I should see "You are purchasing a registration for each of the following"
+    Then I should see "You are purchasing a registration for each of the following"

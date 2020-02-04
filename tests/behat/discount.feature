@@ -1,4 +1,4 @@
-@enrol @enrol_payment @javascript
+@enrol @enrol_payment
 Feature: User has a simple discount when purchasing a course
   In order for the user to purchase a course with discount
   As an authenticated user
@@ -35,9 +35,9 @@ Feature: User has a simple discount when purchasing a course
     And I log out
 
     Scenario: See the discounted amount
-    When I log in as "student1"
-    Then I am on "Course 1" course homepage
-    And I should see "The fee for Course 1"
-    And I should see "is $150.00 USD"
-    And I should see "The fee is now"
+    Given I log in as "student1"
+    When I am on "Course 1" course homepage
+    Then I should see "The fee for Course 1 is"
+    And I should see "$150.00 USD"
+    And I should see "The fee is now $150.00"
     And I should see "Send payment via PayPal"

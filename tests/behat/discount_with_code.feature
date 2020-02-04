@@ -31,19 +31,31 @@ Feature: User has discount when purchasing a course
       | Percentage discount   | 1                  |
       | Discount amount       | 25                 |
       | Require discount code | 1                  |
-      | Discount code         | discount           |
+      | Discount code         | VALIDCODE          |
 
     And I am on "Course 1" course homepage
     And I log out
 
     @javascript
-    Scenario: Add the correct discount code to apply the discount
-    When I log in as "student1"
-    Then I am on "Course 1" course homepage
+    Scenario: Applying a discount code that is correct
+    Given I log in as "student1"
+    And I am on "Course 1" course homepage
     And I should see "The fee for Course 1"
     And I should see "is $200.00 USD"
-    And I set the following fields to these values:
-    | discountcode | discount |
+    When I set the following fields to these values:
+    | discountcode | VALIDCODE |
     And I click on "Apply discount" "button"
-    And I should see "150"
+    Then I should see "150"
+    And I should see "Send payment via PayPal"
+
+    @javascript
+    Scenario: Applying a discount code that is NOT correct
+    Given I log in as "student1"
+    And I am on "Course 1" course homepage
+    And I should see "The fee for Course 1"
+    And I should see "is $200.00 USD"
+    When I set the following fields to these values:
+    | discountcode | somethingelse |
+    And I click on "Apply discount" "button"
+    Then I should see "The discount code is incorrect"
     And I should see "Send payment via PayPal"
