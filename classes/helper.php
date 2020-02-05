@@ -63,8 +63,8 @@ class helper {
      */
     public static function get_payment_from_token(string $prepaytoken) {
         global $DB;
-        return $DB->get_record_sql('SELECT * FROM {enrol_payment_session}
-            WHERE ' . $DB->sql_compare_text('prepaytoken') . ' = ? ',
+        return $DB->get_record_sql('SELECT * FROM {enrol_payment_session} WHERE '
+            . $DB->sql_compare_text('prepaytoken') . ' = ? ',
             ['prepaytoken' => $prepaytoken]
         );
     }
