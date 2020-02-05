@@ -1,4 +1,19 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Float2 type form element
  *
@@ -9,6 +24,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
 global $CFG;
 
 require_once("HTML/QuickForm/text.php");
@@ -27,24 +43,19 @@ require_once($CFG->libdir . "/form/templatable_form_element.php");
 class MoodleQuickForm_float2 extends HTML_QuickForm_text implements templatable {
     use templatable_form_element;
 
-    /** @var string html for help button, if empty then no help */
-    var $_helpbutton='';
-
-    /** @var bool if true label will be hidden */
-    var $_hiddenLabel=false;
-
-    /** @var bool Whether to force the display of this element to flow LTR. */
+    var $_helpbutton = '';
+    var $_hiddenLabel = false;
     protected $forceltr = false;
 
     /**
-     * constructor
+     * Constructor.
      *
-     * @param string $elementName (optional) name of the text field
-     * @param string $elementLabel (optional) text field label
+     * @param string $elementname (optional) name of the text field
+     * @param string $elementlabel (optional) text field label
      * @param string $attributes (optional) Either a typical HTML attribute string or an associative array
      */
-    public function __construct($elementName=null, $elementLabel=null, $attributes=null) {
-        parent::__construct($elementName, $elementLabel, $attributes);
+    public function __construct($elementname = null, $elementlabel = null, $attributes = null) {
+        parent::__construct($elementname, $elementlabel, $attributes);
     }
 
     /**
@@ -52,9 +63,9 @@ class MoodleQuickForm_float2 extends HTML_QuickForm_text implements templatable 
      *
      * @deprecated since Moodle 3.1
      */
-    public function MoodleQuickForm_float2($elementName=null, $elementLabel=null, $attributes=null) {
+    public function MoodleQuickForm_float2($elementname = null, $elementlabel = null, $attributes = null) {
         debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
-        self::__construct($elementName, $elementLabel, $attributes);
+        self::__construct($elementname, $elementlabel, $attributes);
     }
 
     /**
@@ -62,14 +73,14 @@ class MoodleQuickForm_float2 extends HTML_QuickForm_text implements templatable 
      *
      * @param bool $hiddenLabel sets if label should be hidden
      */
-    function setHiddenLabel($hiddenLabel){
+    public function setHiddenLabel($hiddenLabel) {
         $this->_hiddenLabel = $hiddenLabel;
     }
 
     /**
      * Coerce value to two-decimal-place float.
      */
-    function setValue($value) {
+    public function setValue($value) {
         $this->updateAttributes(array("value" => number_format(floatval($value), 2)));
     }
 
@@ -80,12 +91,11 @@ class MoodleQuickForm_float2 extends HTML_QuickForm_text implements templatable 
      * @access    public
      * @return    void
      */
-    function freeze()
-    {
+    public function freeze() {
         $this->_flagFrozen = true;
-        // No hidden element is needed refer MDL-30845
+        // No hidden element is needed refer MDL-30845.
         $this->setPersistantFreeze(false);
-    } //end func freeze
+    }
 
     /**
      * Returns the html to be used when the element is frozen
@@ -93,12 +103,11 @@ class MoodleQuickForm_float2 extends HTML_QuickForm_text implements templatable 
      * @since     Moodle 2.4
      * @return    string Frozen html
      */
-    function getFrozenHtml()
-    {
+    public function getFrozenHtml() {
         $attributes = array('readonly' => 'readonly');
         $this->updateAttributes($attributes);
         return $this->_getTabs() . '<input' . $this->_getAttrString($this->_attributes) . ' />' . $this->_getPersistantData();
-    } //end func getFrozenHtml
+    }
 
     /**
      * Returns HTML for this form element.
@@ -135,7 +144,7 @@ class MoodleQuickForm_float2 extends HTML_QuickForm_text implements templatable 
      *
      * @return string html for help button
      */
-    function getHelpButton(){
+    public function getHelpButton() {
         return $this->_helpbutton;
     }
 
