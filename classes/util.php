@@ -99,8 +99,8 @@ class admin_setting_confightmleditor_nodefaultinfo extends \admin_setting_config
  *
  * @return string
  */
-function format_admin_setting_nodefaultinfo($setting, $title='', $form='', $description='',
-        $label=true, $warning='', $defaultinfo=null, $query='') {
+function format_admin_setting_nodefaultinfo($setting, $title = '', $form = '', $description = '',
+        $label = true, $warning = '', $defaultinfo = null, $query = '') {
     global $CFG, $OUTPUT;
 
     $context = (object) [
