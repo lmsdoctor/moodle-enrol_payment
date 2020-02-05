@@ -123,9 +123,6 @@ class main implements renderable, templatable {
         $coursefullname  = format_string($course->fullname, true, array('context' => $context));
 
         // Are discounts enabled in the admin settings?
-        $enablediscountcodes = get_config('enablediscounts') && $this->instance->customint7 && $this->instance->customint3;
-        $validatezipcode = get_config('validatezipcode');
-        $billingaddressrequired = get_config('billingaddress');
         $discountamount = format_float($this->instance->customdec1, 2, true);
 
         $symbol = enrol_payment_get_currency_symbol($this->instance->currency);
@@ -140,8 +137,8 @@ class main implements renderable, templatable {
             $stripelogourl,
             $taxpercent,
             $localisedcostuntaxed,
-            $validatezipcode,
-            $billingaddressrequired,
+            $this->config->validatezipcode,
+            $this->config->billingaddressrequired,
             $USER->email,
             $this->instance->currency,
             $symbol,
@@ -238,7 +235,7 @@ class main implements renderable, templatable {
             'cost'                  => $cost,
             'discounttype'          => $discounttype,
             'gatewaysenabled'       => $gatewaysenabled,
-            'hasdiscountcode'       => $enablediscountcodes,
+            'hasdiscountcode'       => $this->enablediscountcodes,
             'hasdiscount'           => $hasdiscount,
             'hastax'                => (empty($taxstring)) ? false : true,
             'multipleusers'         => $multipleusers,

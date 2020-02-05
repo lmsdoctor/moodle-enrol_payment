@@ -419,6 +419,10 @@ class enrol_payment_plugin extends enrol_plugin {
         $config->stripekey      = $this->get_config('stripepublishablekey');
         $config->hasstripe      = ((bool) trim($stripesecret)) && ((bool) trim($config->stripekey));
 
+        $config->enablediscountcodes    = $this->get_config('enablediscounts') && $instance->customint7 && $instance->customint3;
+        $config->validatezipcode        = $this->get_config('validatezipcode');
+        $config->billingaddressrequired = $this->get_config('billingaddress');
+
         return $config;
     }
 
