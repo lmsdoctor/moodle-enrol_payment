@@ -137,9 +137,7 @@ $string['duplicateemail'] = "Error: Duplicate emails were entered in the multipl
 $string['paypalaccountnotneeded'] = "<b>A PayPal account is not needed to pay by credit card.</b> <br>At the PayPal site, there is a <i>\"Pay with a credit or Visa Debit card\"</i> <br>button. Please note that the name and address on the form <b>must</b><br><b>match</b> the name and address associated with the credit card.";
 $string['or'] = "OR";
 $string['usersnotfoundwithemail'] = 'The following registrant(s) have not yet created an account: {$a}';
-$string['totalcost'] = '<p>If your intention is to register <b>yourself as well</b> and your name is not in the list, click <b>Cancel</b>. On the Enrolment page, enter your email address as one of the <b>others</b> to enrol.</p>
-    <p>{$a->discount}</p>
-    <p>Total cost: {$a->calculation}</p>';
+$string['totalcost'] = '<p>If your intention is to register <b>yourself as well</b> and your name is not in the list, click <b>Cancel</b>. On the Enrolment page, enter your email address as one of the <b>others</b> to enrol.</p><p>{$a->discount}</p><p>Total cost: {$a->calculation}</p>';
 $string['multipleregistrationconfirmuserlist'] = "You are purchasing a registration for each of the following: <p></p><ul><li>";
 $string['enabletaxcalculation'] = "Enable tax calculation";
 $string['enabletaxcalculation_help'] = "If the \"msn\" user profile field is overloaded to store a canadian province abbreviation, calculate the tax and factor into the cost.";
@@ -157,27 +155,17 @@ $string['removearegistrant'] = 'Remove the registrant';
 $string['definetaxes'] = 'Allow custom tax definitions';
 $string['definetaxes_desc'] = 'Depending on whether there is an entry in the country or region input box, the script will process either a single tax rate based on the user’s country or a regional tax rate based on the user’s <b>taxregion</b> user profile field value.';
 $string['taxdefinitions'] = 'Regional tax rates';
-$string['taxdefinitions_help'] = '<p><b>IMPORTANT:</b> Country tax rate must be empty for regional tax to work.<br><br> A region can be a province, state, territory, department or anything that has an associated tax rate. The format for each entry is Region : 0.## for tax rate. For instance, assume there are only two taxable provinces: Ontario (rate 13%) and Quebec (rate 5%), the entries would be:
-    <br><br>
-    Ontario : 0.13<br>Quebec : 0.05
-    <br><br>
-    Enter each tax definition on a <b>separate</b> line. The label has to be spelled the same way as in the corresponding entry in the “Menu options (one per line)” setting in the (taxregion) user profile field.</p>';
-
+$string['taxdefinitions_help'] = '<p><b>IMPORTANT:</b> Country tax rate must be empty for regional tax to work.<br><br> A region can be a province, state, territory, department or anything that has an associated tax rate. The format for each entry is Region : 0.## for tax rate. For instance, assume there are only two taxable provinces: Ontario (rate 13%) and Quebec (rate 5%), the entries would be:<br><br>Ontario : 0.13<br>Quebec : 0.05<br><br>Enter each tax definition on a <b>separate</b> line. The label has to be spelled the same way as in the corresponding entry in the “Menu options (one per line)” setting in the (taxregion) user profile field.</p>';
 $string['countrytax'] = 'Country tax rate';
 $string['countrytax_desc'] = 'The format is Country Code : 0.## for tax rate. For instance, assume you are setting a tax rate for Colombia (rate 19%) the entry would be: <b>CO : 0.19</b>';
-
-$string['feestringtaxed'] = 'The fee for <b>{$a->coursename}</b><br>
-    is <b>{$a->symbol}<span class="localisedcost-untaxed">{$a->localisedcostuntaxed}</span></b> + {$a->symbol}<span class="taxamountstring">{$a->taxamountstring}</span> <span class="taxstring">{$a->taxstring}</span> = <b>{$a->symbol}<span class="localisedcost">{$a->localisedcost}</span></b> {$a->currency}.<br>';
+$string['feestringtaxed'] = 'The fee for <b>{$a->coursename}</b><br>is <b>{$a->symbol}<span class="localisedcost-untaxed">{$a->localisedcostuntaxed}</span></b> + {$a->symbol}<span class="taxamountstring">{$a->taxamountstring}</span> <span class="taxstring">{$a->taxstring}</span> = <b>{$a->symbol}<span class="localisedcost">{$a->localisedcost}</span></b> {$a->currency}.<br>';
 $string['feestringnotax'] = 'The fee for <b>{$a->coursename}</b><br>is <b>{$a->symbol}<span class="localisedcost">{$a->localisedcost}</span></b> {$a->currency}.<br>';
-
 $string['discountwillbeapplied'] = 'A <b>{$a->symbol}{$a->discountamount}{$a->percentsymbol}{$a->perSeat}</b> discount will be applied to a purchase of <b>{$a->discountthreshold}</b> or more registrations.';
-
 $string['allowbanktransfer'] = 'Allow Bank/Email transfer payment';
 $string['transferinstructions'] = 'Bank/Email transfer payment instructions';
 $string['transferinstructions_help'] = "This text will appear on the course enrolment page. Bank or email money transfer instructions are customizable, but it is advisable to not alter {{AMOUNT}}, {{COURSEFULLNAME}} or {{COURSESHORTNAME}}. These variables are replaced by the plugin code. Note that {{AMOUNT}} is replaced with the course fee + tax (if applicable).";
 $string['transferinstructions_default'] = "<h4>Prefer to pay directly from your bank account?</h4><br>
     <p>Email money transfer (known as <a href=\"https://www.youtube.com/watch?time_continue=4&v=zL9yoZZXyOE\" target=\"_blank\"><em>Interac</em> e-Transfer</a>) is an option if you:</p><ul><li>have an email address or a mobile number, and</li><li>are registered for <em>Interac</em> e-Transfer service with your financial institution.</li></ul><p>To send an <em>Interac</em> e-Transfer payment:</p><ol><li><p>Log in to your financial institution's online or mobile banking and navigate to <em>Interac</em> e-Transfer menu.</p></li><li><p>Select the account from which to withdraw the funds.</p></li><li><p>Add a new recipient using <strong>ENTER RECIPIENT NAME</strong> as the name, <strong>ENTER EMAIL ADDRESS TO RECEIVE THE FUNDS</strong> as the email address, <strong>Who is offering {{COURSESHORTNAME}}?</strong> as the security question, and <strong>ENTER THE ANSWER WITH A MINIMUM OF 5 CHARACTERS</strong> as the answer.</p></li><li><p>Select <strong>ENTER RECIPIENT NAME</strong> as the recipient.</p></li><li><p>Fill in the amount of <strong>{{AMOUNT}}</strong> and enter <strong>your name</strong> in the message area.</p></li><li><p>Follow the on-screen instructions to confirm the information and complete the transfer.</p></li></ol><p>Once payment is received, you will be notified of your enrolment in <strong>{{COURSEFULLNAME}}</strong>.</p>";
-
 $string['paypalwait'] = 'Please wait while PayPal confirms your payment. You will be given access to <i>{$a}</i> when the payment has completed.';
 $string['errorcheckingenrolment'] = "Failure checking user enrolment. Please contact your server administrator. In the meantime, you should navigate to the course manually.";
 $string['thanksforpaypal'] = 'Thank you for your multiple enrolment purchase. The registrant(s) have been successfully enrolled in <i>{$a}</i>.';
