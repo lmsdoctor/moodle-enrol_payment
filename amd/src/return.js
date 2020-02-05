@@ -2,7 +2,7 @@
  * PayPal return page for pending payment
  */
 define(['jquery', 'enrol_payment/spin', 'core/str', 'core/config', 'core/ajax'],
-    function($, Spinner, MoodleStrings, MoodleCfg, Ajax) {
+function($, Spinner, MoodleStrings, MoodleCfg, Ajax) {
     var PayPalReturn = {
 
         checkEnrol: function(ajaxurl, courseid, mdlstr, dest, paymentid) {
