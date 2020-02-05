@@ -28,8 +28,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once('classes/util.php');
-require_once('currencycodes.php');
+require_once(dirname(__FILE__) . '/classes/util.php');
+require_once(dirname(__FILE__) . '/currencycodes.php');
 require_once($CFG->dirroot . '/user/profile/lib.php');
 require_once($CFG->dirroot . '/lib/enrollib.php');
 
