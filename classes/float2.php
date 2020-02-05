@@ -43,8 +43,8 @@ require_once($CFG->libdir . "/form/templatable_form_element.php");
 class MoodleQuickForm_float2 extends HTML_QuickForm_text implements templatable {
     use templatable_form_element;
 
-    protected $_helpbutton = '';
-    protected $_hiddenlabel = false;
+    public $_helpbutton = '';
+    public $_hiddenlabel = false;
     protected $forceltr = false;
 
     /**
