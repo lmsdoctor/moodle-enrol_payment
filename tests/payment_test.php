@@ -139,10 +139,14 @@ class enrol_payment_testcase extends advanced_testcase {
         $this->assertEquals(6, $DB->count_records('role_assignments'));
         $this->assertEquals(4, $DB->count_records('role_assignments', ['roleid' => $studentrole->id]));
         $this->assertEquals(1, $DB->count_records('role_assignments', ['roleid' => $teacherrole->id]));
-        $this->assertFalse($DB->record_exists('role_assignments', ['contextid' => $context1->id, 'userid' => $user3->id, 'roleid' => $studentrole->id]));
-        $this->assertFalse($DB->record_exists('role_assignments', ['contextid' => $context2->id, 'userid' => $user2->id, 'roleid' => $studentrole->id]));
-        $this->assertFalse($DB->record_exists('role_assignments', ['contextid' => $context2->id, 'userid' => $user1->id, 'roleid' => $teacherrole->id]));
-        $this->assertTrue($DB->record_exists('role_assignments', ['contextid' => $context2->id, 'userid' => $user1->id, 'roleid' => $studentrole->id]));
+        $this->assertFalse($DB->record_exists('role_assignments',
+            ['contextid' => $context1->id, 'userid' => $user3->id, 'roleid' => $studentrole->id]));
+        $this->assertFalse($DB->record_exists('role_assignments',
+            ['contextid' => $context2->id, 'userid' => $user2->id, 'roleid' => $studentrole->id]));
+        $this->assertFalse($DB->record_exists('role_assignments',
+            ['contextid' => $context2->id, 'userid' => $user1->id, 'roleid' => $teacherrole->id]));
+        $this->assertTrue($DB->record_exists('role_assignments',
+            ['contextid' => $context2->id, 'userid' => $user1->id, 'roleid' => $studentrole->id]));
 
         $paymentplugin->set_config('expiredaction', ENROL_EXT_REMOVED_UNENROL);
         role_assign($studentrole->id, $user3->id, $context1->id);

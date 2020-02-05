@@ -63,8 +63,7 @@ class helper {
      */
     public static function get_payment_from_token(string $prepaytoken) {
         global $DB;
-        return $DB->get_record_sql('
-            SELECT * FROM {enrol_payment_session}
+        return $DB->get_record_sql('SELECT * FROM {enrol_payment_session}
             WHERE ' . $DB->sql_compare_text('prepaytoken') . ' = ? ',
             ['prepaytoken' => $prepaytoken]
         );
@@ -241,31 +240,29 @@ class helper {
     /**
      * Returns the percentage calculation string.
      *
-     * @param  stdClass $a
+     * @param  stdClass $obj
      * @return string
      */
-    public static function get_percentage_calculation_string(stdClass $a, bool $codegiven, bool $hasdiscount) {
+    public static function get_percentage_calculation_string(stdClass $obj, bool $codegiven, bool $hasdiscount) {
 
         if (!$hasdiscount) {
-            return "{$a->symbol}{$a->originalcost} × {$a->units} {$a->taxstring}
-                = <b>{$a->symbol}{$a->subtotaltaxed}</b> {$a->currency}";
+            return get_string('percentcalculation', 'enrol_payment', $obj);
         }
-        return "{$a->symbol}{$a->originalcost} - {$a->symbol}{$a->unitdiscount} ({$a->percentdiscount}% discount)
-        × {$a->units} {$a->taxstring} = <b>{$a->symbol}{$a->subtotaltaxed}</b> {$a->currency}";
+        return get_string('percentcalculationdiscount', 'enrol_payment', $obj);
     }
 
     /**
      * Returns the percentage discount string.
      *
-     * @param  stdClass $a
+     * @param  stdClass $obj
      * @return string
      */
-    public static function get_percentage_discount_string(stdClass $a, bool $codegiven, bool $hasdiscount) {
+    public static function get_percentage_discount_string(stdClass $obj, bool $codegiven, bool $hasdiscount) {
 
         if (!$hasdiscount) {
             return '';
         }
-        return "The {$a->percentdiscount}% discount has been applied.";
+        return get_string('percentdiscountstring', 'enrol_payment', $obj);
     }
 
     /**
