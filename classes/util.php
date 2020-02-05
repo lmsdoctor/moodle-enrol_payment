@@ -43,7 +43,8 @@ class admin_setting_confightmleditor_nodefaultinfo extends \admin_setting_config
      * @param mixed $defaultsetting string or array
      * @param mixed $paramtype
      */
-    public function __construct($name, $visiblename, $description, $defaultsetting, $paramtype=PARAM_RAW, $cols='60', $rows='8') {
+    public function __construct($name, $visiblename, $description, $defaultsetting,
+            $paramtype = PARAM_RAW, $cols = '60', $rows = '8') {
         parent::__construct($name, $visiblename, $description, $defaultsetting, $paramtype, $cols, $rows);
         $this->cols = $cols;
         $this->rows = $rows;
