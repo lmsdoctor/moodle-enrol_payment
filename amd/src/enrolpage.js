@@ -145,7 +145,7 @@ function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner, Ajax, 
                     // Get HTML for the field we will create.
                     var nextHtml = self.makeEmailEntryLine(mdlstr);
 
-                    // Remove all plus signs (there should only be one at any given time)
+                    // Remove all plus signs (there should only be one at any given time).
                     $(".plus-container").remove();
 
                     // Add the new HTML to the bottom of our container, and update its click handlers.
@@ -539,7 +539,6 @@ function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner, Ajax, 
             trigger.click();
         },
 
-
         /**
          * Attach events to Moodle modal box to destroy dimmer.
          */
@@ -593,13 +592,13 @@ function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner, Ajax, 
          */
         loadStrings: function(keys, callback) {
             var strs = [];
-            for(var i=0; i<keys.length; i++) {
+            for(var i = 0; i < keys.length; i++) {
                 strs.push({ key : keys[i], component : "enrol_payment" });
             }
             var str_promise = MoodleStrings.get_strings(strs);
             str_promise.done(function(strs) {
                 var ret = [];
-                for(var i=0; i<keys.length; i++) {
+                for(var i = 0; i < keys.length; i++) {
                     ret[keys[i]] = strs[i];
                 }
                 callback(ret);
