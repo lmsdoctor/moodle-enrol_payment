@@ -26,7 +26,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 require_once(dirname(__FILE__) . '/classes/util.php');
-$PAGE->requires->js_call_amd('enrol_payment/settings', 'init');
 
 if ($ADMIN->fulltree) {
 
