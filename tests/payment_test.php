@@ -25,7 +25,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-
 class enrol_payment_testcase extends advanced_testcase {
 
     protected function enable_plugin() {
