@@ -459,7 +459,8 @@ class enrol_payment_privacy_provider_testcase extends \core_privacy\tests\provid
         );
         $this->assertEquals(
                 1,
-                $DB->count_records('enrol_payment_transaction', ['courseid' => $this->course1->id, 'userid' => $this->student12->id])
+                $DB->count_records('enrol_payment_transaction',
+                    ['courseid' => $this->course1->id, 'userid' => $this->student12->id])
         );
         $this->assertEquals(
                 3,
@@ -467,7 +468,8 @@ class enrol_payment_privacy_provider_testcase extends \core_privacy\tests\provid
         );
         $this->assertEquals(
                 1,
-                $DB->count_records('enrol_payment_transaction', ['courseid' => $this->course2->id, 'userid' => $this->student12->id])
+                $DB->count_records('enrol_payment_transaction',
+                    ['courseid' => $this->course2->id, 'userid' => $this->student12->id])
         );
 
         // Delete data for user.
@@ -482,7 +484,8 @@ class enrol_payment_privacy_provider_testcase extends \core_privacy\tests\provid
         );
         $this->assertEquals(
                 0,
-                $DB->count_records('enrol_payment_transaction', ['courseid' => $this->course1->id, 'userid' => $this->student12->id])
+                $DB->count_records('enrol_payment_transaction',
+                    ['courseid' => $this->course1->id, 'userid' => $this->student12->id])
         );
         $this->assertEquals(
                 3,
@@ -490,7 +493,8 @@ class enrol_payment_privacy_provider_testcase extends \core_privacy\tests\provid
         );
         $this->assertEquals(
                 1,
-                $DB->count_records('enrol_payment_transaction', ['courseid' => $this->course2->id, 'userid' => $this->student12->id])
+                $DB->count_records('enrol_payment_transaction',
+                    ['courseid' => $this->course2->id, 'userid' => $this->student12->id])
         );
     }
 
@@ -513,7 +517,8 @@ class enrol_payment_privacy_provider_testcase extends \core_privacy\tests\provid
         );
         $this->assertEquals(
                 1,
-                $DB->count_records('enrol_payment_transaction', ['courseid' => $this->course1->id, 'userid' => $this->student12->id])
+                $DB->count_records('enrol_payment_transaction',
+                    ['courseid' => $this->course1->id, 'userid' => $this->student12->id])
         );
         $this->assertEquals(
                 3,
@@ -521,7 +526,8 @@ class enrol_payment_privacy_provider_testcase extends \core_privacy\tests\provid
         );
         $this->assertEquals(
                 1,
-                $DB->count_records('enrol_payment_transaction', ['courseid' => $this->course2->id, 'userid' => $this->student12->id])
+                $DB->count_records('enrol_payment_transaction',
+                    ['courseid' => $this->course2->id, 'userid' => $this->student12->id])
         );
 
         // Delete data for user.
@@ -536,7 +542,8 @@ class enrol_payment_privacy_provider_testcase extends \core_privacy\tests\provid
         );
         $this->assertEquals(
                 0,
-                $DB->count_records('enrol_payment_transaction', ['courseid' => $this->course1->id, 'userid' => $this->student12->id])
+                $DB->count_records('enrol_payment_transaction',
+                    ['courseid' => $this->course1->id, 'userid' => $this->student12->id])
         );
         $this->assertEquals(
                 2,
@@ -544,7 +551,8 @@ class enrol_payment_privacy_provider_testcase extends \core_privacy\tests\provid
         );
         $this->assertEquals(
                 0,
-                $DB->count_records('enrol_payment_transaction', ['courseid' => $this->course2->id, 'userid' => $this->student12->id])
+                $DB->count_records('enrol_payment_transaction',
+                    ['courseid' => $this->course2->id, 'userid' => $this->student12->id])
         );
     }
 
@@ -577,7 +585,8 @@ class enrol_payment_privacy_provider_testcase extends \core_privacy\tests\provid
         // After deletion, PayPal enrolment data for businessuser1 in course1 should have been deleted.
         $this->assertEquals(
                 0,
-                $DB->count_records('enrol_payment_transaction', ['courseid' => $this->course1->id, 'business' => $this->businessuser1->email])
+                $DB->count_records('enrol_payment_transaction',
+                    ['courseid' => $this->course1->id, 'business' => $this->businessuser1->email])
         );
         $this->assertEquals(
                 2,
