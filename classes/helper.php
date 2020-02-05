@@ -55,58 +55,6 @@ class helper {
         // Empty constructor.
     }
 
-    // public function product_has_tax() {
-    //     global $USER;
-    //     profile_load_data($USER);
-
-    //     $istaxable = get_config('definetaxes', 'enrol_payment');
-    //     if (!$istaxable) {
-    //         return false;
-    //     }
-
-    //     // If the tax country is not empty, use it. Otherwise use the tax region.
-    //     $taxlist = get_config('taxdefinitions', 'enrol_payment');
-    //     $taxes = explode("\n", $taxlist);
-
-    //     // Return if this is empty.
-    //     if (empty($taxes)) {
-    //         return false;
-    //     }
-
-    //     return true;
-
-    // }
-
-    // public function user_has_tax() {
-
-    //     foreach ($taxes as $tax) {
-
-    //         $pieces = explode(":", $tax);
-    //         if (count($pieces) != 2) {
-    //             moodle_exception('Incorrect tax definition format.');
-    //         }
-
-    //         $province = strtolower(trim($pieces[0]));
-    //         $taxrate = trim($pieces[1]);
-
-    //         if (!is_numeric($taxrate)) {
-    //             moodle_exception('Encountered non-numeric tax value.');
-    //         }
-
-    //         if ($province == strtolower(trim($userfield))) {
-    //             $this->istaxable = true;
-    //             $this->usertax = floatval($taxrate);
-    //             return true;
-    //         }
-
-    //     }
-
-    //     if (!empty($countrytax = $this->get_config('countrytax'))) {
-    //         $taxholder = $this->get_tax_amount($countrytax, $USER->country);
-    //     }
-
-    // }
-
     /**
      * Get the payment from token.
      *

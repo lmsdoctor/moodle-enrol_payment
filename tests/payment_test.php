@@ -28,12 +28,6 @@ defined('MOODLE_INTERNAL') || die();
 
 class enrol_payment_testcase extends advanced_testcase {
 
-    // public function test_enrol_payment() {
-    //     // $this->resetAfterTest(true);
-    //     $generator = $this->getDataGenerator()->get_plugin_generator('enrol_payment');
-    //     $generator->setup_fake_plugin_config();
-    // }
-
     protected function enable_plugin() {
         $enabled = enrol_get_plugins(true);
         $enabled['payment'] = true;
