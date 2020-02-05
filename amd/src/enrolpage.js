@@ -16,7 +16,7 @@ define([
     'core/ajax',
     'core/notification',
 ],
-function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner, Ajax, Notification) { //eslint-disable-line no-unused-vars
+function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner, Ajax, Notification) {
 
     /**
      * JavaScript functionality for the enrol_payment enrol.html page
@@ -142,11 +142,10 @@ function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner, Ajax, 
                 var self = this;
 
                 plus.click(function() {
-                    // Get HTML for the field we will create
+                    // Get HTML for the field we will create.
                     var nextHtml = self.makeEmailEntryLine(mdlstr);
 
-                    // Remove all plus signs (there should only be one at any
-                    // given time)
+                    // Remove all plus signs (there should only be one at any given time)
                     $(".plus-container").remove();
 
                     // Add the new HTML to the bottom of our container, and update its click handlers.
@@ -167,17 +166,17 @@ function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner, Ajax, 
                 var self = this;
 
                 minus.click(function() {
-                    //Pop the whole email input line off the DOM.
+                    // Pop the whole email input line off the DOM.
                     console.log($(this).parent());
                     $(this).parent().parent().remove();
 
-                    //Add a plus icon to the last line, if it's not already there
+                    // Add a plus icon to the last line, if it's not already there.
                     if (! $(".form-group:last .plus-container").length) {
                         $(".form-group:last").append(self.makePlusSign(mdlstr));
                         self.addPlusClickHandler($('.plus-container'), mdlstr);
                     }
 
-                    //Re-number our rows for the user
+                    // Re-number our rows for the user.
                     self.refreshEmailNums();
                 });
             },
@@ -338,12 +337,11 @@ function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner, Ajax, 
             buildForm: function(btn, mdlstr, enrolPage) {
                 var self = this;
 
-                //If the button is to enable, build the multiple registration
-                //form.
+                // If the button is to enable, build the multiple registration form.
                 if(!self.enabled) {
                     self.enabled = true;
                     self.nextEmailID = 1;
-                    //Build DOM for a multiple-registration form
+                    // Build DOM for a multiple-registration form.
 
                     btn.text(mdlstr["cancelenrolothers"]);
                     btn.removeClass('enable-mr').addClass('disable-mr');
@@ -482,33 +480,33 @@ function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner, Ajax, 
             var self = this;
 
             $.getScript("https://checkout.stripe.com/checkout.js", function() {
+
                 // StripeCheckout is now globally available, but we will only
                 // use it here. Since this javascript code is called from PHP,
                 // we can't load in checkout.js from the HTML, so we have to
                 // do it here.
-
-                var stripeHandler = StripeCheckout.configure({ //eslint-disable-line no-undef
-                  key: self.stripePublishableKey,
-                  image: self.stripeLogo || 'https://stripe.com/img/documentation/checkout/marketplace.png',
-                  locale: 'auto',
-                  billingAddress: self.billingAddressRequired,
-                  shippingAddress: self.shippingAddressRequired,
-                  email: self.userEmail || null,
-                  allowRememberMe: false,
-                  token: function(token) {
-                      $('#stripe-form')
-                          .append('<input type="hidden" name="stripeToken" value="' + token.id + '" />')
-                          .append('<input type="hidden" name="stripeTokenType" value="' + token.type + '" />')
-                          .append('<input type="hidden" name="stripeEmail" value="' + token.email + '" />')
-                          .submit();
-                  }
+                var stripeHandler = StripeCheckout.configure({
+                    key: self.stripePublishableKey,
+                    image: self.stripeLogo || 'https://stripe.com/img/documentation/checkout/marketplace.png',
+                    locale: 'auto',
+                    billingAddress: self.billingAddressRequired,
+                    shippingAddress: self.shippingAddressRequired,
+                    email: self.userEmail || null,
+                    allowRememberMe: false,
+                    token: function(token) {
+                        $('#stripe-form')
+                            .append('<input type="hidden" name="stripeToken" value="' + token.id + '" />')
+                            .append('<input type="hidden" name="stripeTokenType" value="' + token.type + '" />')
+                            .append('<input type="hidden" name="stripeEmail" value="' + token.email + '" />')
+                            .submit();
+                    }
                 });
 
                 stripeHandler.open({
                     name: decodeURIComponent(self.courseFullName),
                     description: self.mdlstr["totalenrolmentfee"] + " " + self.symbol + self.getTaxedAmount() + " " + self.currency,
                     zipCode: self.validateZipCode ? "true" : "false",
-                    //Stripe amount is in pennies
+                    // Stripe amount is in pennies.
                     amount: Math.floor(Number.parseFloat(self.getTaxedAmount()) * 100),
                     currency: self.currency,
                     closed: function() { $("#dimmer").css('display', 'none'); }
@@ -611,45 +609,45 @@ function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner, Ajax, 
         /**
          * Get currency symbol.
          */
-
-
-        init: function( instanceid
-                      , stripePublishableKey
-                      , cost
-                      , prepayToken
-                      , courseFullName
-                      , shippingAddressRequired
-                      , stripeLogo
-                      , taxPercent
-                      , subtotal
-                      , validateZipCode
-                      , billingAddressRequired
-                      , userEmail
-                      , currency
-                      , symbol
-                      , discountCodeRequired
-                      , discountThreshold ) {
+        init: function(
+            instanceid,
+            stripePublishableKey,
+            cost,
+            prepayToken,
+            courseFullName,
+            shippingAddressRequired,
+            stripeLogo,
+            taxPercent,
+            subtotal,
+            validateZipCode,
+            billingAddressRequired,
+            userEmail,
+            currency,
+            symbol,
+            discountCodeRequired,
+            discountThreshold) {
 
             var self = this;
-            var stringKeys = [ "discounttypeerror"
-                             , "discountamounterror"
-                             , "invalidgateway"
-                             , "errcommunicating"
-                             , "addaregistrant"
-                             , "removearegistrant"
-                             , "enrolothers"
-                             , "cancelenrolothers"
-                             , "confirmpurchase"
-                             , "continue"
-                             , "dismiss"
-                             , "invalidpaymentprovider"
-                             , "novalidemailsentered"
-                             , "novalidemailsentered_desc"
-                             , "totalenrolmentfee"
-                             , "error"
-                             , "incorrectdiscountcode"
-                             , "incorrectdiscountcode_desc"
-                             ];
+            var stringKeys = [
+                "discounttypeerror",
+                "discountamounterror",
+                "invalidgateway",
+                "errcommunicating",
+                "addaregistrant",
+                "removearegistrant",
+                "enrolothers",
+                "cancelenrolothers",
+                "confirmpurchase",
+                "continue",
+                "dismiss",
+                "invalidpaymentprovider",
+                "novalidemailsentered",
+                "novalidemailsentered_desc",
+                "totalenrolmentfee",
+                "error",
+                "incorrectdiscountcode",
+                "incorrectdiscountcode_desc"
+            ];
             self.loadStrings(stringKeys, function(strs) {
                 self.mdlstr = strs;
                 self.originalCost = parseFloat(cost);
