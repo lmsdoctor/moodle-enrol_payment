@@ -208,19 +208,6 @@ $string['totalenrolmentfee'] = 'Total enrolment fee:';
 $string['charge_enrolment'] = 'Enrolment in: ';
 $string['error'] = 'Error';
 
-$string['discount_value_success'] = 'The <b>{$a->symbol}{$a->discountamount}</b> discount has been applied to the fee which is now <b>{$a->currencysign}<span class="localisedcost-untaxed">{$a->localisedcostuntaxed}</span></b>
-    <span class="tax-container">
-        + {$a->currencysign}<span class="taxamountstring">{$a->taxamountstring}</span> <span class="taxstring">{$a->taxstring}</span>
-        = <b>{$a->currencysign}<span class="localisedcost">{$a->localisedcost}</span></b>
-    </span>{$a->currency}';
-
-$string['discount_percent_success'] = 'The fee is now <b>{$a->currencysign}<span class="localisedcost-untaxed">{$a->localisedcostuntaxed}</span></b>
-    <span class="tax-container">
-        + {$a->currencysign}<span class="taxamountstring">{$a->taxamountstring}</span> <span class="taxstring">{$a->taxstring}</span>
-        = <b>{$a->currencysign}<span class="localisedcost">{$a->localisedcost}</span></b>
-    </span>
-    {$a->currency}  (<b>{$a->discountamount}{$a->percentsymbol}</b>) discount';
-
 $string['paypalmixeduse'] = 'Mixed-use PayPal account';
 $string['paypalmixeduse_desc'] = 'If other products then enrolments are processes via the PayPal account (e.g., videos, books, etc) than tick the checkbox';
 
