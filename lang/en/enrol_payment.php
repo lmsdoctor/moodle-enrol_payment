@@ -97,15 +97,11 @@ $string['status'] = 'Allow Payment enrolments';
 $string['status_desc'] = 'Allow users to use PayPal and Stripe to enrol';
 $string['transactions'] = 'PayPal transactions';
 $string['unenrolselfconfirm'] = 'Do you really want to unenrol yourself from course "{$a}"?';
-$string['customwelcomemessage_help'] = 'A custom welcome message may be added as plain text or Moodle-auto format, including HTML tags and multi-lang tags.
-
-The following placeholders may be included in the message:
-
-* Course name {$a->coursename}
-* Link to user\'s profile page {$a->profileurl}
-* User email {$a->email}
+$string['customwelcomemessage_help'] = 'A custom welcome message may be added as plain text or Moodle-auto format, including HTML tags and multi-lang tags. <br>The following placeholders may be included in the message:<br><br>
+* Course name {$a->coursename}<br>
+* Link to user\'s profile page {$a->profileurl}<br>
+* User email {$a->email}<br>
 * User fullname {$a->fullname}';
-
 $string['discounttype'] = 'Discount type';
 $string['discounttype_help'] = 'Select type of discount. If "Value discount" is selected and multiple enrolments are purchased, the discount will be applied per-item.';
 $string['nodiscount'] = 'No discount &nbsp;&nbsp;';
