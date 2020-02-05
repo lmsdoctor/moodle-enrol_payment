@@ -43,8 +43,8 @@ require_once($CFG->libdir . "/form/templatable_form_element.php");
 class MoodleQuickForm_float2 extends HTML_QuickForm_text implements templatable {
     use templatable_form_element;
 
-    var $_helpbutton = '';
-    var $_hiddenLabel = false;
+    protected $_helpbutton = '';
+    protected $_hiddenlabel = false;
     protected $forceltr = false;
 
     /**
@@ -59,22 +59,12 @@ class MoodleQuickForm_float2 extends HTML_QuickForm_text implements templatable 
     }
 
     /**
-     * Old syntax of class constructor. Deprecated in PHP7.
-     *
-     * @deprecated since Moodle 3.1
-     */
-    public function MoodleQuickForm_float2($elementname = null, $elementlabel = null, $attributes = null) {
-        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
-        self::__construct($elementname, $elementlabel, $attributes);
-    }
-
-    /**
      * Sets label to be hidden
      *
      * @param bool $hiddenLabel sets if label should be hidden
      */
     public function setHiddenLabel($hiddenLabel) {
-        $this->_hiddenLabel = $hiddenLabel;
+        $this->_hiddenlabel = $hiddenLabel;
     }
 
     /**
@@ -131,7 +121,7 @@ class MoodleQuickForm_float2 extends HTML_QuickForm_text implements templatable 
         }
         $html = $this->_getTabs() . '<input' . $this->_getAttrString($this->_attributes) . ' />';
 
-        if ($this->_hiddenLabel){
+        if ($this->_hiddenlabel) {
             return '<label class="accesshide" for="'.$this->getAttribute('id').'" >'.
                         $this->getLabel() . '</label>' . $html;
         } else {

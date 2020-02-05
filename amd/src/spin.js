@@ -106,7 +106,7 @@ function drawLines(el, opts) {
     var borderRadius = (Math.round(opts.corners * opts.width * 500) / 1000) + 'px';
     var shadow = 'none';
     if (opts.shadow === true) {
-        shadow = '0 2px 4px #000'; // default shadow
+        shadow = '0 2px 4px #000'; // ... default shadow.
     }
     else if (typeof opts.shadow === 'string') {
         shadow = opts.shadow;
@@ -125,7 +125,7 @@ function drawLines(el, opts) {
             transform: "rotate(" + degrees + "deg) translateX(" + opts.radius + "px)",
         });
         var delay = i * opts.direction / opts.lines / opts.speed;
-        delay -= 1 / opts.speed; // so initial animation state will include trail
+        delay -= 1 / opts.speed; // ... so initial animation state will include trail.
         var line = css(document.createElement('div'), {
             width: '100%',
             height: '100%',
@@ -145,7 +145,7 @@ function parseBoxShadow(boxShadow) {
         var shadow = _a[_i];
         var matches = shadow.match(regex);
         if (matches === null) {
-            continue; // invalid syntax
+            continue; // ... invalid syntax.
         }
         var x = +matches[2];
         var y = +matches[5];
@@ -158,7 +158,7 @@ function parseBoxShadow(boxShadow) {
             yUnits = xUnits;
         }
         if (xUnits !== yUnits) {
-            continue; // units must match to use as coordinates
+            continue; // ... units must match to use as coordinates.
         }
         shadows.push({
             prefix: matches[1] || '',
