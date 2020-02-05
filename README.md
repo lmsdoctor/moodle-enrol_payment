@@ -5,7 +5,7 @@ This Moodle plugin is a superset of Moodle's **enrol\_paypal** functionality. Pl
 - Use Stripe or PayPal payment backend
 - Define discount codes with percentage-based or amount-based discounts (see **Discounts**, below)
 - Allow users to enrol other users (see **Multiple Enrolment**, below)
-- Define custom tax rules (see **Adding a Province/State Field**, below)
+- Define custom tax rules (see **Country tax rate** or **Adding a Province/State Field**, below)
 
 ## Discounts
 To set up a discount code:
@@ -21,92 +21,36 @@ To enable the Multiple Enrolment system:
 This will allow users to enroll 1 or more other users in the course, provided the users' email addressses 
 are known.
 
+## Adding a Country Tax Rate
+Country tax rate allows you to define a tax for an specific country. To set this up, follow
+the instructions below:
+
+- Go to Site Administration > Plugins > Enrollments > Payment
+- Check the Allow custom tax definitions
+- Set the Country tax rate, example: CO : 0.19 or BR : 0.15 or AR : 0.09
+
 ## Adding a Province/State Field
-Since Moodle does not natively collect province/state info, the instructions
-below are hacks to core files to enable the insertion of a province/state code
-in the “msn” field in the user table. This value is use by the plugin to
-calculate tax.
+Since Moodle does not natively collect province/state info, we can create a
+user profile field to calculate the tax user information.
 
+### STEP 1: Configure the regional tax rates
+Go to Site Administration > Plugins > Enrollments > Payment
 
-### STEP 1: Customize the following language strings in the core moodle.php
-**msnid:** Province/state
-**state:** Select province/state
-**missingreqreason**: Missing province/state (NB: needed to make “msn” [a.k.a. the state/province field] a
-required field)
+1. Check Allow custom tax definitions
+2. Add the list of regions into the Regional tax rates field, one per line.
 
-### STEP 2: Create the states file
-Name your state/province file states.php and upload it in the folder /lang/en.
-This file needs to begin with `<?PHP` and end with `?>` and have as many entries in
-the format: `$string['Code']` = 'State'; as required. For example:
+The format for each entry is Region : 0.## for tax rate. For instance, assume there are only two taxable provinces: Ontario (rate 13%) and Quebec (rate 5%), the entries would be:
 
-```PHP
-<?PHP
-$string['AB'] = 'Alberta';
-.
-.
-.
-$string['WY'] = 'Wyoming';
-?>
-```
+Ontario : 0.13
+Quebec : 0.05
 
-### STEP 3: Add function get_list_of_states()
-In `/lib/classes/string_manager_standard.php`, just above the `get_list_of_countries()` function, insert:
+Enter each tax definition on a separate line
 
-```PHP
-    /**
-     * Returns a localised list of all state names, sorted by localised name.
-     * @return array two-letter state code => translated name.
-     */
-    public function get_list_of_states($returnall = false, $lang = NULL) {
-        global $CFG;
-        if ($lang === NULL) {
-            $lang = current_language();
-        }
-        $states = $this->load_component_strings('core_states', $lang);
-        if (!$returnall and !empty($CFG->allstatecodes)) {
-            $enabled = explode(',', $CFG->allstatecodes);
-            $return = array();
-            foreach ($enabled as $c) {
-                if (isset($states[$c])) {
-                    $return[$c] = $states[$c];
-                }
-            }
-            return $return;
-        }
-        return $states;
-    }
-```
-
-In `/lib/classes/string_manager.php`, just above the `get_list_of_countries()` function, insert:
-```PHP
-     /**
-     * Returns a localised list of all state names, sorted by localised name.
-     * @return array two-letter state code => translated name.
-     */
-    public function get_list_of_states($returnall = false, $lang = null);
-```
-
-### STEP 4: Modify the signup form
-In `login/signup_form.php`, above the country code insert:
-
-```PHP
-$state = get_string_manager()->get_list_of_states();
-$default_state[''] = get_string('state');
-$state = array_merge($default_state, $state);
-$mform->addElement('select', 'msn', get_string('msnid'), $state);
-$mform->addRule('msn', get_string('missingreqreason'), 'required', null, 'server');
-```
-
-### STEP 5: Modify the edit profile form
-In `user/editlib.php`, above this line:
-`$choices = get_string_manager()->get_list_of_countries();`
-insert:
-
-```PHP
-$choices = get_string_manager()->get_list_of_states();
-$choices= array(''=>get_string('state') . '...') + $choices;
-$mform->addElement('select', 'msn', get_string('msnid'), $choices);
-$mform->addRule('msn', get_string('missingreqreason'), 'required', null, 'server');
-```
-
-Ensure to comment out the “msn” field from the moodle optional fields.
+### STEP 2: Create a user profile field
+- Go to Site Administration > Users > User profile fields
+- Create a new profile field: Drop-down menu
+- Short name: taxregion
+- Name: Can be Province, State, Region or anything that is more related to your location
+- Menu options: Add your regions one per line (only the region name)
+- Is this field required? Yes if you want to force taxes when users purchase a course
+- Display on signup page? Yes if you allow self-registration
