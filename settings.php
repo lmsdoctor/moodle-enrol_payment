@@ -207,8 +207,7 @@ if ($ADMIN->fulltree) {
         get_string('countrytax', 'enrol_payment'),
         get_string('countrytax_desc', 'enrol_payment'),
         '',
-        PARAM_NOTAGS,
-    ));
+        PARAM_NOTAGS));
 
     $settings->add(new admin_setting_configtextarea(
         'enrol_payment/taxdefinitions',
