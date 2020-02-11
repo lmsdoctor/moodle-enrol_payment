@@ -229,13 +229,16 @@ class main implements renderable, templatable {
         $payment->cancelurl     = $CFG->wwwroot;
         $payment->strcontinue   = get_string('continuetocourse');
 
+        $transferinstructions = helper::get_transfer_instructions($localisedcost,
+                                            $coursefullname, $cost->courseshortname);
+
         $totemplate = [
             'allowmultiple'         => $this->config->allowmultiple,
             'coderequired'          => $coderequired,
             'cost'                  => $cost,
             'discounttype'          => $discounttype,
             'gatewaysenabled'       => $gatewaysenabled,
-            'hasdiscountcode'       => $this->enablediscountcodes,
+            'hasdiscountcode'       => $this->config->enablediscountcodes,
             'hasdiscount'           => $hasdiscount,
             'hastax'                => (empty($taxstring)) ? false : true,
             'multipleusers'         => $multipleusers,
@@ -244,6 +247,7 @@ class main implements renderable, templatable {
             'stripeenabled'         => $this->config->hasstripe,
             'singleuser'            => $singleuser,
             'user'                  => $USER,
+            'transferinstructions'  => $transferinstructions,
         ];
 
         return $totemplate;

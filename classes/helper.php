@@ -405,7 +405,7 @@ class helper {
      * @return string
      */
     public static function get_stripe_logo_url() {
-        $stripelogo = get_config('stripelogourl', 'enrol_payment');
+        $stripelogo = get_config('enrol_payment', 'stripelogourl');
         if (empty($stripelogo)) {
             return '';
         }
@@ -464,6 +464,29 @@ class helper {
 
             exit(0);
         };
+    }
+
+    /**
+     * Outputs transfer instructions.
+     *
+     * @param  int $cost
+     * @param  string $coursefullname
+     * @param  string $courseshortname
+     * @return string
+     */
+    public static function get_transfer_instructions(int $cost, string $coursefullname,
+            string $courseshortname) {
+
+        if (!get_config('enrol_payment', 'allowbanktransfer')) {
+            return '';
+        }
+
+        $instructions = get_config('enrol_payment', 'transferinstructions');
+        $instructions = str_replace("{{AMOUNT}}", "<span id=\"banktransfer-cost\">$cost</span>", $instructions);
+        $instructions = str_replace("{{COURSESHORTNAME}}", $courseshortname, $instructions);
+        $instructions = str_replace("{{COURSEFULLNAME}}", $coursefullname, $instructions);
+
+        return $instructions;
     }
 
 }

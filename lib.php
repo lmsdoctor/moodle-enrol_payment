@@ -284,26 +284,6 @@ class enrol_payment_plugin extends enrol_plugin {
     }
 
     /**
-     * Outputs transfer instructions.
-     *
-     * @param  int $cost
-     * @param  string $coursefullname
-     * @param  string $courseshortname
-     * @return void
-     */
-    public function output_transfer_instructions($cost, $coursefullname, $courseshortname) {
-        if ($this->get_config("allowbanktransfer")) {
-            $instructions = $this->get_config("transferinstructions");
-            $instructions = str_replace("{{AMOUNT}}", "<span id=\"banktransfer-cost\">$cost</span>", $instructions);
-            $instructions = str_replace("{{COURSESHORTNAME}}", $courseshortname, $instructions);
-            $instructions = str_replace("{{COURSEFULLNAME}}", $coursefullname, $instructions);
-            echo '<span id="interac-text">';
-            echo $instructions;
-            echo '</span>';
-        }
-    }
-
-    /**
      * Return the tax amount.
      *
      * @param  string $tax
@@ -418,6 +398,7 @@ class enrol_payment_plugin extends enrol_plugin {
         $stripesecret           = $this->get_config('stripesecretkey');
         $config->stripekey      = $this->get_config('stripepublishablekey');
         $config->hasstripe      = ((bool) trim($stripesecret)) && ((bool) trim($config->stripekey));
+        $config->transferinstructions = $this->get_config('transferinstructions');
 
         $config->enablediscountcodes    = $this->get_config('enablediscounts') && $instance->customint7 && $instance->customint3;
         $config->validatezipcode        = $this->get_config('validatezipcode');
