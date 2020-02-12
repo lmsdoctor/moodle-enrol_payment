@@ -59,26 +59,30 @@ Enter each tax definition on a separate line
 - Display on signup page? Yes if you allow self-registration
 
 ### Extra: Move your new custom field below the city in the signup form
+New user profile fields are displayed at the end of the sign up form under a new category. How about
+showing the Province, State or Region (the name you called it) between the City and the Country?
+
+Just follow the instructions below:
+
 - Go to Site Administration > Appearance > Additional HTML
 - Paste the piece of code below in **Before BODY is closed** text field.
 
 ```
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script>
-$('#fitem_id_profile_field_taxregion').insertAfter('#fitem_id_city');
-$('#id_category_1').hide();
+  $('#fitem_id_profile_field_taxregion').insertAfter('#fitem_id_city');
+  $('#id_category_1').hide();
 </script>
 ```
 
 Basically, the code above will take the new created user profile field and place it after the City
 field in the signup form.
 
-Assuming you don't have any other field and it is the **default profile category** the following code
-is the one that hides the empty category.
+Assuming you don't have any other field inside the category and it is the **default profile category** the following line code
+hides the category (as we no longer need it).
 
 ```
 $('#id_category_1').hide();
 ```
 
-In case you have other fields. Make sure to remove it from the code. If the custom field was created in the second
-category, then change the number "1" for "2" and so on.
+In case you have other fields. Make sure to remove **only the line of code above** from the original code given. If the custom field was created in the second category, then change the number "1" for "2" and so on.
