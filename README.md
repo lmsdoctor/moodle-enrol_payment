@@ -58,11 +58,9 @@ Enter each tax definition on a separate line
 - Is this field required? Yes if you want to force taxes when users purchase a course
 - Display on signup page? Yes if you allow self-registration
 
-### Extra: Move your new custom field below the city in the signup form
-New user profile fields are displayed at the end of the sign up form under a new category. How about
-showing the Province, State or Region (the name you called it) between the City and the Country?
-
-Just follow the instructions below:
+### Extra: Move your taxregion custom field below the city in the regular Moodle signup form
+By default, user profile fields are displayed under a category at the end of the regular Moodle sign up form. To display
+ the Province, State or Region (the name you called it) between the City and the Country fields follow the instructions below:
 
 - Go to Site Administration > Appearance > Additional HTML
 - Paste the piece of code below in **Before BODY is closed** text field.
@@ -71,18 +69,41 @@ Just follow the instructions below:
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script>
   $('#fitem_id_profile_field_taxregion').insertAfter('#fitem_id_city');
-  $('#id_category_1').hide();
 </script>
 ```
+- Go to Site Administration > Development > Purge caches and click on **Purge all caches**
 
-Basically, the code above will take the new created user profile field and place it after the City
-field in the signup form.
+The code above will take the taxregion user profile field and place it after the City field in the signup form.
 
-Assuming you don't have any other field inside the category and it is the **default profile category** the following line code
-hides the category (as we no longer need it).
+If there are no either user profile fields inside the category and it is the **default profile category** the following line code hides the category (as it is not needed). Add the following line above the **</script>** closing tag.
 
 ```
 $('#id_category_1').hide();
 ```
 
-In case you have other fields. Make sure to remove **only the line of code above** from the original code given. If the custom field was created in the second category, then change the number "1" for "2" and so on.
+If the taxregion user profile field was created in another category than the default one, then change the number "1" for "2" and so on. For example:
+
+Default category:
+
+```
+$('#id_category_1').hide();
+```
+
+New user defined category: 
+
+```
+$('#id_category_2').hide();
+```
+
+### For custom signup form
+If the script doesn't work, it could be that taxregion and city id in your custom signup form is not the same as the regular Moodle sign up form. To identify the city field id and the taxregion field id within the custom signup form, use the browser inspect element tool to find the correct id. See an example in the following screenshot: https://prnt.sc/r1diam
+
+Assuming the city id reads as: id="custom-city-id" and the taxregion id reads as: id="custom-taxregion-id" then the code should be tweak as follows:
+
+```
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script>
+  $('#custom-taxregion-id').insertAfter('#custom-city-id');
+</script>
+```
+
