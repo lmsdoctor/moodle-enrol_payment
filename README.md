@@ -57,3 +57,28 @@ Enter each tax definition on a separate line
 - Menu options: Add your regions one per line (**only the region name**)
 - Is this field required? Yes if you want to force taxes when users purchase a course
 - Display on signup page? Yes if you allow self-registration
+
+### Extra: Move your new custom field below the city in the signup form
+- Go to Site Administration > Appearance > Additional HTML
+- Paste the piece of code below in **Before BODY is closed** text field.
+
+```
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script>
+$('#fitem_id_profile_field_taxregion').insertAfter('#fitem_id_city');
+$('#id_category_1').hide();
+</script>
+```
+
+Basically, the code above will take the new created user profile field and place it after the City
+field in the signup form.
+
+Assuming you don't have any other field and it is the **default profile category** the following code
+is the one that hides the empty category.
+
+```
+$('#id_category_1').hide();
+```
+
+In case you have other fields. Make sure to remove it from the code. If the custom field was created in the second
+category, then change the number "1" for "2" and so on.
