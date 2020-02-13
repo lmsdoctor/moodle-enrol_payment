@@ -342,12 +342,16 @@ class enrol_payment_plugin extends enrol_plugin {
 
         $taxdefs        = $this->get_config('taxdefinitions');
         $countrytax     = $this->get_config('countrytax');
-        $usertaxregion  = $USER->profile_field_taxregion;
 
         // If country tax are set and the user country is empty. Force user to edit his profile.
         if (!empty($countrytax) && empty($USER->country)) {
             $urltogo = new moodle_url('/user/edit.php', ['id' => $USER->id]);
             redirect($urltogo, 'You must choose your country', null, \core\output\notification::NOTIFY_WARNING);
+        }
+
+        // If the tax field is not set, let's not calculate taxes.
+        if (!isset($USER->profile_field_taxregion)) {
+            return ['taxpercent' => 0, 'taxstring' => ''];
         }
 
         if (!empty($countrytax)) {
