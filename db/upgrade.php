@@ -229,5 +229,18 @@ function xmldb_enrol_payment_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2020012302, 'enrol', 'payment');
     }
 
+    if ($oldversion < 2020023300) {
+
+        // Changing type of field originalcost on table enrol_payment_session to number.
+        $table = new xmldb_table('enrol_payment_session');
+        $field = new xmldb_field('originalcost', XMLDB_TYPE_NUMBER, '11, 2', null, XMLDB_NOTNULL, null, '0', 'units');
+
+        // Launch change of type for field originalcost.
+        $dbman->change_field_type($table, $field);
+
+        // Payment savepoint reached.
+        upgrade_plugin_savepoint(true, 2020023300, 'enrol', 'payment');
+    }
+
     return true;
 }

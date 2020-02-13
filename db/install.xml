@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="enrol/payment/db" VERSION="20180831" COMMENT="XMLDB file for Moodle enrol/payment"
+<XMLDB PATH="enrol/payment/db" VERSION="20200213" COMMENT="XMLDB file for Moodle enrol/payment"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -50,7 +50,7 @@
         <FIELD NAME="multipleuserids" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Comma-separated user IDs for multiple enrollment"/>
         <FIELD NAME="codegiven" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="units" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
-        <FIELD NAME="originalcost" TYPE="text" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="originalcost" TYPE="number" LENGTH="11" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="2"/>
         <FIELD NAME="taxpercent" TYPE="float" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="paypaltxnid" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>

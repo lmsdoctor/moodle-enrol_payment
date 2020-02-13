@@ -379,7 +379,7 @@ class helper {
      * @return stdClass
      */
     public static function store_payment_session(string $prepaytoken, int $userid, int $courseid,
-        int $enrolid, int $originalcost, float $taxpercent) {
+        int $enrolid, float $originalcost, float $taxpercent) {
 
         global $DB;
 

@@ -57,7 +57,7 @@ class main implements renderable, templatable {
     public function __construct(stdClass $instance, stdClass $config) {
         $this->instance = $instance;
         $this->config = $config;
-        $this->originalcost = $instance->cost;
+        $this->originalcost = (float) $instance->cost;
     }
 
     /**
@@ -123,9 +123,7 @@ class main implements renderable, templatable {
         $coursefullname         = format_string($course->fullname, true, array('context' => $context));
 
         // Are discounts enabled in the admin settings?
-        $discountamount = format_float($this->instance->customdec1, 2, true);
-
-        $symbol = enrol_payment_get_currency_symbol($this->instance->currency);
+        $symbol         = enrol_payment_get_currency_symbol($this->instance->currency);
 
         $jsdata = [
             $this->instance->id,
@@ -171,6 +169,7 @@ class main implements renderable, templatable {
         $cost->notaxedcost           = helper::calculate_cost($this->instance, $paymentobj, false)['subtotal'];
         $cost->taxamount             = format_float($taxpercent * $originalcost, 2, false);
         $cost->threshold             = $threshold;
+        $cost->discountamount        = format_float($this->instance->customdec1, 2, true);
 
         $discounttype = $this->instance->customint3;
 
@@ -205,13 +204,12 @@ class main implements renderable, templatable {
         }
 
         // Refactor this logic.
-        if ($discounttype > 0) {
-            $cost->discountamount = $discountamount;
-            if ($discounttype == 1) {
-                $cost->discountamount    = format_float($discountamount, 0);
-                $cost->percentsymbol     = '%';
-            }
+        if ($discounttype == 1) {
+            $cost->discountamount = $calculatecost['percentdiscount'];
+            $cost->percentsymbol     = '%';
         }
+
+        var_dump($cost->discountamount);
 
         $USER->taxregion = isset($USER->profile_field_taxregion) ?? '';
 

@@ -167,7 +167,6 @@ function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner, Ajax, 
 
                 minus.click(function() {
                     // Pop the whole email input line off the DOM.
-                    console.log($(this).parent());
                     $(this).parent().parent().remove();
 
                     // Add a plus icon to the last line, if it's not already there.
@@ -444,7 +443,8 @@ function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner, Ajax, 
         },
 
         getTaxedAmount: function() {
-            return (parseFloat(this.subtotal) + parseFloat(this.taxAmount)).toFixed(2);
+            // return (parseFloat(this.subtotal) + parseFloat(this.taxAmount)).toFixed(2);
+            return (Number(this.subtotal) + Number(this.taxAmount)).toFixed(2);
         },
 
         errorFromDiscount: function(message) {
@@ -459,20 +459,20 @@ function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner, Ajax, 
         },
 
         updateCostView: function() {
-            this.taxAmount = Number.parseFloat(this.subtotal * this.taxPercent).toFixed(2);
-            $("span.localisedcost-untaxed").text(Number.parseFloat(this.subtotal).toFixed(2));
+            this.taxAmount = (this.subtotal * this.taxPercent).toFixed(2);
+            $("span.localisedcost-untaxed").text(this.subtotal);
             $("span.localisedcost").text(this.getTaxedAmount());
             $("span.subtotal-display").text(this.getTaxedAmount());
 
             // Hide part of the string with the span in the string lang file if the tax is 0.
             // Otherwise, display the whole string.
-            if (Number.parseFloat(this.taxAmount).toFixed(0) > 0) {
-                $("span.taxamountstring").text(Number.parseFloat(this.taxAmount).toFixed(2));
+            if (Number(this.taxAmount).toFixed(0) > 0) {
+                $("span.taxamountstring").text(Number(this.taxAmount).toFixed(2));
             } else {
                 $("span.tax-container").hide();
             }
 
-            $("span.taxamountstring").text(Number.parseFloat(this.taxAmount).toFixed(2));
+            $("span.taxamountstring").text(this.taxAmount);
             $("span#banktransfer-cost").text(this.symbol + this.getTaxedAmount());
         },
 
@@ -507,9 +507,11 @@ function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner, Ajax, 
                     description: self.mdlstr["totalenrolmentfee"] + " " + self.symbol + self.getTaxedAmount() + " " + self.currency,
                     zipCode: self.validateZipCode ? "true" : "false",
                     // Stripe amount is in pennies.
-                    amount: Math.floor(Number.parseFloat(self.getTaxedAmount()) * 100),
+                    amount: Math.floor(Number(self.getTaxedAmount()) * 100),
                     currency: self.currency,
-                    closed: function() { $("#dimmer").css('display', 'none'); }
+                    closed: function() {
+                        // Empty.
+                    }
                 });
 
             }).fail(function() {
@@ -649,10 +651,10 @@ function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner, Ajax, 
             ];
             self.loadStrings(stringKeys, function(strs) {
                 self.mdlstr = strs;
-                self.originalCost = parseFloat(cost);
-                self.taxPercent = parseFloat(taxPercent);
-                self.subtotal = parseFloat(subtotal);
-                self.taxAmount = parseFloat(taxPercent * cost);
+                self.originalCost = cost;
+                self.taxPercent = taxPercent;
+                self.subtotal = subtotal;
+                self.taxAmount = taxPercent * cost;
                 self.instanceid = instanceid;
                 self.stripePublishableKey = stripePublishableKey;
                 self.courseFullName = courseFullName;
@@ -670,7 +672,6 @@ function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner, Ajax, 
                 self.initClickHandlers();
                 self.updateCostView();
 
-                $('#dimmer').css('display', 'none');
             });
         }
     };
