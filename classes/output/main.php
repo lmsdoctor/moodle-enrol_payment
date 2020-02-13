@@ -115,12 +115,12 @@ class main implements renderable, templatable {
         // please note PayPal expects amount with 2 decimal places and "." separator.
         $paymentobj = $DB->get_record('enrol_payment_session', ['id' => $paymentid]);
 
-        $calculatecost = helper::calculate_cost($this->instance, $paymentobj, true);
-        $calculatecostuntaxed = helper::calculate_cost($this->instance, $paymentobj, false);
-        $localisedcost = $calculatecost['subtotallocalised'];
-        $localisedcostuntaxed = $calculatecostuntaxed['subtotallocalised'];
-        $originalcost = format_float($originalcost, 2, false);
-        $coursefullname  = format_string($course->fullname, true, array('context' => $context));
+        $calculatecost          = helper::calculate_cost($this->instance, $paymentobj, true);
+        $calculatecostuntaxed   = helper::calculate_cost($this->instance, $paymentobj, false);
+        $localisedcost          = $calculatecost['subtotallocalised'];
+        $localisedcostuntaxed   = $calculatecostuntaxed['subtotallocalised'];
+        $originalcost           = format_float($originalcost, 2, false);
+        $coursefullname         = format_string($course->fullname, true, array('context' => $context));
 
         // Are discounts enabled in the admin settings?
         $discountamount = format_float($this->instance->customdec1, 2, true);
