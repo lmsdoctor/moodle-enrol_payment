@@ -41,7 +41,7 @@
             {{/hastax}}
             {{#hasdiscount}}
                 {{#hasdiscountcode}}
-                    <div id="discount-container">
+                    <div id="discount-container" class="col-md-6 col-md-offset-4">
                         <form class="form-inline">
                             <div class="form-group">
                                 <input class="form-control mb-2 mx-sm-3" type="text" name="discountcode" id="discountcode" placeholder="Discount Code" />
@@ -88,7 +88,6 @@
                 {{/singleuser}}
 
                 {{#allowmultiple}}
-                    <br>
                     {{#multipleusers}}
                         <div class="row justify-content-md-center">
                             <div class="col-md-auto">
@@ -113,7 +112,7 @@
                         </div>
                     {{/multipleusers}}
 
-                    <div id="multiple-registration-container" style="width: 300px;" class="p-3 justify-content-md-center"></div>
+                    <div id="multiple-registration-container" class="p-3 justify-content-md-center col-md-6 col-md-offset-4"></div>
                     <div id="multiple-registration-btn-container">
                         <a id="multiple-registration-btn" role="button" class="btn btn-outline-secondary enable-mr">
                             {{# str }}enrolothers, enrol_payment{{/ str }}
@@ -125,7 +124,6 @@
                             <div class="enrol-payment-enrollment alert alert-danger" style="display: none"></div>
                         </div>
                     </div>
-                    <br>
                 {{/allowmultiple}}
             {{/hasdiscount}}
 
@@ -179,7 +177,6 @@
                     </form>
                 </div>
                 {{/payment}}
-                <br>
                 <p>{{#str}}paypalaccountnotneeded, enrol_payment{{/str}}</p>
 
             {{/paypalenabled}}
@@ -236,7 +233,7 @@
                 <p>{{# str }}nogatewayenabled, enrol_payment{{/ str }}</p>
             {{/gatewaysenabled}}
         </div>
-        <br>
+
         <div class="p-3 justify-content-md-center">
             <span id="interac-text">{{{transferinstructions}}}</span>
         </div>
