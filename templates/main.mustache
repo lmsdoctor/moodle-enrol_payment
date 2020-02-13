@@ -31,7 +31,7 @@
         <div id="enrolpage-centered" align="center">
             {{#hastax}}
                 {{#cost}}
-                    <p>The fee for <strong>{{ coursename }}</strong><br>is <b>{{ symbol }}{{ localisedcostuntaxed }}</b> + {{ symbol }}{{ taxamountstring }} {{ taxstring }} = <b>{{ symbol }}{{ localisedcost }}</b> {{ currency }}.</p>
+                    <p>The fee for <strong>{{ coursename }}</strong><br>is <b>{{ symbol }}<span class="localisedcost-untaxed">{{ localisedcostuntaxed }}</span></b> + {{ symbol }}<span class="taxamountstring">{{taxamountstring}}</span> {{ taxstring }} = <b>{{ symbol }}<span class="localisedcost">{{ localisedcost }}</span></b> {{ currency }}.</p>
                 {{/cost}}
             {{/hastax}}
             {{^hastax}}
@@ -67,8 +67,8 @@
                                             = <b>{{currencysign}}<span class="localisedcost">{{localisedcost}}</span></b>
                                         </span>
                                         {{currency}}
-                                        {{#discountispercentage}} (<b>{{discountamount}}%</b>) discount{{/discountispercentage}}
-                                        {{#discountisvalue}} (<b>{{currencysign}}{{discountamount}}</b>) discount{{/discountisvalue}}
+                                        {{#discountispercentage}} (<b>{{discountamount}}%</b> discount){{/discountispercentage}}
+                                        {{#discountisvalue}} (<b>{{currencysign}}{{discountamount}}</b> discount){{/discountisvalue}}
                                         {{/cost}}
                                     {{/discounttype}}
 
