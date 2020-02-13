@@ -349,14 +349,14 @@ class enrol_payment_plugin extends enrol_plugin {
             redirect($urltogo, 'You must choose your country', null, \core\output\notification::NOTIFY_WARNING);
         }
 
-        // If the tax field is not set, let's not calculate taxes.
-        if (!isset($USER->profile_field_taxregion)) {
-            return ['taxpercent' => 0, 'taxstring' => ''];
-        }
-
         if (!empty($countrytax)) {
             $taxholder = $this->get_tax_amount($countrytax, $USER->country);
             return $taxholder;
+        }
+
+        // If the tax field is not set, let's not calculate taxes.
+        if (!isset($USER->profile_field_taxregion)) {
+            return ['taxpercent' => 0, 'taxstring' => ''];
         }
 
         // If the tax country is not empty, use it. Otherwise use the tax region.
