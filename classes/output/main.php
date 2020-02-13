@@ -209,8 +209,6 @@ class main implements renderable, templatable {
             $cost->percentsymbol     = '%';
         }
 
-        var_dump($cost->discountamount);
-
         $USER->taxregion = isset($USER->profile_field_taxregion) ?? '';
 
         // Store all payment related values in an object.
