@@ -185,7 +185,7 @@ function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner, Ajax, 
              */
             makePlusSign: function(mdlstr) {
                 var title = mdlstr["addaregistrant"];
-                var plusSign = ' <span class="plus-container mb-2" title="' + title + '"><i style="color: green;" class="icon fa fa-user-plus"></i></span> ';
+                var plusSign = ' <a href="#" class="plus-container mb-2" title="' + title + '"><i style="color: green;" class="icon fa fa-user-plus"></i></a> ';
                 return plusSign;
             },
 
@@ -200,7 +200,7 @@ function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner, Ajax, 
             makePlusAndMinusSigns: function(n, mdlstr) {
                 var plusSign = this.makePlusSign(mdlstr);
                 var title = mdlstr["removearegistrant"];
-                var minusSign = '<span class="minus-container mb-2" title="' + title + '"><i style="color: red;" class="icon fa fa-user-times fa-fw"></i></span>';
+                var minusSign = '<a href="#" class="minus-container mb-2" title="' + title + '"><i style="color: red;" class="icon fa fa-user-times fa-fw"></i></a href="#">';
                 if (n > 1) {
                     return plusSign + minusSign;
                 } else {
