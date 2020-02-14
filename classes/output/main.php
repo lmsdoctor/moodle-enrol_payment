@@ -205,8 +205,8 @@ class main implements renderable, templatable {
 
         // Refactor this logic.
         if ($discounttype == 1) {
-            $cost->discountamount = $calculatecost['percentdiscount'];
-            $cost->percentsymbol     = '%';
+            $cost->discountamount = helper::normalize_percent_discount($cost->discountamount, $discounttype) * 100;
+            $cost->percentsymbol  = '%';
         }
 
         $USER->taxregion = isset($USER->profile_field_taxregion) ?? '';
