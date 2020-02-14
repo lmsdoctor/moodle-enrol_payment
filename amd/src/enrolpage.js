@@ -234,11 +234,12 @@ function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner, Ajax, 
                 var strEnterEmail = mdlstr["enteremail"];
 
                 var inputID = "\"multiple-registration-email-" + n + "\"";
-                var div2 = '<div class="form-group p-2  mr-email-line">'
-                            +   '<label for=' + inputID + ' class="control-label col-sm-2 mx-2">' + strRegistrant + '&nbsp;<span class="email-num">' + m + '</span></label>'
-                            +        '<div class="col-sm-10">'
-                            +            '<input id=' + inputID + ' type="text" class="form-control multiple-registration-email" placeholder="' + strEnterEmail + '">';
-                var endDiv = "</div></div>";
+                var div2 = '<div class="form-inline mr-email-line">'
+                            + '<div class="form-group row">'
+                                + '<label for=' + inputID + ' class="mb-2 col-form-label">' + strRegistrant + '&nbsp;<span class="email-num">' + m + ' </span></label>'
+                                + '<div class="mb-2 mx-sm-3">'
+                                    + '<input class="form-control multiple-registration-email" id=' + inputID + ' type="text" placeholder="' + strEnterEmail + '">';
+                var endDiv = "</div></div></div>";
 
                 // Passing n into makePlusAndMinusSigns works because the first
                 // row never gets a minus.

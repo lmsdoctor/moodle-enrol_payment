@@ -26,8 +26,8 @@
     Context variables required for this template:
     * None
 }}
-<div class="path-enrol-payment container-fluid row justify-content-center">
-    <div class="text-center">
+<div class="path-enrol-payment container-fluid justify-content-center">
+    <div class="text-center col-md-12">
         {{#hastax}}
             {{#cost}}
                 <p>The fee for <strong>{{ coursename }}</strong><br>is <b>{{ symbol }}<span class="localisedcost-untaxed">{{ localisedcostuntaxed }}</span></b> + {{ symbol }}<span class="taxamountstring">{{taxamountstring}}</span> {{ taxstring }} = <b>{{ symbol }}<span class="localisedcost">{{ localisedcost }}</span></b> {{ currency }}.</p>
@@ -42,20 +42,20 @@
 
     {{#hasdiscount}}
         {{#hasdiscountcode}}
-            <div id="discount-container" class="text-center">
+            <div id="discount-container" class="text-center row justify-content-center">
                 <form class="form-inline">
-                    <div class="form-group">
-                        <input class="form-control mx-sm-3" type="text" name="discountcode" id="discountcode" placeholder="Discount Code" />
-                        <a id="apply-discount" class="btn btn-outline-primary" role="button">
-                            {{# str }}applydiscount, enrol_payment{{/ str }}
-                        </a>
+                    <div class="form-group mx-sm-3 mb-2">
+                        <input class="form-control" type="text" name="discountcode" id="discountcode" placeholder="{{#str}}  discountcode, enrol_payment{{/str}}" />
                     </div>
+                    <a class="btn btn-primary white mb-2" id="apply-discount" role="button">
+                        {{# str }}applydiscount, enrol_payment{{/ str }}
+                    </a>
                 </form>
             </div>
         {{/hasdiscountcode}}
 
         {{#singleuser}}
-            <div class="text-center">
+            <div class="text-center col-md-12">
                 <div class="col-md-auto">
                     <span class="discount-threshold-info alert alert-success"
                         style="display: {{#coderequired}} none {{/coderequired}} {{^coderequired}} block {{/coderequired}}">
@@ -90,7 +90,7 @@
 
         {{#allowmultiple}}
             {{#multipleusers}}
-                <div class="text-center">
+                <div class="text-center col-md-12">
                     <div class="col-md-auto">
                         <span class="discount-threshold-info alert alert-success"
                             style="display: {{#coderequired}} none {{/coderequired}}
@@ -112,9 +112,8 @@
                     </div>
                 </div>
             {{/multipleusers}}
-
-            <div id="multiple-registration-container" class="form-horizontal p-3"></div>
-            <div id="multiple-registration-btn-container" class="text-center">
+            <div id="multiple-registration-container" style="width: 20%;" class="m-auto col-md-12 justify-content-center py-3"></div>
+            <div id="multiple-registration-btn-container" class="text-center col-md-12 my-3">
                 <a id="multiple-registration-btn" role="button" class="btn btn-outline-secondary enable-mr">
                     {{# str }}enrolothers, enrol_payment{{/ str }}
                 </a>
@@ -124,13 +123,13 @@
         {{/allowmultiple}}
     {{/hasdiscount}}
 
-    <div id="moodle-modals" class="text-center">
+    <div id="moodle-modals" class="text-center col-md-12">
         <a id="error-modal-trigger"></a>
         <a id="success-modal-trigger"></a>
     </div>
 
     {{#paypalenabled}}
-        <div class="text-center">
+        <div class="text-center col-md-12">
             {{#payment}}
             <form id="paypal-form" action="{{paypalaction}}" method="post">
                 <input type="hidden" name="cmd" value="_xclick" />
@@ -178,8 +177,8 @@
     {{/paypalenabled}}
 
     {{#stripeenabled}}
-        <p class="text-center">{{# str }}or, enrol_payment{{/ str }}</p>
-        <div class="text-center">
+        <p class="text-center col-md-12">{{# str }}or, enrol_payment{{/ str }}</p>
+        <div class="text-center col-md-12">
             <a class="btn btn-info payment-checkout" id="stripe-button">{{# str }}sendpaymentbutton_stripe, enrol_payment{{/ str }}</a>
 
             {{#payment}}
@@ -226,7 +225,7 @@
     {{/stripeenabled}}
 
     {{^gatewaysenabled}}
-        <p class="text-center">{{# str }}nogatewayenabled, enrol_payment{{/ str }}</p>
+        <p class="text-center col-md-12">{{# str }}nogatewayenabled, enrol_payment{{/ str }}</p>
     {{/gatewaysenabled}}
 
     <div class="p-3">
