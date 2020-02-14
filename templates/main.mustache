@@ -30,7 +30,7 @@
     <div class="text-center col-md-12">
         {{#hastax}}
             {{#cost}}
-                <p>The fee for <strong>{{ coursename }}</strong><br>is <b>{{ symbol }}<span class="localisedcost-untaxed">{{ localisedcostuntaxed }}</span></b> + {{ symbol }}<span class="taxamountstring">{{taxamountstring}}</span> {{ taxstring }} = <b>{{ symbol }}<span class="localisedcost">{{ localisedcost }}</span></b> {{ currency }}.</p>
+                <p>The fee for <strong>{{ coursename }}</strong><br>is <b>{{ symbol }}{{ localisedcostuntaxed }}</b> + {{ symbol }}{{taxamountstring}} {{ taxstring }} = <b>{{ symbol }}{{ localisedcost }}</b> {{ currency }}.</p>
             {{/cost}}
         {{/hastax}}
         {{^hastax}}
@@ -55,7 +55,7 @@
         {{/hasdiscountcode}}
 
         {{#singleuser}}
-            <div class="text-center col-md-12">
+            <div class="text-center row justify-content-center col-md-12">
                 <div class="col-md-auto">
                     <span class="discount-threshold-info alert alert-success"
                         style="display: {{#coderequired}} none {{/coderequired}} {{^coderequired}} block {{/coderequired}}">
