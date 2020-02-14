@@ -185,7 +185,7 @@ function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner, Ajax, 
              */
             makePlusSign: function(mdlstr) {
                 var title = mdlstr["addaregistrant"];
-                var plusSign = '<div class="plus-container mb-2" title="' + title + '"><i style="color: green;" class="icon fa fa-user-plus"></i></div>';
+                var plusSign = ' <span class="plus-container mb-2" title="' + title + '"><i style="color: green;" class="icon fa fa-user-plus"></i></span> ';
                 return plusSign;
             },
 
@@ -200,7 +200,7 @@ function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner, Ajax, 
             makePlusAndMinusSigns: function(n, mdlstr) {
                 var plusSign = this.makePlusSign(mdlstr);
                 var title = mdlstr["removearegistrant"];
-                var minusSign = '<div class="minus-container mb-2" title="' + title + '"><i style="color: red;" class="icon fa fa-user-times fa-fw"></i></div>';
+                var minusSign = '<span class="minus-container mb-2" title="' + title + '"><i style="color: red;" class="icon fa fa-user-times fa-fw"></i></span>';
                 if (n > 1) {
                     return plusSign + minusSign;
                 } else {
@@ -230,14 +230,14 @@ function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner, Ajax, 
                 var m = self.refreshEmailNums();
                 var n = self.nextEmailID;
                 self.nextEmailID = self.nextEmailID + 1;
+                var strRegistrant = mdlstr["registrant"];
+                var strEnterEmail = mdlstr["enteremail"];
 
                 var inputID = "\"multiple-registration-email-" + n + "\"";
-                var div2 = '<div class="form-inline mr-email-line">'
-                            + '<div class="form-group ">'
-                                + '<label for=' + inputID + ' class="mb-2 col-form-label">Email &nbsp; <span class="email-num"> ' + m + ' </span></label>'
-                                + '<div class="mb-2 mx-sm-3">'
-                                    + '<input id=' + inputID + ' type="text" class="form-control multiple-registration-email" placeholder="Enter an email address">'
-                                + '</div>';
+                var div2 = '<div class="form-group p-2  mr-email-line">'
+                            +   '<label for=' + inputID + ' class="control-label col-sm-2 mx-2">' + strRegistrant + '&nbsp;<span class="email-num">' + m + '</span></label>'
+                            +        '<div class="col-sm-10">'
+                            +            '<input id=' + inputID + ' type="text" class="form-control multiple-registration-email" placeholder="' + strEnterEmail + '">';
                 var endDiv = "</div></div>";
 
                 // Passing n into makePlusAndMinusSigns works because the first
@@ -647,7 +647,9 @@ function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner, Ajax, 
                 "totalenrolmentfee",
                 "error",
                 "incorrectdiscountcode",
-                "incorrectdiscountcode_desc"
+                "incorrectdiscountcode_desc",
+                "registrant",
+                "enteremail",
             ];
             self.loadStrings(stringKeys, function(strs) {
                 self.mdlstr = strs;

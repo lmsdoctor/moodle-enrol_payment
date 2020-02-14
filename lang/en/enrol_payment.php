@@ -193,3 +193,5 @@ $string['getvaluecalculation'] = '{$a->symbol}{$a->originalcost} - {$a->symbol}{
 $string['percentcalculation'] = '{$a->symbol}{$a->originalcost} × {$a->units} {$a->taxstring} = <b>{$a->symbol}{$a->subtotaltaxed}</b> {$a->currency}';
 $string['percentcalculationdiscount'] = '{$a->symbol}{$a->originalcost} - {$a->symbol}{$a->unitdiscount} ({$a->percentdiscount}% discount) × {$a->units} {$a->taxstring} = <b>{$a->symbol}{$a->subtotaltaxed}</b> {$a->currency}';
 $string['percentdiscountstring'] = 'The {$a->percentdiscount}% discount has been applied.';
+$string['registrant'] = 'Registrant';
+$string['enteremail'] = 'Enter email address';

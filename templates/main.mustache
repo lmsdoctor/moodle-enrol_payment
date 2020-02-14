@@ -26,216 +26,210 @@
     Context variables required for this template:
     * None
 }}
-<div class="path-enrol-payment d-flex justify-content-center" style="width: 90%; margin: auto">
-    <div id="enrolpage">
-        <div id="enrolpage-centered" align="center">
-            {{#hastax}}
-                {{#cost}}
-                    <p>The fee for <strong>{{ coursename }}</strong><br>is <b>{{ symbol }}<span class="localisedcost-untaxed">{{ localisedcostuntaxed }}</span></b> + {{ symbol }}<span class="taxamountstring">{{taxamountstring}}</span> {{ taxstring }} = <b>{{ symbol }}<span class="localisedcost">{{ localisedcost }}</span></b> {{ currency }}.</p>
-                {{/cost}}
-            {{/hastax}}
-            {{^hastax}}
-                {{#cost}}
-                    <p>The fee for <strong>{{ coursename }}</strong> is <br><b>{{ symbol }}{{ localisedcost }}</b> {{ currency }}.</p>
-                {{/cost}}
-            {{/hastax}}
-            {{#hasdiscount}}
-                {{#hasdiscountcode}}
-                    <div id="discount-container" class="col-md-4 col-md-offset-4">
-                        <form class="form-inline">
-                            <div class="form-group">
-                                <input class="form-control mb-2 mx-sm-3" type="text" name="discountcode" id="discountcode" placeholder="Discount Code" />
-                                <a id="apply-discount" class="btn btn-outline-primary" role="button" style="margin-bottom: 10px;">
-                                    {{# str }}applydiscount, enrol_payment{{/ str }}
-                                </a>
-                            </div>
-                        </form>
-                    </div>
-                {{/hasdiscountcode}}
+<div class="path-enrol-payment container-fluid row justify-content-center">
+    <div class="text-center">
+        {{#hastax}}
+            {{#cost}}
+                <p>The fee for <strong>{{ coursename }}</strong><br>is <b>{{ symbol }}<span class="localisedcost-untaxed">{{ localisedcostuntaxed }}</span></b> + {{ symbol }}<span class="taxamountstring">{{taxamountstring}}</span> {{ taxstring }} = <b>{{ symbol }}<span class="localisedcost">{{ localisedcost }}</span></b> {{ currency }}.</p>
+            {{/cost}}
+        {{/hastax}}
+        {{^hastax}}
+            {{#cost}}
+                <p>The fee for <strong>{{ coursename }}</strong> is <br><b>{{ symbol }}{{ localisedcost }}</b> {{ currency }}.</p>
+            {{/cost}}
+        {{/hastax}}
+    </div>
 
-                {{#singleuser}}
-                    <div class="row justify-content-md-center">
-                        <div class="col-md-auto">
-                            <span class="discount-threshold-info alert alert-success"
-                                style="display: {{#coderequired}} none {{/coderequired}} {{^coderequired}} block {{/coderequired}}">
-
-                                    {{#discounttype}}
-                                        {{#cost}}
-                                        The fee is now <b>{{currencysign}}<span class="localisedcost-untaxed">{{localisedcostuntaxed}}</span></b>
-                                        <span class="tax-container">
-                                            + {{currencysign}}<span class="taxamountstring">{{taxamountstring}}</span> <span class="taxstring">{{taxstring}}</span>
-                                            = <b>{{currencysign}}<span class="localisedcost">{{localisedcost}}</span></b>
-                                        </span>
-                                        {{currency}}
-                                        {{#discountispercentage}} (<b>{{discountamount}}%</b> discount){{/discountispercentage}}
-                                        {{#discountisvalue}} (<b>{{currencysign}}{{discountamount}}</b> discount){{/discountisvalue}}
-                                        {{/cost}}
-                                    {{/discounttype}}
-
-                                    {{^discounttype}}
-                                        {{#cost}}
-                                        The fee is now <b>{{currencysign}}<span class="localisedcost-untaxed">{{localisedcostuntaxed}}</span></b>
-                                        <span class="tax-container">
-                                            + {{currencysign}}<span class="taxamountstring">{{taxamountstring}}</span> <span class="taxstring">{{taxstring}}</span>
-                                            = <b>{{currencysign}}<span class="localisedcost">{{localisedcost}}</span></b>
-                                        </span>{{currency}}
-                                        {{/cost}}
-                                    {{/discounttype}}
-                            </span>
-                            <div class="enrol-payment-error-text alert alert-danger" style="display: none"></div>
-                        </div>
-                    </div>
-                {{/singleuser}}
-
-                {{#allowmultiple}}
-                    {{#multipleusers}}
-                        <div class="row justify-content-md-center">
-                            <div class="col-md-auto">
-                                <span class="discount-threshold-info alert alert-success"
-                                    style="display: {{#coderequired}} none {{/coderequired}}
-                                    {{^coderequired}} block {{/coderequired}}">
-                                        {{#cost}}
-                                            {{#discountispercentage}}
-                                                A <b>{{discountamount}}{{percentsymbol}}{{perseat}}</b>
-                                                discount will be applied to a purchase of <b>{{threshold}}</b> or more registrations.
-                                            {{/discountispercentage}}
-
-                                            {{#discountisvalue}}
-                                                A <b>{{symbol}}{{discountamount}}{{perseat}}</b>
-                                                discount will be applied to a purchase of <b>{{threshold}}</b> or more registrations.
-                                            {{/discountisvalue}}
-                                        {{/cost}}
-
-                                </span>
-                                <div class="enrol-payment-error-text alert alert-danger" style="display: none"></div>
-                            </div>
-                        </div>
-                    {{/multipleusers}}
-
-                    <div id="multiple-registration-container" class="p-3 justify-content-md-center col-md-4 col-md-offset-4"></div>
-                    <div id="multiple-registration-btn-container">
-                        <a id="multiple-registration-btn" role="button" class="btn btn-outline-secondary enable-mr">
-                            {{# str }}enrolothers, enrol_payment{{/ str }}
+    {{#hasdiscount}}
+        {{#hasdiscountcode}}
+            <div id="discount-container" class="text-center">
+                <form class="form-inline">
+                    <div class="form-group">
+                        <input class="form-control mx-sm-3" type="text" name="discountcode" id="discountcode" placeholder="Discount Code" />
+                        <a id="apply-discount" class="btn btn-outline-primary" role="button">
+                            {{# str }}applydiscount, enrol_payment{{/ str }}
                         </a>
                     </div>
+                </form>
+            </div>
+        {{/hasdiscountcode}}
 
-                    <div class="row justify-content-md-center p-3">
-                        <div class="col-md-auto">
-                            <div class="enrol-payment-enrollment alert alert-danger" style="display: none"></div>
-                        </div>
+        {{#singleuser}}
+            <div class="text-center">
+                <div class="col-md-auto">
+                    <span class="discount-threshold-info alert alert-success"
+                        style="display: {{#coderequired}} none {{/coderequired}} {{^coderequired}} block {{/coderequired}}">
+
+                            {{#discounttype}}
+                                {{#cost}}
+                                The fee is now <b>{{currencysign}}<span class="localisedcost-untaxed">{{localisedcostuntaxed}}</span></b>
+                                <span class="tax-container">
+                                    + {{currencysign}}<span class="taxamountstring">{{taxamountstring}}</span> <span class="taxstring">{{taxstring}}</span>
+                                    = <b>{{currencysign}}<span class="localisedcost">{{localisedcost}}</span></b>
+                                </span>
+                                {{currency}}
+                                {{#discountispercentage}} (<b>{{discountamount}}%</b> discount){{/discountispercentage}}
+                                {{#discountisvalue}} (<b>{{currencysign}}{{discountamount}}</b> discount){{/discountisvalue}}
+                                {{/cost}}
+                            {{/discounttype}}
+
+                            {{^discounttype}}
+                                {{#cost}}
+                                The fee is now <b>{{currencysign}}<span class="localisedcost-untaxed">{{localisedcostuntaxed}}</span></b>
+                                <span class="tax-container">
+                                    + {{currencysign}}<span class="taxamountstring">{{taxamountstring}}</span> <span class="taxstring">{{taxstring}}</span>
+                                    = <b>{{currencysign}}<span class="localisedcost">{{localisedcost}}</span></b>
+                                </span>{{currency}}
+                                {{/cost}}
+                            {{/discounttype}}
+                    </span>
+                    <div class="enrol-payment-error-text alert alert-danger" style="display: none"></div>
+                </div>
+            </div>
+        {{/singleuser}}
+
+        {{#allowmultiple}}
+            {{#multipleusers}}
+                <div class="text-center">
+                    <div class="col-md-auto">
+                        <span class="discount-threshold-info alert alert-success"
+                            style="display: {{#coderequired}} none {{/coderequired}}
+                            {{^coderequired}} block {{/coderequired}}">
+                                {{#cost}}
+                                    {{#discountispercentage}}
+                                        A <b>{{discountamount}}{{percentsymbol}}{{perseat}}</b>
+                                        discount will be applied to a purchase of <b>{{threshold}}</b> or more registrations.
+                                    {{/discountispercentage}}
+
+                                    {{#discountisvalue}}
+                                        A <b>{{symbol}}{{discountamount}}{{perseat}}</b>
+                                        discount will be applied to a purchase of <b>{{threshold}}</b> or more registrations.
+                                    {{/discountisvalue}}
+                                {{/cost}}
+
+                        </span>
+                        <div class="enrol-payment-error-text alert alert-danger" style="display: none"></div>
                     </div>
-                {{/allowmultiple}}
-            {{/hasdiscount}}
+                </div>
+            {{/multipleusers}}
 
-            <div id="moodle-modals">
-                <a id="error-modal-trigger"></a>
-                <a id="success-modal-trigger"></a>
+            <div id="multiple-registration-container" class="form-horizontal p-3"></div>
+            <div id="multiple-registration-btn-container" class="text-center">
+                <a id="multiple-registration-btn" role="button" class="btn btn-outline-secondary enable-mr">
+                    {{# str }}enrolothers, enrol_payment{{/ str }}
+                </a>
             </div>
 
-            {{#paypalenabled}}
-                <div>
-                    {{#payment}}
-                    <form id="paypal-form" action="{{paypalaction}}" method="post">
-                        <input type="hidden" name="cmd" value="_xclick" />
-                        <input type="hidden" name="charset" value="utf-8" />
-                        <input type="hidden" name="business" value="{{paypalaccount}}" />
+            <div class="text-center p-3 enrol-payment-enrollment alert alert-danger" style="display: none"></div>
+        {{/allowmultiple}}
+    {{/hasdiscount}}
 
-                        <input type="hidden" name="quantity" value="1" />
-                        <input id="paypal-custom" class="enrol-payment-custom" type="hidden" name="custom" value="{{prepaytoken}}" />
+    <div id="moodle-modals" class="text-center">
+        <a id="error-modal-trigger"></a>
+        <a id="success-modal-trigger"></a>
+    </div>
 
-                        {{#cost}}
-                        <input type="hidden" name="item_name" value="{{coursename}}" />
-                        <input type="hidden" name="item_number" value="{{courseshortname}}" />
-                        <input type="hidden" name="currency_code" value="{{currency}}" />
-                        <input type="hidden" name="amount" value="{{notaxedcost}}" />
-                        <input type="hidden" name="tax" value="{{taxamount}}" />
-                        {{/cost}}
+    {{#paypalenabled}}
+        <div class="text-center">
+            {{#payment}}
+            <form id="paypal-form" action="{{paypalaction}}" method="post">
+                <input type="hidden" name="cmd" value="_xclick" />
+                <input type="hidden" name="charset" value="utf-8" />
+                <input type="hidden" name="business" value="{{paypalaccount}}" />
 
-                        <input type="hidden" name="for_auction" value="false" />
-                        <input type="hidden" name="no_note" value="1" />
-                        <input type="hidden" name="no_shipping" value="{{shipping}}">
-                        <input type="hidden" name="notify_url" value="{{ipnurl}}" />
-                        <input type="hidden" name="return" value="{{returnurl}}" />
-                        <input type="hidden" name="cancel_return" value="{{cancelurl}}" />
-                        <input type="hidden" name="rm" value="2" />
-                        <input type="hidden" name="cbt" value="{{strcontinue}}" />
+                <input type="hidden" name="quantity" value="1" />
+                <input id="paypal-custom" class="enrol-payment-custom" type="hidden" name="custom" value="{{prepaytoken}}" />
 
-                        {{#user}}
-                        <input type="hidden" name="on0" value="User" />
-                        <input type="hidden" name="os0" value="{{userfullname}}" />
-                        <input type="hidden" name="prov" value="{{taxregion}}" />
-                        <input type="hidden" name="first_name" value="{{firstname}}" />
-                        <input type="hidden" name="last_name" value="{{lastname}}" />
-                        <input type="hidden" name="address" value="{{address}}" />
-                        <input type="hidden" name="city" value="{{city}}" />
-                        <input type="hidden" name="email" value="{{email}}" />
-                        <input type="hidden" name="country" value="{{country}}" />
-                        {{/user}}
-                        <button id="paypal-button" class="btn btn-info payment-checkout">
-                            {{#str}}sendpaymentbutton_paypal, enrol_payment{{/str}}
-                        </button>
-                    </form>
-                </div>
-                {{/payment}}
-                <p>{{#str}}paypalaccountnotneeded, enrol_payment{{/str}}</p>
+                {{#cost}}
+                <input type="hidden" name="item_name" value="{{coursename}}" />
+                <input type="hidden" name="item_number" value="{{courseshortname}}" />
+                <input type="hidden" name="currency_code" value="{{currency}}" />
+                <input type="hidden" name="amount" value="{{notaxedcost}}" />
+                <input type="hidden" name="tax" value="{{taxamount}}" />
+                {{/cost}}
 
-            {{/paypalenabled}}
+                <input type="hidden" name="for_auction" value="false" />
+                <input type="hidden" name="no_note" value="1" />
+                <input type="hidden" name="no_shipping" value="{{shipping}}">
+                <input type="hidden" name="notify_url" value="{{ipnurl}}" />
+                <input type="hidden" name="return" value="{{returnurl}}" />
+                <input type="hidden" name="cancel_return" value="{{cancelurl}}" />
+                <input type="hidden" name="rm" value="2" />
+                <input type="hidden" name="cbt" value="{{strcontinue}}" />
 
-            {{#stripeenabled}}
-                <p>{{# str }}or, enrol_payment{{/ str }}</p>
-                <div>
-                    <a class="btn btn-info payment-checkout" id="stripe-button">{{# str }}sendpaymentbutton_stripe, enrol_payment{{/ str }}</a>
-
-                    {{#payment}}
-                    <form id="stripe-form" action="{{stripeaction}}" method="post">
-
-                        <input type="hidden" name="cmd" value="_xclick" />
-                        <input type="hidden" name="charset" value="utf-8" />
-
-                        <input type="hidden" name="quantity" value="1" />
-                        <input type="hidden" name="shippingrequired" value="{{shipping}}">
-                        <input id="stripe-custom" class="enrol-payment-custom" type="hidden" name="custom" value="{{prepaytoken}}" />
-
-                        {{#cost}}
-                        <input type="hidden" name="item_name" value="{{coursename}}" />
-                        <input type="hidden" name="item_number" value="{{courseshortname}}" />
-                        <input type="hidden" name="currency_code" value="{{currency}}" />
-                        <input type="hidden" name="amount" value="{{notaxedcost}}" />
-                        <input type="hidden" name="tax" value="{{taxamount}}" />
-                        {{/cost}}
-
-                        <input type="hidden" name="for_auction" value="false" />
-                        <input type="hidden" name="no_note" value="1" />
-                        <input type="hidden" name="notify_url" value="{{ipnurl}}" />
-                        <input type="hidden" name="return" value="{{returnurl}}" />
-                        <input type="hidden" name="cancel_return" value="{{cancelurl}}" />
-                        <input type="hidden" name="rm" value="2" />
-                        <input type="hidden" name="cbt" value="{{strcontinue}}" />
-
-                        {{#user}}
-                        <input type="hidden" name="on0" value="User" />
-                        <input type="hidden" name="os0" value="{{userfullname}}" />
-                        <input type="hidden" name="prov" value="{{taxregion}}" />
-                        <input type="hidden" name="first_name" value="{{firstname}}" />
-                        <input type="hidden" name="last_name" value="{{lastname}}" />
-                        <input type="hidden" name="address" value="{{address}}" />
-                        <input type="hidden" name="city" value="{{city}}" />
-                        <input type="hidden" name="email" value="{{email}}" />
-                        <input type="hidden" name="country" value="{{country}}" />
-                        {{/user}}
-
-                    </form>
-                    {{/payment}}
-                </div>
-            {{/stripeenabled}}
-
-            {{^gatewaysenabled}}
-                <p>{{# str }}nogatewayenabled, enrol_payment{{/ str }}</p>
-            {{/gatewaysenabled}}
+                {{#user}}
+                <input type="hidden" name="on0" value="User" />
+                <input type="hidden" name="os0" value="{{userfullname}}" />
+                <input type="hidden" name="prov" value="{{taxregion}}" />
+                <input type="hidden" name="first_name" value="{{firstname}}" />
+                <input type="hidden" name="last_name" value="{{lastname}}" />
+                <input type="hidden" name="address" value="{{address}}" />
+                <input type="hidden" name="city" value="{{city}}" />
+                <input type="hidden" name="email" value="{{email}}" />
+                <input type="hidden" name="country" value="{{country}}" />
+                {{/user}}
+                <button id="paypal-button" class="btn btn-info payment-checkout">
+                    {{#str}}sendpaymentbutton_paypal, enrol_payment{{/str}}
+                </button>
+            </form>
+            {{/payment}}
+            <p class="mt-3">{{#str}}paypalaccountnotneeded, enrol_payment{{/str}}</p>
         </div>
+    {{/paypalenabled}}
 
-        <div class="p-3 justify-content-md-center">
-            <span id="interac-text">{{{transferinstructions}}}</span>
+    {{#stripeenabled}}
+        <p class="text-center">{{# str }}or, enrol_payment{{/ str }}</p>
+        <div class="text-center">
+            <a class="btn btn-info payment-checkout" id="stripe-button">{{# str }}sendpaymentbutton_stripe, enrol_payment{{/ str }}</a>
+
+            {{#payment}}
+            <form id="stripe-form" action="{{stripeaction}}" method="post">
+
+                <input type="hidden" name="cmd" value="_xclick" />
+                <input type="hidden" name="charset" value="utf-8" />
+
+                <input type="hidden" name="quantity" value="1" />
+                <input type="hidden" name="shippingrequired" value="{{shipping}}">
+                <input id="stripe-custom" class="enrol-payment-custom" type="hidden" name="custom" value="{{prepaytoken}}" />
+
+                {{#cost}}
+                <input type="hidden" name="item_name" value="{{coursename}}" />
+                <input type="hidden" name="item_number" value="{{courseshortname}}" />
+                <input type="hidden" name="currency_code" value="{{currency}}" />
+                <input type="hidden" name="amount" value="{{notaxedcost}}" />
+                <input type="hidden" name="tax" value="{{taxamount}}" />
+                {{/cost}}
+
+                <input type="hidden" name="for_auction" value="false" />
+                <input type="hidden" name="no_note" value="1" />
+                <input type="hidden" name="notify_url" value="{{ipnurl}}" />
+                <input type="hidden" name="return" value="{{returnurl}}" />
+                <input type="hidden" name="cancel_return" value="{{cancelurl}}" />
+                <input type="hidden" name="rm" value="2" />
+                <input type="hidden" name="cbt" value="{{strcontinue}}" />
+
+                {{#user}}
+                <input type="hidden" name="on0" value="User" />
+                <input type="hidden" name="os0" value="{{userfullname}}" />
+                <input type="hidden" name="prov" value="{{taxregion}}" />
+                <input type="hidden" name="first_name" value="{{firstname}}" />
+                <input type="hidden" name="last_name" value="{{lastname}}" />
+                <input type="hidden" name="address" value="{{address}}" />
+                <input type="hidden" name="city" value="{{city}}" />
+                <input type="hidden" name="email" value="{{email}}" />
+                <input type="hidden" name="country" value="{{country}}" />
+                {{/user}}
+
+            </form>
+            {{/payment}}
         </div>
+    {{/stripeenabled}}
+
+    {{^gatewaysenabled}}
+        <p class="text-center">{{# str }}nogatewayenabled, enrol_payment{{/ str }}</p>
+    {{/gatewaysenabled}}
+
+    <div class="p-3">
+        <span id="interac-text">{{{transferinstructions}}}</span>
     </div>
 </div>
