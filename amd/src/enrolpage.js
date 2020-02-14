@@ -560,7 +560,8 @@ function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner, Ajax, 
         initClickHandlers: function() {
             var self = this;
 
-            $("#apply-discount").click(function() {
+            $("#apply-discount").click(function(event) {
+                event.preventDefault();
                 self.Discount.checkDiscountCode(self);
             });
 

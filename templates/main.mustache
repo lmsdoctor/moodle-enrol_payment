@@ -43,13 +43,13 @@
     {{#hasdiscount}}
         {{#hasdiscountcode}}
             <div id="discount-container" class="text-center row justify-content-center">
-                <form class="form-inline">
+                <form class="form-inline" method="POST">
                     <div class="form-group mx-sm-3 mb-2">
                         <input class="form-control" type="text" name="discountcode" id="discountcode" placeholder="{{#str}}  discountcode, enrol_payment{{/str}}" />
                     </div>
-                    <a class="btn btn-primary white mb-2" id="apply-discount" role="button">
+                    <button class="btn btn-primary white mb-2" id="apply-discount" role="button">
                         {{# str }}applydiscount, enrol_payment{{/ str }}
-                    </a>
+                    </button>
                 </form>
             </div>
         {{/hasdiscountcode}}
@@ -90,7 +90,7 @@
 
         {{#allowmultiple}}
             {{#multipleusers}}
-                <div class="text-center col-md-12">
+                <div class="text-center row justify-content-center col-md-12">
                     <div class="col-md-auto">
                         <span class="discount-threshold-info alert alert-success"
                             style="display: {{#coderequired}} none {{/coderequired}}
@@ -117,9 +117,10 @@
                 <a id="multiple-registration-btn" role="button" class="btn btn-outline-secondary enable-mr">
                     {{# str }}enrolothers, enrol_payment{{/ str }}
                 </a>
+                {{{multipleregicon}}}
             </div>
 
-            <div class="text-center p-3 enrol-payment-enrollment alert alert-danger" style="display: none"></div>
+            <div class="text-center row justify-content-center p-3 enrol-payment-enrollment alert alert-danger" style="display: none"></div>
         {{/allowmultiple}}
     {{/hasdiscount}}
 

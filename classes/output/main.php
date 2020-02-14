@@ -67,7 +67,7 @@ class main implements renderable, templatable {
      * @return array
      */
     public function export_for_template(renderer_base $output) {
-        global $CFG, $USER, $PAGE, $DB;
+        global $CFG, $USER, $PAGE, $DB, $OUTPUT;
         profile_load_data($USER);
         ob_start();
 
@@ -228,6 +228,8 @@ class main implements renderable, templatable {
         $transferinstructions = helper::get_transfer_instructions($localisedcost,
                                             $coursefullname, $cost->courseshortname);
 
+        $multipleregicon = $OUTPUT->help_icon('multipleregistration', 'enrol_payment');
+
         $totemplate = [
             'allowmultiple'         => $this->config->allowmultiple,
             'coderequired'          => $coderequired,
@@ -244,6 +246,7 @@ class main implements renderable, templatable {
             'singleuser'            => $singleuser,
             'user'                  => $USER,
             'transferinstructions'  => $transferinstructions,
+            'multipleregicon'       => $multipleregicon,
         ];
 
         return $totemplate;
