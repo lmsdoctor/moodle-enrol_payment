@@ -634,8 +634,7 @@ function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner, Ajax, 
             symbol,
             discountCodeRequired,
             discountThreshold,
-            units,
-            ) {
+            units) {
 
             var self = this;
             var stringKeys = [
