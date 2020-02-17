@@ -102,6 +102,7 @@ function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner, Ajax, 
          *
          */
         discountThreshold: undefined,
+        units: undefined,
 
         /**
          * Functions dealing with the multi-user registration system
@@ -141,7 +142,8 @@ function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner, Ajax, 
             addPlusClickHandler: function(plus, mdlstr) {
                 var self = this;
 
-                plus.click(function() {
+                plus.click(function(e) {
+                    e.preventDefault();
                     // Get HTML for the field we will create.
                     var nextHtml = self.makeEmailEntryLine(mdlstr);
 
@@ -165,7 +167,8 @@ function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner, Ajax, 
             addMinusClickHandler: function(minus, mdlstr) {
                 var self = this;
 
-                minus.click(function() {
+                minus.click(function(e) {
+                    e.preventDefault();
                     // Pop the whole email input line off the DOM.
                     $(this).parent().parent().remove();
 
@@ -274,6 +277,7 @@ function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner, Ajax, 
                 var response = JSON.parse(r);
                 if(response["success"]) {
                     enrolPage.subtotal = response["subtotal"];
+                    $("span.units").text(response["units"]);
                     enrolPage.updateCostView();
                     self.checkoutConfirmModal(enrolPage, response["successmessage"]);
                 } else {
@@ -345,7 +349,7 @@ function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner, Ajax, 
 
                     btn.text(mdlstr["cancelenrolothers"]);
                     btn.removeClass('enable-mr').addClass('disable-mr');
-                    $("#multiple-registration-container").html(this.makeEmailEntryLine(mdlstr));
+                    $("#multiple-registration-container").html(this.makeEmailEntryLine(mdlstr)).show();
                     self.addPlusClickHandler($(".plus-container"), mdlstr);
                     $("#multiple-registration-btn-container img.iconhelp").css("display", "none");
 
@@ -358,6 +362,7 @@ function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner, Ajax, 
                     btn.removeClass('disable-mr').addClass('enable-mr');
                     $('.mr-email-line').remove();
                     $('#multiple-registration-btn-container img.iconhelp').css('display', 'inline-block');
+                    $("#multiple-registration-container").hide();
 
                     Ajax.call([{
                         methodname: 'enrol_payment_single_enrollment',
@@ -628,7 +633,9 @@ function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner, Ajax, 
             currency,
             symbol,
             discountCodeRequired,
-            discountThreshold) {
+            discountThreshold,
+            units,
+            ) {
 
             var self = this;
             var stringKeys = [
@@ -672,6 +679,7 @@ function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner, Ajax, 
                 self.symbol = symbol;
                 self.discountCodeRequired = discountCodeRequired == 1 ? true : false;
                 self.discountThreshold = discountThreshold;
+                self.units = units;
 
                 self.initClickHandlers();
                 self.updateCostView();

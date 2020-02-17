@@ -141,7 +141,8 @@ class main implements renderable, templatable {
             $this->instance->currency,
             $symbol,
             $coderequired,
-            $threshold
+            $threshold,
+            $paymentobj->units,
         ];
         $PAGE->requires->js_call_amd('enrol_payment/enrolpage', 'init', $jsdata);
         $PAGE->requires->css('/enrol/payment/style/styles.css');
@@ -153,13 +154,18 @@ class main implements renderable, templatable {
         $originaltotal      = $this->originalcost + $taxamountstring;
 
         $singleuser = false;
-        if ($threshold == 1) {
+        $multiplesingle = false;
+        if ($threshold == 1 && !$this->config->allowmultiple) {
             $singleuser = true;
+        } else if ($threshold == 1 && $this->config->allowmultiple) {
+            $multiplesingle = true;
         }
 
         $cost                        = new stdClass;
         $cost->price                 = $this->originalcost;
         $cost->total                 = $originaltotal;
+        $cost->units                 = $paymentobj->units;
+        $cost->unitdiscount   = $calculatecost['percentdiscountunit'];
         $cost->coursename            = $coursefullname;
         $cost->courseshortname       = $course->shortname;
         $cost->localisedcostuntaxed  = $localisedcostuntaxed;
@@ -243,6 +249,7 @@ class main implements renderable, templatable {
             'hasdiscount'           => $hasdiscount,
             'hastax'                => (empty($taxstring)) ? false : true,
             'multipleusers'         => $multipleusers,
+            'multiplesingle'        => $multiplesingle,
             'payment'               => $payment,
             'paypalenabled'         => $this->config->haspaypal,
             'stripeenabled'         => $this->config->hasstripe,

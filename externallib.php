@@ -192,9 +192,12 @@ class enrol_payment_external extends external_api {
 
                 // This string should only be displayed for the multienrollment and if the code
                 // was given, otherwise we don't display the string.
-                $hasdiscount = (count($ret['users']) >= $threshold);
-                $strings->discount = helper::get_percentage_discount_string($objcosts, $payment->codegiven, $hasdiscount);
-                $strings->calculation = helper::get_percentage_calculation_string($objcosts, $payment->codegiven, $hasdiscount);
+                $hasdiscount            = (count($ret['users']) >= $threshold);
+                $strings->discount      = helper::get_percentage_discount_string($objcosts, $payment->codegiven, $hasdiscount);
+                $strings->calculation   = helper::get_percentage_calculation_string($objcosts, $payment->codegiven, $hasdiscount);
+
+                // Update the units.
+                $ret['units'] = $payment->units;
 
                 $ret['successmessage'] = get_string('multipleregistrationconfirmuserlist', 'enrol_payment')
                 . implode('<li>', $stremails)
