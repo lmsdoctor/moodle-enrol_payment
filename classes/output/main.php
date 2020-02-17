@@ -148,8 +148,9 @@ class main implements renderable, templatable {
 
         // Sanitise some fields before building the PayPal form.
         $USER->userfullname = fullname($USER);
-        $stripeshipping    = $this->instance->customint4;
-        $taxamountstring = format_float($taxpercent * $originalcost, 2, true);
+        $stripeshipping     = $this->instance->customint4;
+        $taxamountstring    = format_float($taxpercent * $originalcost, 2, true);
+        $originaltotal      = $this->originalcost + $taxamountstring;
 
         $singleuser = false;
         if ($threshold == 1) {
@@ -157,6 +158,8 @@ class main implements renderable, templatable {
         }
 
         $cost                        = new stdClass;
+        $cost->price                 = $this->originalcost;
+        $cost->total                 = $originaltotal;
         $cost->coursename            = $coursefullname;
         $cost->courseshortname       = $course->shortname;
         $cost->localisedcostuntaxed  = $localisedcostuntaxed;

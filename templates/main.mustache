@@ -30,12 +30,12 @@
     <div class="text-center col-md-12">
         {{#hastax}}
             {{#cost}}
-                <p>The fee for <strong>{{ coursename }}</strong><br>is <b>{{ symbol }}{{ localisedcostuntaxed }}</b> + {{ symbol }}{{taxamountstring}} {{ taxstring }} = <b>{{ symbol }}{{ localisedcost }}</b> {{ currency }}.</p>
+                <p>The fee for <strong>{{ coursename }}</strong><br>is <b>{{ symbol }}{{ price }}</b> + {{ symbol }}{{taxamountstring}} {{ taxstring }} = <b>{{ symbol }}{{ total }}</b> {{ currency }}.</p>
             {{/cost}}
         {{/hastax}}
         {{^hastax}}
             {{#cost}}
-                <p>The fee for <strong>{{ coursename }}</strong> is <br><b>{{ symbol }}{{ localisedcost }}</b> {{ currency }}.</p>
+                <p>The fee for <strong>{{ coursename }}</strong> is <br><b>{{ symbol }}{{ price }}</b> {{ currency }}.</p>
             {{/cost}}
         {{/hastax}}
     </div>

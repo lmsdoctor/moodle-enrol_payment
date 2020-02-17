@@ -188,7 +188,7 @@ $string['charge_enrolment'] = 'Enrolment in: ';
 $string['error'] = 'Error';
 $string['paypalmixeduse'] = 'Mixed-use PayPal account';
 $string['paypalmixeduse_desc'] = 'If other products then enrolments are processes via the PayPal account (e.g., videos, books, etc) than tick the checkbox';
-$string['getvaluediscount'] = 'The {$a->symbol}{$a->discountvalue} discount per registrant has been applied.';
+$string['getvaluediscount'] = 'The {$a->symbol}{$a->discountvalue} discount per-person has been applied.';
 $string['getvaluecalculation'] = '{$a->symbol}{$a->originalcost} - {$a->symbol}{$a->discountvalue} discount × {$a->units} {$a->taxstring} = <b>{$a->symbol}{$a->subtotaltaxed}</b> {$a->currency}';
 $string['percentcalculation'] = '{$a->symbol}{$a->originalcost} × {$a->units} {$a->taxstring} = <b>{$a->symbol}{$a->subtotaltaxed}</b> {$a->currency}';
 $string['percentcalculationdiscount'] = '{$a->symbol}{$a->originalcost} - {$a->symbol}{$a->unitdiscount} ({$a->percentdiscount}% discount) × {$a->units} {$a->taxstring} = <b>{$a->symbol}{$a->subtotaltaxed}</b> {$a->currency}';
