@@ -165,7 +165,7 @@ class main implements renderable, templatable {
         $cost->price                 = $this->originalcost;
         $cost->total                 = $originaltotal;
         $cost->units                 = $paymentobj->units;
-        $cost->unitdiscount   = $calculatecost['percentdiscountunit'];
+        $cost->unitdiscount          = $calculatecost['percentdiscountunit'];
         $cost->coursename            = $coursefullname;
         $cost->courseshortname       = $course->shortname;
         $cost->localisedcostuntaxed  = $localisedcostuntaxed;
@@ -178,7 +178,7 @@ class main implements renderable, templatable {
         $cost->notaxedcost           = helper::calculate_cost($this->instance, $paymentobj, false)['subtotal'];
         $cost->taxamount             = format_float($taxpercent * $originalcost, 2, false);
         $cost->threshold             = $threshold;
-        $cost->discountamount        = format_float($this->instance->customdec1, 2, true);
+        $cost->discountamount        = (float) format_float($this->instance->customdec1, 2, true);
 
         $discounttype = $this->instance->customint3;
 

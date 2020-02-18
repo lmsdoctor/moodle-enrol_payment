@@ -75,8 +75,8 @@ class helper {
      * @param  stdClass $instance
      * @return int
      */
-    public static function normalize_percent_discount($amount, $discounttype) {
-        if ($discounttype == 1 && $amount > 1) {
+    public static function normalize_percent_discount(float $amount, $discounttype) {
+        if ($amount > 1 && $discounttype == 1) {
             return $amount * 0.01;
         }
         return $amount;
@@ -111,18 +111,11 @@ class helper {
         // Assuming the discount theshold is met:
         // If a discount code isn't required, apply the discount.
         // If a discount code is required and the user has provided it, apply the discount.
-        $discounttype = 0;
-        $discountamount = 0;
-        if ($payment->units >= $discountthreshold) {
-            if (!$discountcoderequired || ($discountcoderequired && $payment->codegiven)) {
-                $discounttype = $instance->customint3;
-                $discountamount = $instance->customdec1;
-            }
-        }
+        $discounttype = $instance->customint3;
+        $discountamount = $instance->customdec1;
 
         $ocdiscounted = $cost;
         $normalizeddiscount = self::normalize_percent_discount($discountamount, $discounttype);
-
         switch ($discounttype) {
             case 0:
                 $subtotal = $cost * $payment->units;
@@ -181,7 +174,7 @@ class helper {
      *
      * @return int
      */
-    protected static function calculate_discount(int $total, int $discount) {
+    protected static function calculate_discount($total, $discount) {
         return $total * $discount / 100;
     }
 
