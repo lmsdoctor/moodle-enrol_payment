@@ -392,6 +392,12 @@ class enrol_payment_plugin extends enrol_plugin {
 
     }
 
+    /**
+     * Returns multiple configuration values.
+     *
+     * @param  stdClass $instance
+     * @return stdClass
+     */
     protected function get_instance_configuration(stdClass $instance) {
         $config                 = new stdClass;
         $config->taxinfo        = $this->get_tax_info($instance->cost, $instance->courseid);
