@@ -91,12 +91,11 @@ class helper {
      * @return array
      */
     public static function calculate_cost(stdClass $instance, stdClass $payment, bool $addtax = false) {
-        $discountthreshold = $instance->customint8;
-        $discountcoderequired = $instance->customint7;
-        $discountamount = 0.0;
-
-        $cost = $payment->originalcost;
-        $subtotal = $cost;
+        $discountamount = $instance->customdec1;
+        $discounttype   = $instance->customint3;
+        $cost           = $payment->originalcost;
+        $subtotal       = $cost;
+        $ocdiscounted   = $cost;
 
         if (self::is_negative_value($discountamount)) {
             throw new moodle_exception('negativediscount', 'enrol_payment');
@@ -106,15 +105,6 @@ class helper {
             throw new moodle_exception('notenoughunits', 'enrol_payment');
         }
 
-        // If conditions have been met for a discount, apply it.
-        // This is not the most concise way to write this logic, but it is the most understandable in my opinion.
-        // Assuming the discount theshold is met:
-        // If a discount code isn't required, apply the discount.
-        // If a discount code is required and the user has provided it, apply the discount.
-        $discounttype = $instance->customint3;
-        $discountamount = $instance->customdec1;
-
-        $ocdiscounted = $cost;
         $normalizeddiscount = self::normalize_percent_discount($discountamount, $discounttype);
         switch ($discounttype) {
             case 0:
@@ -366,7 +356,7 @@ class helper {
      * @param  int    $userid
      * @param  int    $courseid
      * @param  int    $enrolid
-     * @param  int    $originalcost
+     * @param  float  $originalcost
      * @param  float  $taxpercent
      *
      * @return stdClass
@@ -462,12 +452,12 @@ class helper {
     /**
      * Outputs transfer instructions.
      *
-     * @param  int $cost
+     * @param  float $cost
      * @param  string $coursefullname
      * @param  string $courseshortname
      * @return string
      */
-    public static function get_transfer_instructions(int $cost, string $coursefullname,
+    public static function get_transfer_instructions(float $cost, string $coursefullname,
             string $courseshortname) {
 
         if (!get_config('enrol_payment', 'allowbanktransfer')) {
