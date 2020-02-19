@@ -85,7 +85,6 @@ if (empty($data->custom)) {
     if (get_config('paypalmixeduse', 'enrol_payment')) {
         // ... PayPal interprets the moodle_exception
         // with an HTTP response code 500 when anything else but a course is purchased.
-        throw new moodle_exception('invalidrequest', 'core_error', '', null, 'Missing request param: custom');
         die();
     }
 }
