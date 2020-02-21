@@ -284,98 +284,6 @@ class enrol_payment_plugin extends enrol_plugin {
     }
 
     /**
-     * Return the tax amount.
-     *
-     * @param  string $tax
-     * @param  string $userfield
-     *
-     * @return array
-     */
-    private function get_tax_amount(string $tax, string $userfield) {
-        $pieces = explode(":", $tax);
-        if (count($pieces) != 2) {
-            debugging('Incorrect tax definition format.');
-        }
-
-        $taxregion = strtolower(trim($pieces[0]));
-        $taxrate = trim($pieces[1]);
-
-        // If the user country and the tax country does not match, return with empty values.
-        if ($taxregion != strtolower(trim($userfield))) {
-            return [
-                'taxpercent' => 0,
-                'taxstring'  => ''
-            ];
-        }
-
-        if (!is_numeric($taxrate)) {
-            debugging('Encountered non-numeric tax value.');
-        }
-
-        try {
-            $floattaxrate = floatval($taxrate);
-            return [
-                'taxpercent' => $floattaxrate,
-                'taxstring'  => '(' . floor($floattaxrate * 100) . '% tax)'
-            ];
-
-        } catch (Exception $e) {
-            debugging("Could not convert tax value for $province into a float.");
-        }
-    }
-
-    /**
-     * Returns the tax info.
-     *
-     * @param  int $cost
-     * @return array
-     */
-    public function get_tax_info($cost) {
-        global $USER;
-        profile_load_data($USER);
-
-        // If the option is disabled, return.
-        $hastaxes = $this->get_config('definetaxes');
-        if (!$hastaxes) {
-            return ['taxpercent' => 0, 'taxstring' => ''];
-        }
-
-        $taxdefs        = $this->get_config('taxdefinitions');
-        $countrytax     = $this->get_config('countrytax');
-
-        // If country tax are set and the user country is empty. Force user to edit his profile.
-        if (!empty($countrytax) && empty($USER->country)) {
-            $urltogo = new moodle_url('/user/edit.php', ['id' => $USER->id]);
-            redirect($urltogo, 'You must choose your country', null, \core\output\notification::NOTIFY_WARNING);
-        }
-
-        if (!empty($countrytax)) {
-            $taxholder = $this->get_tax_amount($countrytax, $USER->country);
-            return $taxholder;
-        }
-
-        // If the tax field is not set, let's not calculate taxes.
-        if (!isset($USER->profile_field_taxregion)) {
-            return ['taxpercent' => 0, 'taxstring' => ''];
-        }
-
-        // If the tax country is not empty, use it. Otherwise use the tax region.
-        $taxdefs = $this->get_config('taxdefinitions');
-        $taxdeflines = explode("\n", $taxdefs);
-
-        // Return if this is empty.
-        if (empty($taxdefs)) {
-            return ['taxpercent' => 0, 'taxstring' => ''];
-        }
-
-        foreach ($taxdeflines as $taxline) {
-            $taxholder = $this->get_tax_amount($taxline, $USER->profile_field_taxregion);
-        }
-
-        return $taxholder;
-    }
-
-    /**
      * Creates course enrol form, checks if form submitted
      * and enrols user if necessary. It can also redirect.
      *
@@ -385,36 +293,10 @@ class enrol_payment_plugin extends enrol_plugin {
     public function enrol_page_hook(stdClass $instance) {
         global $PAGE;
 
-        $config     = $this->get_instance_configuration($instance);
-        $renderable = new main($instance, $config);
+        $renderable = new main($instance);
         $renderer   = $PAGE->get_renderer('enrol_payment');
         return $renderer->render($renderable);
 
-    }
-
-    /**
-     * Returns multiple configuration values.
-     *
-     * @param  stdClass $instance
-     * @return stdClass
-     */
-    protected function get_instance_configuration(stdClass $instance) {
-        $config                 = new stdClass;
-        $config->taxinfo        = $this->get_tax_info($instance->cost, $instance->courseid);
-        $config->allowmultiple  = ($this->get_config('allowmultipleenrol') && $instance->customint5);
-        $config->haspaypal      = (bool) trim($this->get_config('paypalbusiness'));
-        $config->paypalaccount  = $this->get_config('paypalbusiness');
-
-        $stripesecret           = $this->get_config('stripesecretkey');
-        $config->stripekey      = $this->get_config('stripepublishablekey');
-        $config->hasstripe      = ((bool) trim($stripesecret)) && ((bool) trim($config->stripekey));
-        $config->transferinstructions = $this->get_config('transferinstructions');
-
-        $config->enablediscountcodes    = $this->get_config('enablediscounts') && $instance->customint7 && $instance->customint3;
-        $config->validatezipcode        = $this->get_config('validatezipcode');
-        $config->billingaddressrequired = $this->get_config('billingaddress');
-
-        return $config;
     }
 
     /**

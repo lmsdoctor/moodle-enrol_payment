@@ -44,9 +44,7 @@ require_once($CFG->dirroot . '/lib/enrollib.php');
  */
 class main implements renderable, templatable {
 
-    protected $instance;
-    protected $config;
-    protected $originalcost;
+    private $instance;
 
     /**
      * Constructor.
@@ -54,10 +52,8 @@ class main implements renderable, templatable {
      * @param string $instance
      * @param array  $config
      */
-    public function __construct(stdClass $instance, stdClass $config) {
+    public function __construct(stdClass $instance) {
         $this->instance = $instance;
-        $this->config = $config;
-        $this->originalcost = (float) $instance->cost;
     }
 
     /**
@@ -71,122 +67,87 @@ class main implements renderable, templatable {
         profile_load_data($USER);
         ob_start();
 
+        $config = $this->get_settings();
+
         // No cost, other enrolment methods (instances) should be used.
-        if (abs($this->originalcost) < 0.01) {
+        if (abs((float) $this->instance->cost) < 0.01) {
             echo html_writer::tag('p', get_string('nocost', 'enrol_payment'));
             die();
         }
 
         $course = $DB->get_record('course', array('id' => $this->instance->courseid));
-        $context = context_course::instance($course->id);
-        $originalcost = $this->originalcost;
-
-        if (is_enrolled($context, $USER)) {
-            return ob_get_clean();
-        }
-
-        // Get stripe logo if is found.
-        $stripelogourl  = helper::get_stripe_logo_url();
-
-        // Pass $view=true to filter hidden caps if the user cannot see them.
-        $teacher = false;
-        if ($users = get_users_by_capability($context, 'moodle/course:update', 'u.*', 'u.id ASC',
-                                             '', '', '', '', false, true)) {
-            $users = sort_by_roleassignment_authority($users, $context);
-            $teacher = array_shift($users);
-        }
-
-        $taxstring  = $this->config->taxinfo['taxstring'];
-        $taxpercent = $this->config->taxinfo['taxpercent'];
-
-        $gatewaysenabled = ((int) $this->config->haspaypal) + ((int) $this->config->hasstripe);
 
         // Force login only for guest user, not real users with guest role.
         // Used to verify payment data so that it can't be spoofed.
-        $prepaytoken    = bin2hex(random_bytes(16));
-        $coderequired   = ($this->instance->customint7) ?? 0;
-        $threshold      = $this->instance->customint8;
-
-        $paymentid = helper::store_payment_session(
-                $prepaytoken, $USER->id, $course->id,
-                $this->instance->id, $originalcost, $taxpercent);
-
-        // Calculate localised and "." cost, make sure we send PayPal/Stripe the same value,
-        // please note PayPal expects amount with 2 decimal places and "." separator.
-        $paymentobj = $DB->get_record('enrol_payment_session', ['id' => $paymentid]);
-
-        $calculatecost          = helper::calculate_cost($this->instance, $paymentobj, true);
-        $calculatecostuntaxed   = helper::calculate_cost($this->instance, $paymentobj, false);
-        $localisedcost          = $calculatecost['subtotallocalised'];
-        $localisedcostuntaxed   = $calculatecostuntaxed['subtotallocalised'];
-        $originalcost           = format_float($originalcost, 2, false);
-        $coursefullname         = format_string($course->fullname, true, array('context' => $context));
+        $token      = bin2hex(random_bytes(16));
+        $price      = format_float((float) $this->instance->cost, 2, false);
+        $taxpercent = $config->taxinfo['taxpercent'];
+        $paymentid  = helper::store_payment_session($token, $USER->id, $course->id,
+                                $this->instance->id, $price, $taxpercent);
+        $session    = $DB->get_record('enrol_payment_session', ['id' => $paymentid]);
+        $costslist  = helper::calculate_cost($this->instance, $session, true);
 
         // Are discounts enabled in the admin settings?
-        $symbol         = enrol_payment_get_currency_symbol($this->instance->currency);
+        $symbol = enrol_payment_get_currency_symbol($this->instance->currency);
 
         $jsdata = [
             $this->instance->id,
-            $this->config->stripekey,
-            $originalcost,
-            $prepaytoken,
+            $config->stripekey,
+            $price,
+            $token,
             $course->fullname,
             $this->instance->customint4,
-            $stripelogourl,
+            helper::get_stripe_logo_url(),
             $taxpercent,
-            $localisedcostuntaxed,
-            $this->config->validatezipcode,
-            $this->config->billingaddressrequired,
+            $costslist['subtotal'],
+            $config->validatezipcode,
+            $config->addressrequired,
             $USER->email,
             $this->instance->currency,
             $symbol,
-            $coderequired,
-            $threshold,
-            $paymentobj->units,
+            $config->codeisrequired,
+            $config->threshold,
+            $session->units,
         ];
         $PAGE->requires->js_call_amd('enrol_payment/enrolpage', 'init', $jsdata);
         $PAGE->requires->css('/enrol/payment/style/styles.css');
 
         // Sanitise some fields before building the PayPal form.
         $USER->userfullname = fullname($USER);
-        $stripeshipping     = $this->instance->customint4;
-        $taxamountstring    = format_float($taxpercent * $originalcost, 2, true);
-        $originaltotal      = $this->originalcost + $taxamountstring;
+        $taxamountstring    = format_float($taxpercent * $price, 2, true);
+        $originaltotal      = $price + $taxamountstring;
 
         $singleuser = false;
         $multiplesingle = false;
-        if ($threshold == 1 && !$this->config->allowmultiple) {
+        if ($config->threshold == 1 && !$config->allowmultiple) {
             $singleuser = true;
-        } else if ($threshold == 1 && $this->config->allowmultiple) {
+        } else if ($config->threshold == 1 && $config->allowmultiple) {
             $multiplesingle = true;
         }
 
         $cost                        = new stdClass;
-        $cost->price                 = $this->originalcost;
+        $cost->price                 = $price;
         $cost->total                 = $originaltotal;
-        $cost->units                 = $paymentobj->units;
-        $cost->unitdiscount          = $calculatecost['percentdiscountunit'];
-        $cost->coursename            = $coursefullname;
+        $cost->units                 = $session->units;
+        $cost->unitdiscount          = $costslist['percentdiscountunit'];
+        $cost->coursename            = $course->fullname;
         $cost->courseshortname       = $course->shortname;
-        $cost->localisedcostuntaxed  = $localisedcostuntaxed;
-        $cost->taxstring             = $taxstring;
+        $cost->localisedcostuntaxed  = $costslist['subtotal'];
+        $cost->taxstring             = $config->taxinfo['taxstring'];
         $cost->taxamountstring       = $taxamountstring;
-        $cost->localisedcost         = $localisedcost;
+        $cost->localisedcost         = $costslist['subtotal'];
         $cost->currency              = $this->instance->currency;
         $cost->symbol                = $symbol;
-        $cost->currencysign          = $symbol;
-        $cost->notaxedcost           = helper::calculate_cost($this->instance, $paymentobj, false)['subtotal'];
-        $cost->taxamount             = format_float($taxpercent * $originalcost, 2, false);
-        $cost->threshold             = $threshold;
+        $cost->notaxedcost           = $costslist['subtotal'];
+        $cost->taxamount             = format_float($taxpercent * $price, 2, false);
+        $cost->threshold             = $config->threshold;
         $cost->discountamount        = (float) format_float($this->instance->customdec1, 2, true);
-
-        $discounttype = $this->instance->customint3;
 
         // If percentage discount, get the percentage amount to display.
         $cost->discountispercentage = false;
         $cost->discountisvalue = false;
         $hasdiscount = false;
-        switch ($discounttype) {
+        switch ($config->discounttype) {
             case 1:
                 $hasdiscount = true;
                 $cost->discountispercentage = true;
@@ -200,21 +161,17 @@ class main implements renderable, templatable {
                 break;
         }
 
-        if ($discounttype) {
-            $percentdisplay = $calculatecost['percentdiscount'];
-        }
-
         // Check if applies for multiple users.
         $cost->perseat = '';
         $multipleusers = false;
-        if ($threshold > 1 && $discounttype > 0) {
+        if ($config->threshold > 1 && $config->discounttype > 0) {
             $multipleusers = true;
-            $cost->perseat = ($discounttype == 2) ? ' per-person' : '';
+            $cost->perseat = ($config->discounttype == 2) ? ' per-person' : '';
         }
 
         // Refactor this logic.
-        if ($discounttype == 1) {
-            $cost->discountamount = helper::normalize_percent_discount($cost->discountamount, $discounttype) * 100;
+        if ($config->discounttype == 1) {
+            $cost->discountamount = helper::normalize_percent_discount($cost->discountamount, $config->discounttype) * 100;
             $cost->percentsymbol  = '%';
         }
 
@@ -224,35 +181,35 @@ class main implements renderable, templatable {
         $payment                = new stdClass;
         $payment->paypalaction  = 'https://www.paypal.com/cgi-bin/webscr';
         $payment->stripeaction  = $CFG->wwwroot . '/enrol/payment/stripecharge.php';
-        $payment->paypalaccount = $this->config->paypalaccount;
-        $payment->prepaytoken   = $prepaytoken;
+        $payment->paypalaccount = $config->paypalaccount;
+        $payment->prepaytoken   = $token;
         $payment->shipping      = $this->instance->customint4 ? 2 : 1;
         $payment->ipnurl        = $CFG->wwwroot . '/enrol/payment/ipn.php';
         $payment->returnurl     = new moodle_url('/enrol/payment/return.php', [
-            'id' => $course->id, 'token' => $prepaytoken
+            'id' => $course->id, 'token' => $token
         ]);
         $payment->cancelurl     = $CFG->wwwroot;
         $payment->strcontinue   = get_string('continuetocourse');
 
-        $transferinstructions = helper::get_transfer_instructions($localisedcost,
-                                            $coursefullname, $cost->courseshortname);
+        $transferinstructions = helper::get_transfer_instructions($costslist['subtotal'],
+                                            $course->fullname, $course->shortname);
 
         $multipleregicon = $OUTPUT->help_icon('multipleregistration', 'enrol_payment');
 
         $totemplate = [
-            'allowmultiple'         => $this->config->allowmultiple,
-            'coderequired'          => $coderequired,
+            'allowmultiple'         => $config->allowmultiple,
+            'coderequired'          => $config->codeisrequired,
             'cost'                  => $cost,
-            'discounttype'          => $discounttype,
-            'gatewaysenabled'       => $gatewaysenabled,
-            'hasdiscountcode'       => $this->config->enablediscountcodes,
+            'discounttype'          => $config->discounttype,
+            'gatewaysenabled'       => ($config->haspaypal && $config->hasstripe),
+            'hasdiscountcode'       => $config->codeisrequired,
             'hasdiscount'           => $hasdiscount,
-            'hastax'                => (empty($taxstring)) ? false : true,
+            'hastax'                => (empty($config->taxinfo['taxstring'])) ? false : true,
             'multipleusers'         => $multipleusers,
             'multiplesingle'        => $multiplesingle,
             'payment'               => $payment,
-            'paypalenabled'         => $this->config->haspaypal,
-            'stripeenabled'         => $this->config->hasstripe,
+            'paypalenabled'         => $config->haspaypal,
+            'stripeenabled'         => $config->hasstripe,
             'singleuser'            => $singleuser,
             'user'                  => $USER,
             'transferinstructions'  => $transferinstructions,
@@ -260,5 +217,128 @@ class main implements renderable, templatable {
         ];
 
         return $totemplate;
+    }
+
+    /**
+     * Returns multiple configuration values.
+     *
+     * @param  stdClass $instance
+     * @return stdClass
+     */
+    private function get_settings() {
+
+        $config                 = new stdClass;
+        $config->hasdiscount    = (bool) ($this->instance->customint3);
+        $config->discounttype   = $this->instance->customint3;
+        $config->codeisrequired = $this->instance->customint7;
+
+        $config->taxinfo        = $this->get_tax_info($this->instance->cost, $this->instance->courseid);
+        $config->allowmultiple  = (get_config('enrol_payment', 'allowmultipleenrol') && $this->instance->customint5);
+        $config->threshold      = $this->instance->customint8;
+
+        $config->haspaypal      = (bool) trim(get_config('enrol_payment', 'paypalbusiness'));
+        $config->paypalaccount  = get_config('enrol_payment', 'paypalbusiness');
+
+        $stripesecret           = get_config('enrol_payment', 'stripesecretkey');
+        $config->stripekey      = get_config('enrol_payment', 'stripepublishablekey');
+        $config->hasstripe      = ((bool) trim($stripesecret)) && ((bool) trim($config->stripekey));
+
+        $config->transferinstructions = get_config('enrol_payment', 'transferinstructions');
+        $config->validatezipcode        = get_config('enrol_payment', 'validatezipcode');
+        $config->addressrequired = get_config('enrol_payment', 'billingaddress');
+
+        return $config;
+    }
+
+    /**
+     * Return the tax amount.
+     *
+     * @param  string $tax
+     * @param  string $userfield
+     *
+     * @return array
+     */
+    private function get_tax_amount(string $tax, string $userfield) {
+        $pieces = explode(":", $tax);
+        if (count($pieces) != 2) {
+            debugging('Incorrect tax definition format.');
+        }
+
+        $taxregion = strtolower(trim($pieces[0]));
+        $taxrate = trim($pieces[1]);
+
+        // If the user country and the tax country does not match, return with empty values.
+        if ($taxregion != strtolower(trim($userfield))) {
+            return [
+                'taxpercent' => 0,
+                'taxstring'  => ''
+            ];
+        }
+
+        if (!is_numeric($taxrate)) {
+            debugging('Encountered non-numeric tax value.');
+        }
+
+        try {
+            $floattaxrate = floatval($taxrate);
+            return [
+                'taxpercent' => $floattaxrate,
+                'taxstring'  => '(' . floor($floattaxrate * 100) . '% tax)'
+            ];
+
+        } catch (Exception $e) {
+            debugging("Could not convert tax value for $province into a float.");
+        }
+    }
+
+    /**
+     * Returns the tax info.
+     *
+     * @param  int $cost
+     * @return array
+     */
+    private function get_tax_info($cost) {
+        global $USER;
+        profile_load_data($USER);
+
+        // If the option is disabled, return.
+        $hastaxes = get_config('enrol_payment', 'definetaxes');
+        if (!$hastaxes) {
+            return ['taxpercent' => 0, 'taxstring' => ''];
+        }
+
+        $taxdefs        = get_config('enrol_payment', 'taxdefinitions');
+        $countrytax     = get_config('enrol_payment', 'countrytax');
+
+        // If country tax are set and the user country is empty. Force user to edit his profile.
+        if (!empty($countrytax) && empty($USER->country)) {
+            $urltogo = new moodle_url('/user/edit.php', ['id' => $USER->id]);
+            redirect($urltogo, 'You must choose your country', null, \core\output\notification::NOTIFY_WARNING);
+        }
+
+        if (!empty($countrytax)) {
+            $taxholder = $this->get_tax_amount($countrytax, $USER->country);
+            return $taxholder;
+        }
+
+        // If the tax field is not set, let's not calculate taxes.
+        if (!isset($USER->profile_field_taxregion)) {
+            return ['taxpercent' => 0, 'taxstring' => ''];
+        }
+
+        // If the tax country is not empty, use it. Otherwise use the tax region.
+        $taxdefs = get_config('enrol_payment', 'taxdefinitions');
+        $taxdeflines = explode("\n", $taxdefs);
+
+        // Return if this is empty.
+        if (empty($taxdefs)) {
+            return ['taxpercent' => 0, 'taxstring' => ''];
+        }
+
+        foreach ($taxdeflines as $taxline) {
+            $taxholder = $this->get_tax_amount($taxline, $USER->profile_field_taxregion);
+        }
+
+        return $taxholder;
     }
 }

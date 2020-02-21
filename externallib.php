@@ -211,6 +211,9 @@ class enrol_payment_external extends external_api {
                 $strings->discount = get_string('getvaluediscount', 'enrol_payment', $objcosts);
                 $strings->calculation = get_string('getvaluecalculation', 'enrol_payment', $objcosts);
 
+                // Update the units.
+                $ret['units'] = $payment->units;
+
                 $ret['successmessage'] = get_string('multipleregistrationconfirmuserlist', 'enrol_payment')
                 . implode('<li>', $stremails)
                 . '</ul>'

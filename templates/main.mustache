@@ -63,26 +63,17 @@
 
                             {{#discounttype}}
                                 {{#cost}}
-                                {{#str}}thefeeisnow, enrol_payment{{/str}} <b>{{currencysign}}<span class="localisedcost-untaxed">{{localisedcostuntaxed}}</span></b>
+                                {{#str}}thefeeisnow, enrol_payment{{/str}} <b>{{symbol}}<span class="localisedcost-untaxed">{{localisedcostuntaxed}}</span></b>
                                 <span class="tax-container">
-                                    + {{currencysign}}<span class="taxamountstring">{{taxamountstring}}</span> <span class="taxstring">{{taxstring}}</span>
-                                    = <b>{{currencysign}}<span class="localisedcost">{{localisedcost}}</span></b>
+                                    + {{symbol}}<span class="taxamountstring">{{taxamountstring}}</span> <span class="taxstring">{{taxstring}}</span>
+                                    = <b>{{symbol}}<span class="localisedcost">{{localisedcost}}</span></b>
                                 </span>
                                 {{currency}}
                                 {{#discountispercentage}} (<b>{{discountamount}}%</b> discount){{/discountispercentage}}
-                                {{#discountisvalue}} (<b>{{currencysign}}{{discountamount}}</b> discount){{/discountisvalue}}
+                                {{#discountisvalue}} (<b>{{symbol}}{{discountamount}}</b> discount){{/discountisvalue}}
                                 {{/cost}}
                             {{/discounttype}}
 
-                            {{^discounttype}}
-                                {{#cost}}
-                                {{#str}}thefeeisnow, enrol_payment{{/str}} <b>{{currencysign}}<span class="localisedcost-untaxed">{{localisedcostuntaxed}}</span></b>
-                                <span class="tax-container">
-                                    + {{currencysign}}<span class="taxamountstring">{{taxamountstring}}</span> <span class="taxstring">{{taxstring}}</span>
-                                    = <b>{{currencysign}}<span class="localisedcost">{{localisedcost}}</span></b>
-                                </span>{{currency}}
-                                {{/cost}}
-                            {{/discounttype}}
                     </span>
                     <div class="enrol-payment-error-text alert alert-danger" style="display: none"></div>
                 </div>
@@ -99,12 +90,12 @@
                             {{^coderequired}} block {{/coderequired}}">
 
                                 {{#cost}}
-                                    {{#str}}thefeeisnow, enrol_payment{{/str}} {{currencysign}}{{price}} -
-                                    {{#discountispercentage}} {{symbol}}{{unitdiscount}} (<b>{{discountamount}}%</b> discount){{/discountispercentage}}
-                                    {{#discountisvalue}} <b>{{currencysign}}{{discountamount}}</b> discount {{/discountisvalue}} × <span class="units">{{units}}</span>
+                                    {{#str}}thefeeisnow, enrol_payment{{/str}} {{symbol}}{{price}} -
+                                    {{#discountispercentage}} {{symbol}}{{unitdiscount}} (<b>{{discountamount}}%</b> {{#str}}discount, enrol_payment{{/str}}){{/discountispercentage}}
+                                    {{#discountisvalue}} <b>{{symbol}}{{discountamount}}</b> {{#str}}discount, enrol_payment{{/str}} {{/discountisvalue}} × <span class="units">{{units}}</span>
                                     <span class="tax-container">
-                                        + {{currencysign}}<span class="taxamountstring">{{taxamountstring}}</span> <span class="taxstring">{{taxstring}}</span>
-                                        = <b>{{currencysign}}<span class="localisedcost">{{localisedcost}}</span></b>
+                                        + {{symbol}}<span class="taxamountstring">{{taxamountstring}}</span> <span class="taxstring">{{taxstring}}</span>
+                                        = <b>{{symbol}}<span class="localisedcost">{{localisedcost}}</span></b>
                                     </span>
                                     {{currency}}
                                 {{/cost}}

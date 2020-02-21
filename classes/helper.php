@@ -96,6 +96,7 @@ class helper {
         $cost           = $payment->originalcost;
         $subtotal       = $cost;
         $ocdiscounted   = $cost;
+        $coderequired   = ($instance->customint7) ?? 0;
 
         if (self::is_negative_value($discountamount)) {
             throw new moodle_exception('negativediscount', 'enrol_payment');
@@ -115,15 +116,22 @@ class helper {
                     throw new \Exception(get_string("percentdiscountover100error", "enrol_payment"));
                 }
 
+                if ($coderequired && !$payment->codegiven) {
+                    break;
+                }
+
                 // Percentages over 1 converted to a float between 0 and 1.
                 // Per-unit cost is the difference between the full cost and the percent discount.
-                $perunitcost = $cost - ($cost * $normalizeddiscount);
-                $subtotal = $perunitcost * $payment->units;
-
-                $ocdiscounted = $perunitcost;
+                $perunitcost    = $cost - ($cost * $normalizeddiscount);
+                $subtotal       = $perunitcost * $payment->units;
+                $ocdiscounted   = $perunitcost;
 
                 break;
             case 2:
+                if ($coderequired && !$payment->codegiven) {
+                    break;
+                }
+
                 $ocdiscounted = $cost - $discountamount;
                 $subtotal = ($cost - $discountamount) * $payment->units;
 
@@ -141,18 +149,18 @@ class helper {
             $subtotaltaxed = $subtotal + $taxamount;
         }
 
-        $ret = [];
-        $ret['subtotal'] = format_float($subtotal, 2, false);
-        $ret['subtotallocalised'] = format_float($subtotal, 2, true);
-        $ret['subtotaltaxed'] = format_float($subtotaltaxed, 2, true);
-        $ret['taxamount'] = format_float($taxamount, 2, true);
-        $ret['ocdiscounted'] = format_float($ocdiscounted, 2, true);
-        $ret['percentdiscount'] = floor($normalizeddiscount * 100);
-        $ret['originalunitprice'] = format_float($cost, 2, true);
+        $ret = [
+            'subtotal'            => format_float($subtotal, 2, true),
+            'subtotaltaxed'       => format_float($subtotaltaxed, 2, true),
+            'taxamount'           => format_float($taxamount, 2, true),
+            'ocdiscounted'        => format_float($ocdiscounted, 2, true),
+            'percentdiscount'     => floor($normalizeddiscount * 100),
+            'originalunitprice'   => format_float($cost, 2, true),
+            'discountvalue'       => format_float($discountamount, 2),
+        ];
+
         $percentdiscountunit = self::calculate_discount($ret['originalunitprice'], $ret['percentdiscount']);
         $ret['percentdiscountunit'] = format_float($percentdiscountunit, 2, true);
-        $ret['discountvalue'] = format_float($discountamount, 2);
-
         return $ret;
     }
 
