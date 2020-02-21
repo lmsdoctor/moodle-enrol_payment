@@ -194,8 +194,11 @@
         </div>
     {{/paypalenabled}}
 
-    {{#stripeenabled}}
+    {{#hasbothpayments}}
         <p class="text-center col-md-12">{{# str }}or, enrol_payment{{/ str }}</p>
+    {{/hasbothpayments}}
+
+    {{#stripeenabled}}
         <div class="text-center col-md-12">
             <a class="btn btn-info payment-checkout" id="stripe-button">{{# str }}sendpaymentbutton_stripe, enrol_payment{{/ str }}</a>
 

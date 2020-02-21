@@ -67,6 +67,12 @@ class main implements renderable, templatable {
         profile_load_data($USER);
         ob_start();
 
+        // Allow Payment Enrollments is true when No is selected
+        // in the parent plugin setting.
+        if (get_config('enrol_payment', 'status')) {
+            return false;
+        }
+
         $config = $this->get_settings();
 
         // No cost, other enrolment methods (instances) should be used.
@@ -201,7 +207,8 @@ class main implements renderable, templatable {
             'coderequired'          => $config->codeisrequired,
             'cost'                  => $cost,
             'discounttype'          => $config->discounttype,
-            'gatewaysenabled'       => ($config->haspaypal && $config->hasstripe),
+            'gatewaysenabled'       => ($config->haspaypal || $config->hasstripe),
+            'hasbothpayments'       => ($config->haspaypal && $config->hasstripe),
             'hasdiscountcode'       => $config->codeisrequired,
             'hasdiscount'           => $hasdiscount,
             'hastax'                => (empty($config->taxinfo['taxstring'])) ? false : true,
