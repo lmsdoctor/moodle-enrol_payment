@@ -201,3 +201,4 @@ $string['thefeeisnow'] = 'The fee is now';
 $string['discountwillapply'] = 'discount will be applied to a purchase of <b>{$a}</b> or more registrations.';
 $string['a'] = 'A';
 $string['discount'] = 'discount';
+$string['tax'] = 'tax';

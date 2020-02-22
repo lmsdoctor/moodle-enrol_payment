@@ -275,11 +275,8 @@ class main implements renderable, templatable {
         $taxrate = trim($pieces[1]);
 
         // If the user country and the tax country does not match, return with empty values.
-        if ($taxregion != strtolower(trim($userfield))) {
-            return [
-                'taxpercent' => 0,
-                'taxstring'  => ''
-            ];
+        if (stripos($taxregion, $userfield) === false) {
+            return ['taxpercent' => 0, 'taxstring'  => ''];
         }
 
         if (!is_numeric($taxrate)) {
@@ -290,7 +287,7 @@ class main implements renderable, templatable {
             $floattaxrate = floatval($taxrate);
             return [
                 'taxpercent' => $floattaxrate,
-                'taxstring'  => '(' . floor($floattaxrate * 100) . '% tax)'
+                'taxstring'  => '(' . floor($floattaxrate * 100) . '% ' . get_string('tax', 'enrol_payment') . ')'
             ];
 
         } catch (Exception $e) {
