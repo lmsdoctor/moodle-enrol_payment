@@ -304,10 +304,7 @@ function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner, Ajax, 
                 var emails = self.getEmails();
 
                 if (!emails.length) {
-                    enrolPage.genericErrorModal(enrolPage.mdlstr["novalidemailsentered"],
-                                                enrolPage.mdlstr["novalidemailsentered_desc"],
-                                                "no-valid-emails-entered");
-                    $("#dimmer").css("display", "none");
+                    enrolPage.errorFromEnrollment(enrolPage.mdlstr["novalidemailsentered"]);
                 } else {
 
                     // Always clean this div first.
