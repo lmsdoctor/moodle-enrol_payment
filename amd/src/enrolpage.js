@@ -237,10 +237,10 @@ function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner, Ajax, 
                 var strEnterEmail = mdlstr["enteremail"];
 
                 var inputID = "\"multiple-registration-email-" + n + "\"";
-                var div2 = '<div class="form-inline mr-email-line">'
+                var div2 = '<div class="form-inline mr-email-line" style="clear:both;">'
                             + '<div class="form-group row">'
-                                + '<label for=' + inputID + ' class="mb-2 col-form-label">' + strRegistrant + '&nbsp;<span class="email-num">' + m + ' </span></label>'
-                                + '<div class="mb-2 mx-sm-3">'
+                                + '<label style="float:left; margin-right: 5px;" for=' + inputID + ' class="mb-2 p-1 col-form-label">' + strRegistrant + '&nbsp;<span class="email-num">' + m + ' </span></label>'
+                                + '<div class="mb-2 mx-sm-3" style="float:left; margin-right: 5px;">'
                                     + '<input class="form-control multiple-registration-email" id=' + inputID + ' type="text" placeholder="' + strEnterEmail + '">';
                 var endDiv = "</div></div></div>";
 
