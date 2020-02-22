@@ -275,7 +275,7 @@ class main implements renderable, templatable {
         $taxrate = trim($pieces[1]);
 
         // If the user country and the tax country does not match, return with empty values.
-        if (stripos($taxregion, $userfield) === false) {
+        if (stripos($taxregion, strtolower(trim($userfield))) === false) {
             return ['taxpercent' => 0, 'taxstring'  => ''];
         }
 
@@ -341,6 +341,9 @@ class main implements renderable, templatable {
 
         foreach ($taxdeflines as $taxline) {
             $taxholder = $this->get_tax_amount($taxline, $USER->profile_field_taxregion);
+            if (!empty($taxholder['taxpercent'])) {
+               break;
+            }
         }
 
         return $taxholder;
