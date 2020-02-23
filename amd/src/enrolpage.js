@@ -345,6 +345,7 @@ function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner, Ajax, 
                     // Build DOM for a multiple-registration form.
 
                     btn.text(mdlstr["cancelenrolothers"]);
+                    $('.fa-question-circle').parent().hide();
                     btn.removeClass('enable-mr').addClass('disable-mr');
                     $("#multiple-registration-container").html(this.makeEmailEntryLine(mdlstr)).show();
                     self.addPlusClickHandler($(".plus-container"), mdlstr);
@@ -356,6 +357,9 @@ function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner, Ajax, 
 
                     // Return to single registration mode.
                     btn.text(mdlstr['enrolothers']);
+                    // Remove notice error.
+                    $('.enrol-payment-enrollment').hide();
+                    $('.fa-question-circle').parent().show();
                     btn.removeClass('disable-mr').addClass('enable-mr');
                     $('.mr-email-line').remove();
                     $('#multiple-registration-btn-container img.iconhelp').css('display', 'inline-block');
