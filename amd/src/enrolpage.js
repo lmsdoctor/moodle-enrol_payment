@@ -571,7 +571,8 @@ function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner, Ajax, 
                 self.Discount.checkDiscountCode(self);
             });
 
-            $("#multiple-registration-btn").click(function() {
+            $("#multiple-registration-btn").click(function(e) {
+                e.preventDefault();
                 self.MultipleRegistration.buildForm($(this), self.mdlstr, self);
             });
 
