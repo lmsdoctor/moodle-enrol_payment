@@ -25,9 +25,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2020023710;
+$plugin->version   = 2020023800;
 $plugin->requires  = 2018120300;
 $plugin->component = 'enrol_payment';
 $plugin->maturity  = MATURITY_RC;
-$plugin->release   = '1.2.3';
+$plugin->release   = '1.2.4';
 $plugin->supported = [36, 37, 38];
