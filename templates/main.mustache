@@ -48,9 +48,9 @@
                     <div class="form-group mx-sm-3 mb-2">
                         <input class="form-control" type="text" name="discountcode" id="discountcode" placeholder="{{#str}}  discountcode, enrol_payment{{/str}}" />
                     </div>
-                    <button class="btn btn-primary white mb-2" id="apply-discount" role="button">
+                    <a href="#" class="btn btn-outline-primary white mb-2" id="apply-discount" role="button">
                         {{# str }}applydiscount, enrol_payment{{/ str }}
-                    </button>
+                    </a>
                 </form>
             </div>
         {{/hasdiscountcode}}
@@ -92,7 +92,7 @@
                                 {{#cost}}
                                     {{#str}}thefeeisnow, enrol_payment{{/str}} {{symbol}}{{price}} -
                                     {{#discountispercentage}} {{symbol}}<span class="unitdiscount">{{unitdiscount}}</span> (<b>{{discountamount}}%</b> {{#str}}discount, enrol_payment{{/str}}){{/discountispercentage}}
-                                    {{#discountisvalue}} <b>{{symbol}}{{discountamount}}</b> {{#str}}discount, enrol_payment{{/str}} {{/discountisvalue}} × <span class="units">{{units}}</span>
+                                    {{#discountisvalue}} <b>{{symbol}}{{discountamount}}</b> {{#str}}discount, enrol_payment{{/str}} {{/discountisvalue}} <span class="units">{{units}}</span>
                                     <span class="tax-container">
                                         + {{symbol}}<span class="taxamountstring">{{taxamountstring}}</span> <span class="taxstring">{{taxstring}}</span>
                                         = <b>{{symbol}}<span class="localisedcost">{{localisedcost}}</span></b>
@@ -131,7 +131,7 @@
             {{/multipleusers}}
             <div id="multiple-registration-container" style="display: none;" class="m-auto col-md-4 p-3 justify-content-center"></div>
             <div id="multiple-registration-btn-container" class="text-center col-md-12 my-3">
-                <a href="#" id="multiple-registration-btn" role="button" class="btn btn-outline-secondary enable-mr">
+                <a href="#" id="multiple-registration-btn" role="button" class="btn btn-outline-primary enable-mr">
                     {{# str }}enrolothers, enrol_payment{{/ str }}
                 </a>
                 {{{multipleregicon}}}

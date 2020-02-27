@@ -134,7 +134,7 @@ class main implements renderable, templatable {
         $cost                        = new stdClass;
         $cost->price                 = $price;
         $cost->total                 = $originaltotal;
-        $cost->units                 = $session->units;
+        $cost->units                 = ($session->units > 1) ? $session->units : '';
         $cost->unitdiscount          = $costslist['percentdiscountunit'];
         $cost->coursename            = $course->fullname;
         $cost->courseshortname       = $course->shortname;

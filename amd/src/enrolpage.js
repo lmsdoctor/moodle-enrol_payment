@@ -277,7 +277,12 @@ function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner, Ajax, 
                 var response = JSON.parse(r);
                 if(response["success"]) {
                     enrolPage.subtotal = response["subtotal"];
-                    $("span.units").text(response["units"]);
+
+                    var units = response["units"];
+                    if (units > 1) {
+                        $("span.units").text(' x ' + units);
+                    }
+
                     enrolPage.updateCostView();
                     self.checkoutConfirmModal(enrolPage, response["successmessage"]);
                 } else {
