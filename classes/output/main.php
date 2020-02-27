@@ -152,18 +152,15 @@ class main implements renderable, templatable {
         // If percentage discount, get the percentage amount to display.
         $cost->discountispercentage = false;
         $cost->discountisvalue = false;
-        $hasdiscount = false;
         switch ($config->discounttype) {
             case 1:
-                $hasdiscount = true;
                 $cost->discountispercentage = true;
                 break;
             case 2:
-                $hasdiscount = true;
                 $cost->discountisvalue = true;
                 break;
             default:
-                $hasdiscount = false;
+                $config->hasdiscount = false;
                 break;
         }
 
@@ -210,7 +207,7 @@ class main implements renderable, templatable {
             'gatewaysenabled'       => ($config->haspaypal || $config->hasstripe),
             'hasbothpayments'       => ($config->haspaypal && $config->hasstripe),
             'hasdiscountcode'       => $config->codeisrequired,
-            'hasdiscount'           => $hasdiscount,
+            'hasdiscount'           => helper::has_discount($config->discounttype),
             'hastax'                => (empty($config->taxinfo['taxstring'])) ? false : true,
             'multipleusers'         => $multipleusers,
             'multiplesingle'        => $multiplesingle,
@@ -235,7 +232,6 @@ class main implements renderable, templatable {
     private function get_settings() {
 
         $config                 = new stdClass;
-        $config->hasdiscount    = (bool) ($this->instance->customint3);
         $config->discounttype   = $this->instance->customint3;
         $config->codeisrequired = $this->instance->customint7;
 

@@ -425,6 +425,7 @@ function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner, Ajax, 
 
                             enrolPage.subtotal = obj.subtotal;
                             enrolPage.updateCostView();
+                            $('span.unitdiscount').text(obj.percentdiscountunit);
                             $('.discount-threshold-info').css('display','block');
                         }
 

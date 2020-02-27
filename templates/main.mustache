@@ -91,7 +91,7 @@
 
                                 {{#cost}}
                                     {{#str}}thefeeisnow, enrol_payment{{/str}} {{symbol}}{{price}} -
-                                    {{#discountispercentage}} {{symbol}}{{unitdiscount}} (<b>{{discountamount}}%</b> {{#str}}discount, enrol_payment{{/str}}){{/discountispercentage}}
+                                    {{#discountispercentage}} {{symbol}}<span class="unitdiscount">{{unitdiscount}}</span> (<b>{{discountamount}}%</b> {{#str}}discount, enrol_payment{{/str}}){{/discountispercentage}}
                                     {{#discountisvalue}} <b>{{symbol}}{{discountamount}}</b> {{#str}}discount, enrol_payment{{/str}} {{/discountisvalue}} × <span class="units">{{units}}</span>
                                     <span class="tax-container">
                                         + {{symbol}}<span class="taxamountstring">{{taxamountstring}}</span> <span class="taxstring">{{taxstring}}</span>

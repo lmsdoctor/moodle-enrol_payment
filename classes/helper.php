@@ -85,83 +85,124 @@ class helper {
     /**
      * Calculate cost.
      *
-     * @param stdClass $instance enrol_payment instance
-     * @param stdClass $payment  payment object from enrol_payment_session
+     * @param  stdClass $instance
+     * @param  stdClass $payment
+     * @param  bool     $addtax
      *
      * @return array
      */
     public static function calculate_cost(stdClass $instance, stdClass $payment, bool $addtax = false) {
-        $discountamount = $instance->customdec1;
-        $discounttype   = $instance->customint3;
-        $cost           = $payment->originalcost;
-        $subtotal       = $cost;
-        $ocdiscounted   = $cost;
-        $coderequired   = ($instance->customint7) ?? 0;
 
-        if (self::is_negative_value($discountamount)) {
-            throw new moodle_exception('negativediscount', 'enrol_payment');
-        }
+        $cart               = new stdClass;
+        $cart->discountamount = $instance->customdec1;
+        $cart->discounttype = $instance->customint3;
+        $cart->cost         = $payment->originalcost;
+        $cart->subtotal     = $cart->cost * $payment->units;
+        $cart->coderequired = ($instance->customint7) ?? 0;
+        $cart->discount     = 0;
+        $cart->taxamount    = 0;
 
         if (self::not_enough_units($payment->units)) {
             throw new moodle_exception('notenoughunits', 'enrol_payment');
         }
 
-        $normalizeddiscount = self::normalize_percent_discount($discountamount, $discounttype);
-        switch ($discounttype) {
-            case 0:
-                $subtotal = $cost * $payment->units;
-                break;
-            case 1:
-                if ($discountamount > 100) {
-                    throw new \Exception(get_string("percentdiscountover100error", "enrol_payment"));
-                }
-
-                if ($coderequired && !$payment->codegiven) {
-                    break;
-                }
-
-                // Percentages over 1 converted to a float between 0 and 1.
-                // Per-unit cost is the difference between the full cost and the percent discount.
-                $perunitcost    = $cost - ($cost * $normalizeddiscount);
-                $subtotal       = $perunitcost * $payment->units;
-                $ocdiscounted   = $perunitcost;
-
-                break;
-            case 2:
-                if ($coderequired && !$payment->codegiven) {
-                    break;
-                }
-
-                $ocdiscounted = $cost - $discountamount;
-                $subtotal = ($cost - $discountamount) * $payment->units;
-
-                break;
-            default:
-                throw new \Exception(get_string("discounttypeerror", "enrol_payment"));
-                break;
+        if (self::has_discount($cart->discounttype)) {
+            $cart = self::get_discount($cart, $payment);
         }
 
-        $taxamount = 0;
-        $subtotaltaxed = $subtotal;
-
+        $cart->subtotaltaxed = $cart->subtotal;
         if ($payment->taxpercent && $addtax) {
-            $taxamount = $subtotal * $payment->taxpercent;
-            $subtotaltaxed = $subtotal + $taxamount;
+            $cart->taxamount = $cart->subtotal * $payment->taxpercent;
+            $cart->subtotaltaxed = $cart->subtotal + $cart->taxamount;
         }
 
-        $ret = [
-            'subtotal'            => format_float($subtotal, 2, true),
-            'subtotaltaxed'       => format_float($subtotaltaxed, 2, true),
-            'taxamount'           => format_float($taxamount, 2, true),
-            'ocdiscounted'        => format_float($ocdiscounted, 2, true),
-            'percentdiscount'     => floor($normalizeddiscount * 100),
-            'originalunitprice'   => format_float($cost, 2, true),
-            'discountvalue'       => format_float($discountamount, 2),
+        return self::get_formatted_values($cart);
+
+    }
+
+    /**
+     * Reduce the float values to 2 decimals.
+     *
+     * @param  stdClass $cart [description]
+     *
+     * @return array
+     */
+    private static function get_formatted_values(stdClass $cart) {
+
+        $checkout = [
+            'subtotal'        => format_float($cart->subtotal, 2, true),
+            'subtotaltaxed'   => format_float($cart->subtotaltaxed, 2, true),
+            'taxamount'       => format_float($cart->taxamount, 2, true),
+            'percentdiscount' => floor($cart->discount * 100),
+            'unitprice'       => format_float($cart->cost, 2, true),
+            'discountvalue'   => format_float($cart->discountamount, 2),
         ];
 
-        $percentdiscountunit = self::calculate_discount($ret['originalunitprice'], $ret['percentdiscount']);
-        $ret['percentdiscountunit'] = format_float($percentdiscountunit, 2, true);
-        return $ret;
+        $percentdiscountunit = self::calculate_discount($checkout['unitprice'], $checkout['percentdiscount']);
+        $checkout['percentdiscountunit'] = format_float($percentdiscountunit, 2, true);
+
+        return $checkout;
+
+    }
+
+    /**
+     * Check if the discount is enabled.
+     *
+     * @param  int  $discounttype
+     *
+     * @return bool
+     */
+    public static function has_discount(int $discounttype) {
+        return (get_config('enrol_payment', 'enablediscounts') && $discounttype !== 0);
+    }
+
+    /**
+     * Apply the discounts based on the discount type.
+     *
+     * @param  stdClass $cart
+     * @param  stdClass $payment
+     *
+     * @return stdClass
+     */
+    private static function get_discount(stdClass $cart, stdClass $payment) {
+
+        if ($cart->coderequired && !$payment->codegiven) {
+            return $cart;
+        }
+
+        $cart->discount = self::normalize_percent_discount($cart->discountamount, $cart->discounttype);
+        switch ($cart->discounttype) {
+
+            case 1:
+                // This throws an exception if the discount is over 100.
+                self::discount_is_overlimit($cart->discountamount);
+
+                // Per-unit cost is the difference between the full cost and the percent discount.
+                $cart->perunitcost = $cart->cost - ($cart->cost * $cart->discount);
+                $cart->subtotal    = $cart->perunitcost * $payment->units;
+                break;
+
+            case 2:
+                $cart->subtotal = ($cart->cost - $cart->discountamount) * $payment->units;
+                break;
+        }
+
+        return $cart;
+
+    }
+
+    /**
+     * Check if the discount is overlimit.
+     *
+     * @param  float $discount
+     * @return void
+     */
+    private static function discount_is_overlimit($discount) {
+
+        if ($discount > 100) {
+            throw new \Exception(get_string("percentdiscountover100error", "enrol_payment"));
+        }
+
     }
 
     /**
@@ -190,7 +231,7 @@ class helper {
 
         $data                   = new stdClass;
         $data->symbol           = $symbol;
-        $data->originalcost     = $ret['originalunitprice'];
+        $data->originalcost     = $ret['unitprice'];
         $data->unitdiscount     = $ret['percentdiscountunit'];
         $data->percentdiscount  = $ret['percentdiscount'];
         $data->units            = $units;
