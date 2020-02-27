@@ -279,6 +279,7 @@ function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner, Ajax, 
                     enrolPage.subtotal = response["subtotal"];
 
                     var units = response["units"];
+                    $("span.units").text('');
                     if (units > 1) {
                         $("span.units").text(' x ' + units);
                     }
