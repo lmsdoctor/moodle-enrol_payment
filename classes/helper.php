@@ -153,7 +153,7 @@ class helper {
      * @return bool
      */
     public static function has_discount($discounttype) {
-        return (get_config('enrol_payment', 'enablediscounts') && $discounttype !== 0);
+        return (get_config('enrol_payment', 'enablediscounts') && $discounttype != 0);
     }
 
     /**
