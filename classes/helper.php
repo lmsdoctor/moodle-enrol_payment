@@ -94,8 +94,8 @@ class helper {
     public static function calculate_cost(stdClass $instance, stdClass $payment, bool $addtax = false) {
 
         $cart               = new stdClass;
-        $cart->discountamount = $instance->customdec1;
-        $cart->discounttype = $instance->customint3;
+        $cart->discountamount = $instance->customdec1 ?? 0;
+        $cart->discounttype = $instance->customint3 ?? 0;
         $cart->cost         = $payment->originalcost;
         $cart->subtotal     = $cart->cost * $payment->units;
         $cart->coderequired = ($instance->customint7) ?? 0;
