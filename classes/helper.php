@@ -372,6 +372,8 @@ class helper {
             'notfound' => [],
         ];
         foreach ($emails as $email) {
+            // Make sure to remove any extra spaces.
+            $email = trim($email);
             $user = $DB->get_record('user', ['email' => $email], 'id, email, firstname, lastname');
             if ($user) {
                 $userdata = [
