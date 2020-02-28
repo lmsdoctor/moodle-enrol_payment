@@ -365,6 +365,8 @@ function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner, Ajax, 
                     btn.text(mdlstr['enrolothers']);
                     // Remove notice error.
                     $('.enrol-payment-enrollment').hide();
+                    // Reset unit class.
+                    $("span.units").text('');
                     $('.fa-question-circle').parent().show();
                     btn.removeClass('disable-mr').addClass('enable-mr');
                     $('.mr-email-line').remove();
