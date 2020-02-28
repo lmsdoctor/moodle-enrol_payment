@@ -192,9 +192,15 @@ class enrol_payment_external extends external_api {
 
                 // This string should only be displayed for the multienrollment and if the code
                 // was given, otherwise we don't display the string.
-                $hasdiscount            = (count($ret['users']) >= $threshold);
-                $strings->discount      = helper::get_percentage_discount_string($objcosts, $payment->codegiven, $hasdiscount);
-                $strings->calculation   = helper::get_percentage_calculation_string($objcosts, $payment->codegiven, $hasdiscount);
+                // If the code is required and given or no code is required, display strings.
+                $strings->discount = helper::get_percentage_discount_string($objcosts, $payment->codegiven, false);
+                $strings->calculation = helper::get_percentage_calculation_string($objcosts, $payment->codegiven, false);
+
+                if ($instance->customint7 && $payment->codegiven || !$instance->customint7) {
+                    $hasdiscount = (count($ret['users']) >= $threshold);
+                    $strings->discount = helper::get_percentage_discount_string($objcosts, $payment->codegiven, $hasdiscount);
+                    $strings->calculation = helper::get_percentage_calculation_string($objcosts, $payment->codegiven, $hasdiscount);
+                }
 
                 // Update the units.
                 $ret['units'] = $payment->units;
@@ -203,21 +209,37 @@ class enrol_payment_external extends external_api {
                 . implode('<li>', $stremails)
                 . '</ul>'
                 . get_string('totalcost', 'enrol_payment', $strings);
+
+            } else if ($instance->customint3 == 2) {
+
+                // ... it is value discount and we want to reflect that.
+                $strings                = new \stdClass;
+                $strings->discount      = '';
+                $strings->calculation   = get_string('nodiscountvaluecalculation', 'enrol_payment', $objcosts);
+
+                // If the code is required and given or no code is required, display strings.
+                if ($instance->customint7 && $payment->codegiven || !$instance->customint7) {
+                    $strings->discount = get_string('getvaluediscount', 'enrol_payment', $objcosts);
+                    $strings->calculation = get_string('getvaluecalculation', 'enrol_payment', $objcosts);
+                }
+
+                // Update the units.
+                $ret['units']           = $payment->units;
+                $ret['successmessage']  = get_string('multipleregistrationconfirmuserlist', 'enrol_payment')
+                                            . implode('<li>', $stremails)
+                                            . '</ul>'
+                                            . get_string('totalcost', 'enrol_payment', $strings);
 
             } else {
 
                 // ... it is value discount and we want to reflect that.
-                $strings = new \stdClass;
-                $strings->discount = get_string('getvaluediscount', 'enrol_payment', $objcosts);
-                $strings->calculation = get_string('getvaluecalculation', 'enrol_payment', $objcosts);
-
-                // Update the units.
-                $ret['units'] = $payment->units;
-
-                $ret['successmessage'] = get_string('multipleregistrationconfirmuserlist', 'enrol_payment')
-                . implode('<li>', $stremails)
-                . '</ul>'
-                . get_string('totalcost', 'enrol_payment', $strings);
+                $strings                = new \stdClass;
+                $strings->discount      = '';
+                $strings->calculation   = get_string('nodiscountvaluecalculation', 'enrol_payment', $objcosts);
+                $ret['successmessage']  = get_string('multipleregistrationconfirmuserlist', 'enrol_payment')
+                                            . implode('<li>', $stremails)
+                                            . '</ul>'
+                                            . get_string('totalcost', 'enrol_payment', $strings);
 
             }
         }

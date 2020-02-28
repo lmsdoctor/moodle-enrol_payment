@@ -133,7 +133,7 @@ $string['multipleregistration_help'] = 'Enrol other(s) by entering the email add
 $string['allowmultipleenrol'] = 'Allow multiple registration';
 $string['allowmultipleenrol_help'] = 'Allow a user to enrol others by entering their email address. Note that the other registrants need to already have created their account on the site.';
 $string['sameemailaccountsallowed'] = "Error: Accounts sharing the same email address are allowed on this Moodle site. Because of this, the Multiple Registration cannot be used. Please contact your site administrator.";
-$string['duplicateemail'] = "Error: Duplicate emails were entered in the multiple registration form.";
+$string['duplicateemail'] = "There are duplicate emails.";
 $string['paypalaccountnotneeded'] = "<b>A PayPal account is not needed to pay by credit card.</b> <br>At the PayPal site, there is a <i>\"Pay with a credit or Visa Debit card\"</i> <br>button. Please note that the name and address on the form <b>must</b><br><b>match</b> the name and address associated with the credit card.";
 $string['or'] = "OR";
 $string['usersnotfoundwithemail'] = 'The following registrant(s) have not yet created an account: {$a}';
@@ -190,6 +190,7 @@ $string['paypalmixeduse'] = 'Mixed-use PayPal account';
 $string['paypalmixeduse_desc'] = 'If other products then enrolments are processes via the PayPal account (e.g., videos, books, etc) than tick the checkbox.';
 $string['getvaluediscount'] = 'The {$a->symbol}{$a->discountvalue} discount per-person has been applied.';
 $string['getvaluecalculation'] = '{$a->symbol}{$a->originalcost} - {$a->symbol}{$a->discountvalue} discount × {$a->units} {$a->taxstring} = <b>{$a->symbol}{$a->subtotaltaxed}</b> {$a->currency}';
+$string['nodiscountvaluecalculation'] = '{$a->symbol}{$a->originalcost} × {$a->units} {$a->taxstring} = <b>{$a->symbol}{$a->subtotaltaxed}</b> {$a->currency}';
 $string['percentcalculation'] = '{$a->symbol}{$a->originalcost} × {$a->units} {$a->taxstring} = <b>{$a->symbol}{$a->subtotaltaxed}</b> {$a->currency}';
 $string['percentcalculationdiscount'] = '{$a->symbol}{$a->originalcost} - {$a->symbol}{$a->unitdiscount} ({$a->percentdiscount}% discount) × {$a->units} {$a->taxstring} = <b>{$a->symbol}{$a->subtotaltaxed}</b> {$a->currency}';
 $string['percentdiscountstring'] = 'The {$a->percentdiscount}% discount has been applied.';

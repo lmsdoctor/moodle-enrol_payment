@@ -145,6 +145,24 @@
         {{/allowmultiple}}
     {{/hasdiscount}}
 
+    {{^hasdiscount}}
+        {{#allowmultiple}}
+            <div id="multiple-registration-container" style="display: none;" class="m-auto col-md-4 p-3 justify-content-center"></div>
+            <div id="multiple-registration-btn-container" class="text-center col-md-12 my-3">
+                <a href="#" id="multiple-registration-btn" role="button" class="btn btn-outline-primary enable-mr">
+                    {{# str }}enrolothers, enrol_payment{{/ str }}
+                </a>
+                {{{multipleregicon}}}
+            </div>
+
+            <div class="text-center row justify-content-center">
+                <div class="col-md-auto">
+                    <div class="enrol-payment-enrollment alert alert-danger" style="display: none"></div>
+                </div>
+            </div>
+        {{/allowmultiple}}
+    {{/hasdiscount}}
+
     <div id="moodle-modals" class="text-center col-md-12">
         <a id="error-modal-trigger"></a>
         <a id="success-modal-trigger"></a>
