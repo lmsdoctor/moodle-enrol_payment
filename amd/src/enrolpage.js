@@ -459,7 +459,6 @@ function($, ModalFactory, ModalEvents, MoodleStrings, MoodleCfg, Spinner, Ajax, 
         },
 
         getTaxedAmount: function() {
-            // return (parseFloat(this.subtotal) + parseFloat(this.taxAmount)).toFixed(2);
             return (Number(this.subtotal) + Number(this.taxAmount)).toFixed(2);
         },
 

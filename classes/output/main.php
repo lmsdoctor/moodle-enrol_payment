@@ -338,7 +338,7 @@ class main implements renderable, templatable {
         foreach ($taxdeflines as $taxline) {
             $taxholder = $this->get_tax_amount($taxline, $USER->profile_field_taxregion);
             if (!empty($taxholder['taxpercent'])) {
-               break;
+                break;
             }
         }
 
