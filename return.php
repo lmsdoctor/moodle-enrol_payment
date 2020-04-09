@@ -29,9 +29,12 @@ require_once("$CFG->dirroot/enrol/paypal/lib.php");
 use enrol_payment\helper;
 
 $id = required_param('id', PARAM_INT);
-$token = required_param('token', PARAM_RAW);
+$token = required_param('custom', PARAM_TEXT);
+$txnid = required_param('txn_id', PARAM_TEXT);
 $userid = $USER->id;
 $payment = helper::get_payment_from_token($token);
+$payment->paypaltxnid = $txnid;
+$DB->update_record('enrol_payment_session', $payment);
 $purchasingforself = true;
 
 if (!$course = $DB->get_record("course", array("id" => $id))) {
@@ -51,7 +54,7 @@ if (!empty($SESSION->wantsurl)) {
 }
 
 if ($payment->multiple) {
-    $userids = explode(',', $payment->multiple_userids);
+    $userids = explode(',', $payment->multipleuserids);
 
     if (!in_array(strval($userid), $userids)) {
         $purchasingforself = false;

@@ -355,7 +355,7 @@ class helper {
         if ($transaction) {
             return $transaction->paymentstatus;
         }
-        return false;
+        return null;
     }
 
     /**
@@ -454,6 +454,8 @@ class helper {
      * @param stdClass $data    PayPal IPN data
      */
     public static function message_paypal_error_to_admin(string $subject, stdClass $data) {
+        global $CFG;
+
         $admin = get_admin();
         $site = get_site();
 
@@ -463,18 +465,36 @@ class helper {
             $message .= "$key => $value\n";
         }
 
-        $eventdata = new \stdClass();
-        $eventdata->modulename        = 'moodle';
-        $eventdata->component         = 'enrol_payment';
-        $eventdata->name              = 'payment_enrolment';
-        $eventdata->userfrom          = $admin;
-        $eventdata->userto            = $admin;
-        $eventdata->subject           = "PAYPAL ERROR: ".$subject;
-        $eventdata->fullmessage       = $message;
-        $eventdata->fullmessageformat = FORMAT_PLAIN;
-        $eventdata->fullmessagehtml   = '';
-        $eventdata->smallmessage      = '';
-        message_send($eventdata);
+        $messagehtml = '<p>' . $message . '</p>';
+        $messagetext = html_to_text($messagehtml);
+
+        $fromuser = self::get_fromuser_object();
+        return email_to_user($admin, $fromuser, $subject, $messagetext, $messagehtml, ", ", false);
+
+    }
+
+    /**
+     * Returns fromuser object to be used in email_to_user function.
+     *
+     * @return stdClass
+     */
+    public static function get_fromuser_object() {
+        global $CFG;
+
+        $fromuser = new stdClass;
+        $fromuser->email = $CFG->supportemail;
+        $fromuser->firstname = $CFG->supportname;
+        $fromuser->lastname = '';
+        $fromuser->maildisplay = true;
+        $fromuser->mailformat = 1;
+        $fromuser->id = -99;
+        $fromuser->firstnamephonetic = '';
+        $fromuser->lastnamephonetic = '';
+        $fromuser->middlename = '';
+        $fromuser->alternatename = '';
+
+        return $fromuser;
+
     }
 
     /**

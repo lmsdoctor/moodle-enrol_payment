@@ -319,8 +319,8 @@ class enrol_payment_external extends external_api {
     public static function check_enrol_parameters() {
         return new external_function_parameters(
             [
-                'enrolid' => new external_value(PARAM_INT, 'Enrol id from the enrol table'),
-                'prepaytoken' => new external_value(PARAM_NOTAGS, 'The prepay token'),
+                'courseid' => new external_value(PARAM_INT, 'Course id'),
+                'paymentid' => new external_value(PARAM_INT, 'Payment id'),
             ]
         );
     }
@@ -333,7 +333,7 @@ class enrol_payment_external extends external_api {
      * @return string
      */
     public static function check_enrol($courseid, $paymentid) {
-        global $DB;
+        global $DB, $USER;
 
         // Parameters validation.
         $params = self::validate_parameters(self::check_enrol_parameters(),
@@ -345,20 +345,20 @@ class enrol_payment_external extends external_api {
 
         $context = context_course::instance($params['courseid'], MUST_EXIST);
 
-        if (is_enrolled($context, null, '', true)) {
+        if (is_enrolled($context, $USER, '', true)) {
             return json_encode([
                 'status' => 'success',
                 'result' => true
             ]);
 
-        } else if (payment_pending($params['paymentid'])) {
+        } else if (helper::payment_pending($params['paymentid'])) {
             return json_encode([
                 'status' => 'success',
                 'result' => false,
                 'reason' => 'Pending'
             ]);
         } else {
-            $reason = get_payment_status($params['paymentid']);
+            $reason = helper::get_payment_status($params['paymentid']);
             return json_encode([
                 'status' => 'success',
                 'result' => false,

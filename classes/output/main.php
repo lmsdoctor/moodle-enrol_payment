@@ -182,7 +182,9 @@ class main implements renderable, templatable {
 
         // Store all payment related values in an object.
         $payment                = new stdClass;
-        $payment->paypalaction  = 'https://www.paypal.com/cgi-bin/webscr';
+        $sandbox                = get_config('enrol_payment', 'enablesandbox');
+        $paypalurl              = ($sandbox) ? 'sandbox.paypal.com' : 'paypal.com';
+        $payment->paypalaction  = 'https://www.' . $paypalurl . '/cgi-bin/webscr';
         $payment->stripeaction  = $CFG->wwwroot . '/enrol/payment/stripecharge.php';
         $payment->paypalaccount = $config->paypalaccount;
         $payment->prepaytoken   = $token;

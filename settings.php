@@ -35,6 +35,18 @@ if ($ADMIN->fulltree) {
         get_string('pluginname_desc', 'enrol_payment')
     ));
 
+    $options = [
+        get_string('no'),
+        get_string('yes'),
+    ];
+
+    $settings->add(new admin_setting_configselect(
+        'enrol_payment/enablesandbox',
+        get_string('enablesandbox', 'enrol_payment'),
+        '',
+        0, $options
+    ));
+
     $settings->add(new admin_setting_configtext(
         'enrol_payment/paypalbusiness',
         get_string('businessemail', 'enrol_payment'),
