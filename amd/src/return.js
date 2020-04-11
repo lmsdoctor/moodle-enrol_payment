@@ -27,7 +27,7 @@ function($, Spinner, MoodleStrings, MoodleCfg, Ajax) {
                     }
 
                 }.bind(this),
-                fail: alert(mdlstr[0])
+                fail: Notification.exception
             }]);
 
         },
